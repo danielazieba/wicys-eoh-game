@@ -18,3 +18,6 @@ You need python3, after which you should install numpy and OpenCV (```pip instal
 - Start Unity game
 - Make a basic main character sprite
 - Once initial assets are formed and basic Unity game is made where players can walk around on the map, start more serious planning about game mechanics
+
+## Colors
+- Purple: #bd9aff
