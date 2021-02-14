@@ -1,0 +1,320 @@
+<!doctype html> 
+<meta charset = "utf-8"> 
+<title>Hello, world!</title>
+<body style="background-color: black;">
+<script src="ga.js"></script>
+<script src="plugins.js"></script>
+<script>
+
+document.addEventListener('keydown', logKey);
+var display_hint = false;
+var hint_index = 0;
+var hints = ["Try unlocking the computer!", "Look for a password clue in the bedroom", "Check the Caesar cipher guide for ideas!", "How many lives does a cat have?"];
+var hint_has_been_viewed = [false, false, false, false];
+var closeWindow = false;
+var password_string = " ";
+var terminal_string = "";
+var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP", "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyY"];
+var computerUnlocked = false;
+var terminal_archive = [];
+
+function logKey(e) {
+//  console.log(e.code);
+  if (e.code === "KeyZ") {
+    display_hint = !display_hint;
+    if (hint_index === 2 && hint_has_been_viewed[hint_index]) {
+      hint_index++;
+    }
+  }
+  if (e.code === "KeyX") {
+    closeWindow = true;
+  }
+
+  if (gameSceneLockedScreen.visible) {
+    if (allowed_password_keys.includes(e.code) && password_string.length < 18) {
+      password_string += e.code[3];
+    }
+
+    if (e.code === "Enter") {
+      console.log("Checking correctness of password...");
+      check_password_correctness();
+    }
+    // add being able to delete a character as a quality of life update
+    // if needed; lower priority than getting game to work
+    // if (e.code === "Backspace") {
+    //   password_string = password_string.slice(0, -1);
+    // }
+  }
+
+  if (gameSceneTerminal.visible) {
+    if (allowed_password_keys.includes(e.code) && terminal_string.length < 40) {
+      terminal_string += e.code[3];
+    }
+
+    if (e.code === "Enter") {
+      console.log("TO DO: process commands!");
+      terminal_archive.push("$ " + terminal_string);
+      terminal_string = "";
+    }
+    // add being able to delete a character as a quality of life update
+    // if needed; lower priority than getting game to work
+    // if (e.code === "Backspace") {
+    //   password_string = password_string.slice(0, -1);
+    // }
+  }
+}
+
+ 
+function check_password_correctness() {
+  if (password_string === " DELILAH") {
+    closeWindow = true;
+    console.log("Password correct!");
+    computerUnlocked = true;
+  } 
+}
+
+//Create a new GA instance, and start it.
+var g = ga(790, 720, setup,
+  [
+    "images/big-out-living.png",
+    "images/kitchen.png",
+    "images/uh.png",
+    "images/coffee.png",
+    "images/whiteboard2.png",
+    "images/bedroom.png",
+    "images/locked_computer.png",
+    "images/terminal.png"
+  ]
+);
+g.start();
+
+var cat, message;
+//A `setup` function that will run only once.
+//Use it for initialization tasks
+function setup() {
+  console.log("setup");
+  forest = g.sprite("images/big-out-living.png");
+  kitchen = g.sprite("images/kitchen.png");
+  coffee = g.sprite("images/coffee.png")
+  whiteboard = g.sprite("images/whiteboard2.png");
+  bedroom = g.sprite("images/bedroom.png");
+  locked_screen = g.sprite("images/locked_computer.png");
+  terminal = g.sprite("images/terminal.png");
+  //Make a sprite 
+  cat = g.sprite("images/uh.png");
+  cat2 = g.sprite("images/uh.png");
+  cat3 = g.sprite("images/uh.png");
+
+  //Center the cat
+  g.stage.putCenter(cat);
+  g.stage.putCenter(cat2);
+  g.stage.putCenter(cat3);
+
+  g.fourKeyController(cat, 2, 38, 39, 40, 37);
+  g.fourKeyController(cat2, 2, 38, 39, 40, 37);
+  g.fourKeyController(cat3, 2, 38, 39, 40, 37);
+  message = g.text("Use the arrow keys to move...", "16px sans-serif", "black");
+  message2 = g.text("Use the arrow keys to move...", "16px sans-serif", "black");
+  message3 = g.text("Toggle current hint by pressing Z!", "30px sans-serif", "white", 50, 680);
+ // message4 = g.text("Controls: arrow keys to move. X to close an item popup.", "30px sans-serif", "white", 50, 700);
+  // message3.x = 0;
+  // message3.y = 770;
+  gameScene = g.group(forest, cat, message3);
+ // gameSceneCat = g.group(cat, message);
+  gameSceneKitchen = g.group(kitchen, cat2);
+  gameSceneBedroom = g.group(bedroom, cat3);
+  gameSceneCoffee = g.group(coffee);
+  gameSceneWhiteboard = g.group(whiteboard);
+  gameSceneLockedScreen = g.group(locked_screen);
+  gameSceneTerminal = g.group(terminal);
+
+  //gameSceneCat.visible = true;
+  gameScene.visible = true;
+  gameSceneKitchen.visible = false;
+  gameSceneCoffee.visible = false;
+  gameSceneBedroom.visible = false;
+  gameSceneWhiteboard.visible = false;
+  gameSceneLockedScreen.visible = false;
+  gameSceneTerminal.visible = false;
+
+  // var customKey = g.keyboard(122);
+  // customKey.press = function() {
+  //   console.log("Pressed");
+  // };
+
+  //Change the state to `play`
+  g.state = play;  
+}
+
+var passwordDisplayExists = false;
+var terminalDisplayExists = false;
+var numRemove = 0;
+
+//The `play` function will run in a loop
+function play() {
+  //console.log("play");
+
+  if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
+    && !gameSceneTerminal.visible) {
+    g.move(cat);
+    g.move(cat2);
+    g.move(cat3);
+  }
+
+  if (!display_hint) {
+    g.remove(message3);
+    message3 = g.text("Toggle current hint by pressing Z!", "30px sans-serif", "white", 50, 680);
+  } else {
+    g.remove(message3);
+    message3 = g.text(hints[hint_index], "30px sans-serif", "white", 50, 680);
+  }
+  
+  //Of course you can also move a sprite the good old-fashioned way if
+  //really want to!
+  //cat.x += cat.vx;
+  //cat.y += cat.vy;
+
+  //If the cat is moving, display its direction
+  if (Math.abs(cat.vx) > 0 || Math.abs(cat.vy) > 0) {
+    message.content = "The cat is going: " + cat.direction;
+  } else {
+    message.content = "Use the arrow keys to move...";
+  }
+ // console.log(cat.x);
+ // console.log(cat.y);
+  /*
+  Contain the cat inside the canvas.
+  'contain` constrains the sprite's movement to a rectangular space
+  defined by the `localBounds` property of any object.
+  (`localBounds` returns an object with `x`, `y`, `width` and `height`
+  properties). 
+  that space, `contain` returns a useful a string that will tell you which
+  side the sprite hit: "left", "right". "top" or "bottom".
+  */
+
+  //var catHitsEdges = gameScene.visible ? g.contain(cat, g.stage.localBounds) : g.contain(cat2, g.stage.localBounds);
+  /*  */
+  living_room_contains = g.contain(cat, g.stage.localBounds);
+  kitchen_contains = g.contain(cat2, g.stage.localBounds);
+  bedroom_contains = g.contain(cat3, g.stage.localBounds);
+  var catHitsEdges = living_room_contains || kitchen_contains || bedroom_contains;
+  
+  // if (catHitsEdges) {
+  //   console.log(g.contain(cat, g.stage.localBounds));
+  //   console.log(g.contain(cat2, g.stage.localBounds));
+  //   console.log(g.contain(cat3, g.stage.localBounds));
+  // }
+  if (gameSceneKitchen.visible && cat2.x > 500 && cat2.y < 150 && cat2.x < 700) {
+    gameSceneCoffee.visible = true;
+  }
+
+  if (gameSceneBedroom.visible && cat3.x > 400 && cat3.x < 500 && cat3.y < 130) {
+    gameSceneWhiteboard.visible = true;
+    if (hint_index === 1) {
+      hint_index++;
+    }
+  }
+
+  if (gameScene.visible && cat.y > 290 && cat.y < 420 && cat.x > 645) {
+    if (!computerUnlocked) {
+      gameSceneLockedScreen.visible = true;
+      if (passwordDisplayExists) {
+        g.remove(message4);
+      }
+      message4 = g.text(password_string, "30px sans-serif", "black", 190, 260);
+      passwordDisplayExists = true;
+    } else {
+      gameSceneTerminal.visible = true; // TODO change this to real computer screen
+      console.log("??");
+    }
+    
+    // if (message4) {
+    //   g.remove(message4);
+    // }
+    // message4 = g.text(password_string, "30px sans-serif", "black", 300, 300);
+  }
+
+  if (gameSceneTerminal.visible) {
+    if (terminalDisplayExists) {
+    //  g.remove(message5);
+    }
+    // for (var i = 0; i < terminal_archive.length; i++) {
+    //   message5 = g.text(terminal_archive[i], "20px sans-serif", "white", 50, 50 + (i*20));
+    // }
+
+
+  //  message5 = g.text("$ " + terminal_string, "20px sans-serif", "white", 50, 50 + (20*terminal_archive.length));
+    terminalDisplayExists = true;
+  }
+
+  //Display the edge of canvas that the cat hit
+  if (catHitsEdges) {
+    message.content 
+      = "The cat hit the " + catHitsEdges + " of the canvas";
+      // living_room_contains = g.contain(cat, g.stage.localBounds);
+      // kitchen_contains = g.contain(cat2, g.stage.localBounds);
+      // bedroom_contains = g.contain(cat3, g.stage.localBounds);
+      // console.log(kitchen_contains);
+      // console.log(kitchen_contains === "top")
+      var needs_centering = false;
+
+      if (gameScene.visible && (living_room_contains === "top" || kitchen_contains === "top" || bedroom_contains === "top")) {
+        gameScene.visible = false;
+        gameSceneKitchen.visible = true;
+        needs_centering = true;
+      } else if (gameScene.visible && (living_room_contains === "right" || kitchen_contains === "right" || bedroom_contains === "right")) {
+        gameScene.visible = false;
+        gameSceneBedroom.visible = true;
+        needs_centering = true;
+      } else if (gameSceneKitchen.visible && (living_room_contains === "bottom" || kitchen_contains === "bottom" || bedroom_contains === "bottom")) {
+        gameScene.visible = true;
+        gameSceneKitchen.visible = false;
+        needs_centering = true;
+      } else if (gameSceneBedroom.visible && (living_room_contains === "left" || kitchen_contains === "left" || bedroom_contains === "left")) {
+        gameScene.visible = true;
+        gameSceneBedroom.visible = false;
+        needs_centering = true;
+      }
+
+      // gameSceneCat.visible = false;
+      // gameSceneCat.visible = true;
+      if (needs_centering) {
+        g.stage.putCenter(cat);
+        g.stage.putCenter(cat2);
+        g.stage.putCenter(cat3);
+      }
+  }
+
+  if (closeWindow) {
+    if (gameSceneLockedScreen.visible && hint_index === 0) {
+      hint_index++;
+    }
+    if (gameSceneLockedScreen.visible) {
+      password_string = " ";
+      g.remove(message4);
+    }
+
+    if (gameSceneTerminal.visible) {
+      terminal_string = "";
+      // for (var i = 0; i < terminal_archive.length; i++) {
+      //   g.remove(message5);
+      // }
+   //   g.remove(message5);
+      
+    }
+
+    gameSceneCoffee.visible = false;
+    gameSceneWhiteboard.visible = false;
+    gameSceneLockedScreen.visible = false;
+    gameSceneTerminal.visible = false;
+    
+    closeWindow = false;
+    cat.y += 100;
+    cat2.y += 100;
+    cat3.y += 100;
+  }
+}
+
+</script>
+</body>
+
