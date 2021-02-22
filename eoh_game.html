@@ -1,7 +1,18 @@
-<!doctype html> 
-<meta charset = "utf-8"> 
+<!doctype html>
+<meta charset = "utf-8">
 <title>Hello, world!</title>
-<body style="background-color: black;">
+<head>
+  <style>
+    body {
+      background-color: black;
+      text-align: center;
+      color: white;
+      font-family: courier;
+    }
+  </style>
+</head>
+<body>
+  <h2>Test Header</h2>
 <script src="ga.js"></script>
 <script src="plugins.js"></script>
 <script>
@@ -64,21 +75,23 @@ function logKey(e) {
   }
 }
 
- 
+
 function check_password_correctness() {
   if (password_string === " DELILAH") {
     closeWindow = true;
     console.log("Password correct!");
     computerUnlocked = true;
-  } 
+  }
 }
 
 //Create a new GA instance, and start it.
-var g = ga(790, 720, setup,
+var g = ga(700, 500, setup,
   [
     "images/big-out-living.png",
     "images/kitchen.png",
-    "images/uh.png",
+    "images/step1.png",
+    "images/step2.png",
+    "images/standing.png",
     "images/coffee.png",
     "images/whiteboard2.png",
     "images/bedroom.png",
@@ -92,7 +105,7 @@ var cat, message;
 //A `setup` function that will run only once.
 //Use it for initialization tasks
 function setup() {
-  console.log("setup");
+  console.log("hiiiii");
   forest = g.sprite("images/big-out-living.png");
   kitchen = g.sprite("images/kitchen.png");
   coffee = g.sprite("images/coffee.png")
@@ -100,15 +113,35 @@ function setup() {
   bedroom = g.sprite("images/bedroom.png");
   locked_screen = g.sprite("images/locked_computer.png");
   terminal = g.sprite("images/terminal.png");
-  //Make a sprite 
-  cat = g.sprite("images/uh.png");
-  cat2 = g.sprite("images/uh.png");
-  cat3 = g.sprite("images/uh.png");
+  //Make a sprite
+  var catFrames = [
+    "images/standing.png",
+    "images/step1.png",
+    "images/step2.png"
+  ];
 
+  var walkCycle = [1, 2];
+
+  cat = g.sprite(catFrames);
+  cat2 = g.sprite(catFrames);
+  cat3 = g.sprite(catFrames);
   //Center the cat
   g.stage.putCenter(cat);
   g.stage.putCenter(cat2);
   g.stage.putCenter(cat3);
+
+  // THIS STARTS CAT'S ANIMATION
+  cat.fps = 5;
+  cat2.fps = 5;
+  cat3.fps = 5;
+
+  cat.playSequence(walkCycle);
+  cat2.playSequence(walkCycle);
+  cat3.playSequence(walkCycle);
+
+  cat.loop = false;
+  cat2.loop = false;
+  cat3.loop = false;
 
   g.fourKeyController(cat, 2, 38, 39, 40, 37);
   g.fourKeyController(cat2, 2, 38, 39, 40, 37);
@@ -143,7 +176,7 @@ function setup() {
   // };
 
   //Change the state to `play`
-  g.state = play;  
+  g.state = play;
 }
 
 var passwordDisplayExists = false;
@@ -168,7 +201,7 @@ function play() {
     g.remove(message3);
     message3 = g.text(hints[hint_index], "30px sans-serif", "white", 50, 680);
   }
-  
+
   //Of course you can also move a sprite the good old-fashioned way if
   //really want to!
   //cat.x += cat.vx;
@@ -177,8 +210,14 @@ function play() {
   //If the cat is moving, display its direction
   if (Math.abs(cat.vx) > 0 || Math.abs(cat.vy) > 0) {
     message.content = "The cat is going: " + cat.direction;
+    cat.loop = true;
+    cat2.loop = true;
+    cat3.loop = true;
   } else {
     message.content = "Use the arrow keys to move...";
+    cat.loop = false;
+    cat2.loop = false;
+    cat3.loop = false;
   }
  // console.log(cat.x);
  // console.log(cat.y);
@@ -187,7 +226,7 @@ function play() {
   'contain` constrains the sprite's movement to a rectangular space
   defined by the `localBounds` property of any object.
   (`localBounds` returns an object with `x`, `y`, `width` and `height`
-  properties). 
+  properties).
   that space, `contain` returns a useful a string that will tell you which
   side the sprite hit: "left", "right". "top" or "bottom".
   */
@@ -198,36 +237,36 @@ function play() {
   kitchen_contains = g.contain(cat2, g.stage.localBounds);
   bedroom_contains = g.contain(cat3, g.stage.localBounds);
   var catHitsEdges = living_room_contains || kitchen_contains || bedroom_contains;
-  
+
   // if (catHitsEdges) {
   //   console.log(g.contain(cat, g.stage.localBounds));
   //   console.log(g.contain(cat2, g.stage.localBounds));
   //   console.log(g.contain(cat3, g.stage.localBounds));
   // }
-  if (gameSceneKitchen.visible && cat2.x > 500 && cat2.y < 150 && cat2.x < 700) {
+  if (gameSceneKitchen.visible && cat2.x > 470 && cat2.y < 250 && cat2.x < 570) {
     gameSceneCoffee.visible = true;
   }
 
-  if (gameSceneBedroom.visible && cat3.x > 400 && cat3.x < 500 && cat3.y < 130) {
+  if (gameSceneBedroom.visible && cat3.x > 260 && cat3.x < 460 && cat3.y < 160) {
     gameSceneWhiteboard.visible = true;
     if (hint_index === 1) {
       hint_index++;
     }
   }
 
-  if (gameScene.visible && cat.y > 290 && cat.y < 420 && cat.x > 645) {
+  if (gameScene.visible && cat.y > 200 && cat.y < 410 && cat.x > 530) {
     if (!computerUnlocked) {
       gameSceneLockedScreen.visible = true;
       if (passwordDisplayExists) {
         g.remove(message4);
       }
-      message4 = g.text(password_string, "30px sans-serif", "black", 190, 260);
+      message4 = g.text(password_string, "30px sans-serif", "black", 140, 235);
       passwordDisplayExists = true;
     } else {
       gameSceneTerminal.visible = true; // TODO change this to real computer screen
       console.log("??");
     }
-    
+
     // if (message4) {
     //   g.remove(message4);
     // }
@@ -249,7 +288,7 @@ function play() {
 
   //Display the edge of canvas that the cat hit
   if (catHitsEdges) {
-    message.content 
+    message.content
       = "The cat hit the " + catHitsEdges + " of the canvas";
       // living_room_contains = g.contain(cat, g.stage.localBounds);
       // kitchen_contains = g.contain(cat2, g.stage.localBounds);
@@ -300,14 +339,14 @@ function play() {
       //   g.remove(message5);
       // }
    //   g.remove(message5);
-      
+
     }
 
     gameSceneCoffee.visible = false;
     gameSceneWhiteboard.visible = false;
     gameSceneLockedScreen.visible = false;
     gameSceneTerminal.visible = false;
-    
+
     closeWindow = false;
     cat.y += 100;
     cat2.y += 100;
@@ -316,5 +355,6 @@ function play() {
 }
 
 </script>
+<!--Add hints or description to bottom-->
+<p>Hints: bleb</p>
 </body>
-
