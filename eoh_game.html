@@ -96,7 +96,12 @@ var g = ga(700, 500, setup,
     "images/whiteboard2.png",
     "images/bedroom.png",
     "images/locked_computer.png",
-    "images/terminal.png"
+    "images/terminal.png",
+    "images/toaster_zoomed.png",
+    "images/combination_lock_on_cabinet.png",
+    "images/combination_lock_with_numbers_on_cabinet.png",
+    "images/eceb.png",
+    "images/fridge_display_empty.png"
   ]
 );
 g.start();
@@ -113,6 +118,11 @@ function setup() {
   bedroom = g.sprite("images/bedroom.png");
   locked_screen = g.sprite("images/locked_computer.png");
   terminal = g.sprite("images/terminal.png");
+  zoomed_toaster = g.sprite("images/toaster_zoomed.png");
+  lock_on_cabinet = g.sprite("images/combination_lock_on_cabinet.png");
+  lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet.png");
+  eceb = g.sprite("images/eceb.png");
+  fridge_display = g.sprite("images/fridge_display_empty.png");
   //Make a sprite
   var catFrames = [
     "images/standing.png",
