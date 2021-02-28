@@ -95,7 +95,7 @@ var g = ga(700, 500, setup,
     "images/step2.png",
     "images/step2_left.png",
     "images/standing.png",
-    "images/coffee.png",
+    "images/coffee_blank_displayw_text.png",
     "images/whiteboard2.png",
     "images/bedroom.png",
     "images/locked_computer.png",
@@ -113,7 +113,7 @@ function setup() {
   console.log("hiiiii");
   forest = g.sprite("images/big-out-living.png");
   kitchen = g.sprite("images/new_new_kitchen.png");
-  coffee = g.sprite("images/coffee.png")
+  coffee = g.sprite("images/coffee_blank_displayw_text.png")
   whiteboard = g.sprite("images/whiteboard2.png");
   bedroom = g.sprite("images/bedroom.png");
   locked_screen = g.sprite("images/locked_computer.png");
@@ -249,7 +249,8 @@ function play() {
   //console.log("play");
 
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
-    && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible) {
+    && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible
+    && !gameSceneLock.visible && !gameSceneFridge.visible) {
     g.move(cat);
     g.move(cat2);
     g.move(cat3);
