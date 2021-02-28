@@ -86,7 +86,7 @@ function check_password_correctness() {
 }
 
 //Create a new GA instance, and start it.
-var g = ga(700, 500, setup,
+var g = ga(700, 550, setup,
   [
     "images/big-out-living.png",
     "images/new_new_kitchen.png",
@@ -137,6 +137,37 @@ function setup() {
   cat2 = g.sprite(catFrames);
   cat3 = g.sprite(catFrames);
 
+  // keep player in bounds
+  g.contain(
+    cat,
+    {
+      x: 0,
+      y: 0,
+      width: 700,
+      height: 500
+    }
+  );
+
+  g.contain(
+    cat2,
+    {
+      x: 0,
+      y: 0,
+      width: 700,
+      height: 500
+    }
+  );
+
+  g.contain(
+    cat3,
+    {
+      x: 0,
+      y: 0,
+      width: 700,
+      height: 500
+    }
+  );
+
   // animation states
   cat.states = {
     walkRight: [1, 2],
@@ -174,7 +205,7 @@ function setup() {
   g.fourKeyController(cat3, 2, 38, 39, 40, 37);
   message = g.text("Use the arrow keys to move...", "16px sans-serif", "black");
   message2 = g.text("Use the arrow keys to move...", "16px sans-serif", "black");
-  message3 = g.text("Toggle current hint by pressing Z!", "30px sans-serif", "white", 50, 680);
+  message3 = g.text("Toggle current hint by pressing Z!", "20zpx courier", "white", 50, 510);
  // message4 = g.text("Controls: arrow keys to move. X to close an item popup.", "30px sans-serif", "white", 50, 700);
   // message3.x = 0;
   // message3.y = 770;
@@ -210,7 +241,7 @@ function setup() {
   upArrow = g.keyboard(38);
   rightArrow = g.keyboard(39);
   downArrow = g.keyboard(40);
-  
+
   //Assign key `press` and release methods that
   //show and play the elf's different states
   leftArrow.press = function() {
@@ -258,10 +289,10 @@ function play() {
 
   if (!display_hint) {
     g.remove(message3);
-    message3 = g.text("Toggle current hint by pressing Z!", "30px sans-serif", "white", 50, 680);
+    message3 = g.text("Toggle current hint by pressing Z!", "20px courier", "white", 50, 510);
   } else {
     g.remove(message3);
-    message3 = g.text(hints[hint_index], "30px sans-serif", "white", 50, 680);
+    message3 = g.text(hints[hint_index], "20px courier", "white", 50, 510);
   }
 
   //Of course you can also move a sprite the good old-fashioned way if
