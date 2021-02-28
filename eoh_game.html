@@ -101,7 +101,8 @@ var g = ga(700, 500, setup,
     "images/locked_computer.png",
     "images/terminal.png",
     "images/zoomed_in_toaster_with_background.png",
-    "images/combination_lock_with_numbers_on_cabinet.png"
+    "images/combination_lock_with_numbers_on_cabinet.png",
+    "images/fridge_display_w_text.png"
   ]
 );
 g.start();
@@ -119,7 +120,8 @@ function setup() {
   terminal = g.sprite("images/terminal.png");
   zoomed_toaster = g.sprite("images/zoomed_in_toaster_with_background.png");
   lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet.png");
-  //Make a sprite
+  zoomed_fridge = g.sprite("images/fridge_display_w_text.png");
+
   var catFrames = [
     "images/standing.png",
     "images/step1.png",
@@ -186,6 +188,7 @@ function setup() {
   gameSceneTerminal = g.group(terminal);
   gameSceneLock = g.group(lock_on_cabinet_w_num);
   gameSceneToaster = g.group(zoomed_toaster);
+  gameSceneFridge = g.group(zoomed_fridge);
 
   //gameSceneCat.visible = true;
   gameScene.visible = true;
@@ -197,6 +200,7 @@ function setup() {
   gameSceneTerminal.visible = false;
   gameSceneLock.visible = false;
   gameSceneToaster.visible = false;
+  gameSceneFridge.visible = false;
 
   // var customKey = g.keyboard(122);
   // customKey.press = function() {
@@ -300,12 +304,20 @@ function play() {
   //   console.log(g.contain(cat2, g.stage.localBounds));
   //   console.log(g.contain(cat3, g.stage.localBounds));
   // }
-  if (gameSceneKitchen.visible && cat2.x > 470 && cat2.y < 250 && cat2.x < 570) {
+  if (gameSceneKitchen.visible && cat2.x > 470 && cat2.y < 230 && cat2.x < 570) {
     gameSceneCoffee.visible = true;
   }
 
   if (gameSceneKitchen.visible && cat2.x > 250 && cat2.x < 300 && cat2.y < 230) {
     gameSceneToaster.visible = true;
+  }
+
+  if (gameSceneKitchen.visible && cat2.x > 20 && cat2.x < 90 && cat2.y < 250) {
+    gameSceneLock.visible = true;
+  }
+
+  if (gameSceneKitchen.visible && cat2.x > 90 && cat2.x < 180 && cat2.y < 250) {
+    gameSceneFridge.visible = true;
   }
 
   if (gameSceneBedroom.visible && cat3.x > 260 && cat3.x < 460 && cat3.y < 160) {
@@ -404,6 +416,8 @@ function play() {
     }
 
     gameSceneToaster.visible = false;
+    gameSceneLock.visible = false;
+    gameSceneFridge.visible = false;
     gameSceneCoffee.visible = false;
     gameSceneWhiteboard.visible = false;
     gameSceneLockedScreen.visible = false;
