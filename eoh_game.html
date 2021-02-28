@@ -25,20 +25,21 @@ var hint_has_been_viewed = [false, false, false, false];
 var closeWindow = false;
 var password_string = " ";
 var terminal_string = "";
-var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP", "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyY"];
+var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP",
+  "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyX", "KeyY", "KeyZ"];
 var computerUnlocked = false;
 var terminal_archive = [];
 var cat, cat2, cat3, message;
 
 function logKey(e) {
 //  console.log(e.code);
-  if (e.code === "KeyZ") {
+  if (e.code === "Slash") {
     display_hint = !display_hint;
     if (hint_index === 2 && hint_has_been_viewed[hint_index]) {
       hint_index++;
     }
   }
-  if (e.code === "KeyX") {
+  if (e.code === "Escape") {
     closeWindow = true;
   }
 
