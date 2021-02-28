@@ -28,6 +28,7 @@ var terminal_string = "";
 var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP", "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyY"];
 var computerUnlocked = false;
 var terminal_archive = [];
+var cat, cat2, cat3, message;
 
 function logKey(e) {
 //  console.log(e.code);
@@ -90,7 +91,9 @@ var g = ga(700, 500, setup,
     "images/big-out-living.png",
     "images/kitchen.png",
     "images/step1.png",
+    "images/step1_left.png",
     "images/step2.png",
+    "images/step2_left.png",
     "images/standing.png",
     "images/coffee.png",
     "images/whiteboard2.png",
@@ -106,7 +109,6 @@ var g = ga(700, 500, setup,
 );
 g.start();
 
-var cat, message;
 //A `setup` function that will run only once.
 //Use it for initialization tasks
 function setup() {
@@ -127,7 +129,10 @@ function setup() {
   var catFrames = [
     "images/standing.png",
     "images/step1.png",
-    "images/step2.png"
+    "images/step2.png",
+    "images/standing.png",
+    "images/step1_left.png",
+    "images/step2_left.png"
   ];
 
   var walkCycle = [1, 2];
@@ -135,6 +140,21 @@ function setup() {
   cat = g.sprite(catFrames);
   cat2 = g.sprite(catFrames);
   cat3 = g.sprite(catFrames);
+
+  // animation states
+  cat.states = {
+    walkRight: [1, 2],
+    walkLeft: [4,5]
+  };
+  cat2.states = {
+    walkRight: [1, 2],
+    walkLeft: [4,5]
+  };
+  cat3.states = {
+    walkRight: [1, 2],
+    walkLeft: [4,5]
+  };
+
   //Center the cat
   g.stage.putCenter(cat);
   g.stage.putCenter(cat2);
@@ -184,6 +204,35 @@ function setup() {
   // customKey.press = function() {
   //   console.log("Pressed");
   // };
+  leftArrow = g.keyboard(37);
+  upArrow = g.keyboard(38);
+  rightArrow = g.keyboard(39);
+  downArrow = g.keyboard(40);
+  
+  //Assign key `press` and release methods that
+  //show and play the elf's different states
+  leftArrow.press = function() {
+    cat.playSequence(cat.states.walkLeft);
+    cat2.playSequence(cat2.states.walkLeft);
+    cat3.playSequence(cat3.states.walkLeft);
+  };
+  leftArrow.release = function() {
+  };
+  upArrow.press = function() {
+  };
+  upArrow.release = function() {
+  };
+  rightArrow.press = function() {
+    cat.playSequence(cat.states.walkRight);
+    cat2.playSequence(cat2.states.walkRight);
+    cat3.playSequence(cat3.states.walkRight);
+  };
+  rightArrow.release = function() {
+  };
+  downArrow.press = function() {
+  };
+  downArrow.release = function() {
+  };
 
   //Change the state to `play`
   g.state = play;
