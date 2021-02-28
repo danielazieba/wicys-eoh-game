@@ -89,7 +89,7 @@ function check_password_correctness() {
 var g = ga(700, 500, setup,
   [
     "images/big-out-living.png",
-    "images/kitchen.png",
+    "images/new_kitchen.png",
     "images/step1.png",
     "images/step1_left.png",
     "images/step2.png",
@@ -101,8 +101,7 @@ var g = ga(700, 500, setup,
     "images/locked_computer.png",
     "images/terminal.png",
     "images/zoomed_in_toaster_with_background.png",
-    "images/combination_lock_with_numbers_on_cabinet.png",
-    "images/eceb.png"
+    "images/combination_lock_with_numbers_on_cabinet.png"
   ]
 );
 g.start();
@@ -112,7 +111,7 @@ g.start();
 function setup() {
   console.log("hiiiii");
   forest = g.sprite("images/big-out-living.png");
-  kitchen = g.sprite("images/kitchen.png");
+  kitchen = g.sprite("images/new_kitchen.png");
   coffee = g.sprite("images/coffee.png")
   whiteboard = g.sprite("images/whiteboard2.png");
   bedroom = g.sprite("images/bedroom.png");
@@ -120,7 +119,6 @@ function setup() {
   terminal = g.sprite("images/terminal.png");
   zoomed_toaster = g.sprite("images/zoomed_in_toaster_with_background.png");
   lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet.png");
-  eceb = g.sprite("images/eceb.png");
   //Make a sprite
   var catFrames = [
     "images/standing.png",
@@ -186,6 +184,8 @@ function setup() {
   gameSceneWhiteboard = g.group(whiteboard);
   gameSceneLockedScreen = g.group(locked_screen);
   gameSceneTerminal = g.group(terminal);
+  gameSceneLock = g.group(lock_on_cabinet_w_num);
+  gameSceneToaster = g.group(zoomed_toaster);
 
   //gameSceneCat.visible = true;
   gameScene.visible = true;
@@ -195,6 +195,8 @@ function setup() {
   gameSceneWhiteboard.visible = false;
   gameSceneLockedScreen.visible = false;
   gameSceneTerminal.visible = false;
+  gameSceneLock.visible = false;
+  gameSceneToaster.visible = false;
 
   // var customKey = g.keyboard(122);
   // customKey.press = function() {
@@ -243,7 +245,7 @@ function play() {
   //console.log("play");
 
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
-    && !gameSceneTerminal.visible) {
+    && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible) {
     g.move(cat);
     g.move(cat2);
     g.move(cat3);
@@ -300,6 +302,10 @@ function play() {
   // }
   if (gameSceneKitchen.visible && cat2.x > 470 && cat2.y < 250 && cat2.x < 570) {
     gameSceneCoffee.visible = true;
+  }
+
+  if (gameSceneKitchen.visible && cat2.x > 281 && cat2.x < 336 && cat2.y > 275) {
+    gameSceneToaster.visible = true;
   }
 
   if (gameSceneBedroom.visible && cat3.x > 260 && cat3.x < 460 && cat3.y < 160) {
@@ -397,6 +403,7 @@ function play() {
 
     }
 
+    gameSceneToaster.visible = false;
     gameSceneCoffee.visible = false;
     gameSceneWhiteboard.visible = false;
     gameSceneLockedScreen.visible = false;
