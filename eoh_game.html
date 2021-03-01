@@ -138,37 +138,6 @@ function setup() {
   cat2 = g.sprite(catFrames);
   cat3 = g.sprite(catFrames);
 
-  // keep player in bounds
-  g.contain(
-    cat,
-    {
-      x: 0,
-      y: 0,
-      width: 700,
-      height: 500
-    }
-  );
-
-  g.contain(
-    cat2,
-    {
-      x: 0,
-      y: 0,
-      width: 700,
-      height: 500
-    }
-  );
-
-  g.contain(
-    cat3,
-    {
-      x: 0,
-      y: 0,
-      width: 700,
-      height: 500
-    }
-  );
-
   // animation states
   cat.states = {
     walkRight: [1, 2],
@@ -327,9 +296,32 @@ function play() {
 
   //var catHitsEdges = gameScene.visible ? g.contain(cat, g.stage.localBounds) : g.contain(cat2, g.stage.localBounds);
   /*  */
-  living_room_contains = g.contain(cat, g.stage.localBounds);
-  kitchen_contains = g.contain(cat2, g.stage.localBounds);
-  bedroom_contains = g.contain(cat3, g.stage.localBounds);
+  living_room_contains = g.contain(cat,
+    {
+      x: 0,
+      y: 0,
+      width: 700,
+      height: 500
+    }
+  );
+  
+  kitchen_contains = g.contain(cat2,
+    {
+      x: 0,
+      y: 0,
+      width: 700,
+      height: 500
+    }
+  );
+
+  bedroom_contains = g.contain(cat3,
+    {
+      x: 0,
+      y: 0,
+      width: 700,
+      height: 500
+    }
+  );
   var catHitsEdges = living_room_contains || kitchen_contains || bedroom_contains;
 
   // if (catHitsEdges) {
