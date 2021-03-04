@@ -43,6 +43,14 @@ function logKey(e) {
     closeWindow = true;
   }
 
+  if (e.code === "KeyH") {
+    if (document.getElementById("hintsText").innerHTML === "Hint toggled!") {
+      document.getElementById("hintsText").innerHTML = "Press H to toggle hint!";
+    } else {
+      document.getElementById("hintsText").innerHTML = "Hint toggled!";
+    }
+  }
+
   if (gameSceneLockedScreen.visible) {
     if (allowed_password_keys.includes(e.code) && password_string.length < 18) {
       password_string += e.code[3];
@@ -457,5 +465,5 @@ function play() {
 
 </script>
 <!--Add hints or description to bottom-->
-<p>Hints: Press ? to see a hint!</p>
+<p id="hintsText">Hints: press H to toggle!</p>
 </body>
