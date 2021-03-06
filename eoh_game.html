@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset = "utf-8">
-<title>Hello, world!</title>
+<title>Cybersecurity Breakfast Adventure</title>
 <head>
   <style>
     body {
@@ -8,6 +8,11 @@
       text-align: center;
       color: white;
       font-family: courier;
+    }
+
+    a 
+    {
+      color: rgb(123, 213, 255);
     }
   </style>
 </head>
@@ -44,10 +49,10 @@ function logKey(e) {
   }
 
   if (e.code === "KeyH") {
-    if (document.getElementById("hintsText").innerHTML === "Hint toggled!") {
+    if (document.getElementById("hintsText").innerHTML === hints[hint_index]) {
       document.getElementById("hintsText").innerHTML = "Press H to toggle hint!";
     } else {
-      document.getElementById("hintsText").innerHTML = "Hint toggled!";
+      document.getElementById("hintsText").innerHTML = hints[hint_index];
     }
   }
 
@@ -91,6 +96,7 @@ function check_password_correctness() {
     closeWindow = true;
     console.log("Password correct!");
     computerUnlocked = true;
+    document.getElementById("unlockComputer").innerHTML = "[x] Unlock the computer";
   }
 }
 
@@ -465,5 +471,19 @@ function play() {
 
 </script>
 <!--Add hints or description to bottom-->
-<p id="hintsText">Hints: press H to toggle!</p>
+  <p id="hintsText">Hints: press H to toggle!</p>
+  <div id="tastList">
+    <p>Remaining tasks:</p>
+    <p id="unlockComputer">- Unlock the computer</p>
+    <p id="makeToast">- Make toast</p>
+    <p id="openFridge">- Open the fridge</p>
+    <p id="makeCoffee">- Make coffee</p>
+  </div>
+  <p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
+  <div id="resources">
+    <p>Resources</p>
+    <p><a href="guides/caesar_ciphers.pdf" target="_blank" rel="noopener noreferrer">On Caesar Ciphers</a></p>
+    <p><a href="guides/number_systems_and_ascii.pdf" target="_blank" rel="noopener noreferrer">Number Systems and ASCII</a></p>
+    <p><a href="guides/sql.pdf" target="_blank" rel="noopener noreferrer">A Light Intro on SQL</a></p>
+  </div>
 </body>
