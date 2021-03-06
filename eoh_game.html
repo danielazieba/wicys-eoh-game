@@ -125,7 +125,6 @@ g.start();
 //A `setup` function that will run only once.
 //Use it for initialization tasks
 function setup() {
-  console.log("hiiiii");
   forest = g.sprite("images/big-out-living.png");
   kitchen = g.sprite("images/new_new_kitchen.png");
   coffee = g.sprite("images/coffee_blank_displayw_text.png")
@@ -187,14 +186,8 @@ function setup() {
   g.fourKeyController(cat, 2, 38, 39, 40, 37);
   g.fourKeyController(cat2, 2, 38, 39, 40, 37);
   g.fourKeyController(cat3, 2, 38, 39, 40, 37);
-  message = g.text("Use the arrow keys to move...", "16px sans-serif", "black");
-  message2 = g.text("Use the arrow keys to move...", "16px sans-serif", "black");
-  message3 = g.text("Toggle current hint by pressing Z!", "20zpx courier", "white", 50, 510);
- // message4 = g.text("Controls: arrow keys to move. X to close an item popup.", "30px sans-serif", "white", 50, 700);
-  // message3.x = 0;
-  // message3.y = 770;
-  gameScene = g.group(forest, cat, message3);
- // gameSceneCat = g.group(cat, message);
+
+  gameScene = g.group(forest, cat);
   gameSceneKitchen = g.group(kitchen, cat2);
   gameSceneBedroom = g.group(bedroom, cat3);
   gameSceneCoffee = g.group(coffee);
@@ -205,7 +198,6 @@ function setup() {
   gameSceneToaster = g.group(zoomed_toaster);
   gameSceneFridge = g.group(zoomed_fridge);
 
-  //gameSceneCat.visible = true;
   gameScene.visible = true;
   gameSceneKitchen.visible = false;
   gameSceneCoffee.visible = false;
@@ -261,8 +253,6 @@ var numRemove = 0;
 
 //The `play` function will run in a loop
 function play() {
-  //console.log("play");
-
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
     && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible
     && !gameSceneLock.visible && !gameSceneFridge.visible) {
@@ -271,33 +261,17 @@ function play() {
     g.move(cat3);
   }
 
-  if (!display_hint) {
-    g.remove(message3);
-    message3 = g.text("Toggle current hint by pressing Z!", "20px courier", "white", 50, 510);
-  } else {
-    g.remove(message3);
-    message3 = g.text(hints[hint_index], "20px courier", "white", 50, 510);
-  }
-
-  //Of course you can also move a sprite the good old-fashioned way if
-  //really want to!
-  //cat.x += cat.vx;
-  //cat.y += cat.vy;
-
-  //If the cat is moving, display its direction
+  //If the cat is moving, play walking animation
   if (Math.abs(cat.vx) > 0 || Math.abs(cat.vy) > 0) {
-    message.content = "The cat is going: " + cat.direction;
     cat.loop = true;
     cat2.loop = true;
     cat3.loop = true;
   } else {
-    message.content = "Use the arrow keys to move...";
     cat.loop = false;
     cat2.loop = false;
     cat3.loop = false;
   }
- // console.log(cat.x);
- // console.log(cat.y);
+
   /*
   Contain the cat inside the canvas.
   'contain` constrains the sprite's movement to a rectangular space
@@ -308,8 +282,6 @@ function play() {
   side the sprite hit: "left", "right". "top" or "bottom".
   */
 
-  //var catHitsEdges = gameScene.visible ? g.contain(cat, g.stage.localBounds) : g.contain(cat2, g.stage.localBounds);
-  /*  */
   living_room_contains = g.contain(cat,
     {
       x: 0,
@@ -338,11 +310,6 @@ function play() {
   );
   var catHitsEdges = living_room_contains || kitchen_contains || bedroom_contains;
 
-  // if (catHitsEdges) {
-  //   console.log(g.contain(cat, g.stage.localBounds));
-  //   console.log(g.contain(cat2, g.stage.localBounds));
-  //   console.log(g.contain(cat3, g.stage.localBounds));
-  // }
   if (gameSceneKitchen.visible && cat2.x > 470 && cat2.y < 230 && cat2.x < 570) {
     gameSceneCoffee.visible = true;
   }
@@ -400,13 +367,6 @@ function play() {
 
   //Display the edge of canvas that the cat hit
   if (catHitsEdges) {
-    message.content
-      = "The cat hit the " + catHitsEdges + " of the canvas";
-      // living_room_contains = g.contain(cat, g.stage.localBounds);
-      // kitchen_contains = g.contain(cat2, g.stage.localBounds);
-      // bedroom_contains = g.contain(cat3, g.stage.localBounds);
-      // console.log(kitchen_contains);
-      // console.log(kitchen_contains === "top")
       var needs_centering = false;
 
       if (gameScene.visible && (living_room_contains === "top" || kitchen_contains === "top" || bedroom_contains === "top")) {
@@ -427,8 +387,6 @@ function play() {
         needs_centering = true;
       }
 
-      // gameSceneCat.visible = false;
-      // gameSceneCat.visible = true;
       if (needs_centering) {
         g.stage.putCenter(cat);
         g.stage.putCenter(cat2);
