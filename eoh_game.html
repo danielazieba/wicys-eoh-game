@@ -67,9 +67,13 @@ function logKey(e) {
     }
     // add being able to delete a character as a quality of life update
     // if needed; lower priority than getting game to work
-    // if (e.code === "Backspace") {
-    //   password_string = password_string.slice(0, -1);
-    // }
+    if (e.code === "Backspace") {
+      if (password_string.length <= 1) {
+        password_string = " ";
+      } else {
+        password_string = password_string.substring(0, password_string.length-1);
+      }
+    }
   }
 
   if (gameSceneTerminal.visible) {
