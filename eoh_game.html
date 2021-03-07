@@ -32,25 +32,26 @@ var password_string = " ";
 var terminal_string = "";
 var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP",
   "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyX", "KeyY", "KeyZ"];
+var allowed_combo_keys = ["Digit0", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9"];
 var computerUnlocked = false;
 var terminal_archive = [];
 var cat, cat2, cat3, message;
 
 function logKey(e) {
 //  console.log(e.code);
-  if (e.code === "Slash") {
-    display_hint = !display_hint;
-    if (hint_index === 2 && hint_has_been_viewed[hint_index]) {
-      hint_index++;
-    }
-  }
+  // if (e.code === "Slash") {
+  //   display_hint = !display_hint;
+  //   if (hint_index === 2 && hint_has_been_viewed[hint_index]) {
+  //     hint_index++;
+  //   }
+  // }
   if (e.code === "Escape") {
     closeWindow = true;
   }
 
-  if (e.code === "KeyH") {
+  if (e.code === "Slash") {
     if (document.getElementById("hintsText").innerHTML === hints[hint_index]) {
-      document.getElementById("hintsText").innerHTML = "Press H to toggle hint!";
+      document.getElementById("hintsText").innerHTML = "Press ? to toggle hint!";
     } else {
       document.getElementById("hintsText").innerHTML = hints[hint_index];
     }
@@ -476,7 +477,7 @@ function play() {
 
 </script>
 <!--Add hints or description to bottom-->
-  <p id="hintsText">Hints: press H to toggle!</p>
+  <p id="hintsText">Hints: press ? to toggle!</p>
   <div id="tastList">
     <p>Remaining tasks:</p>
     <p id="unlockComputer">- Unlock the computer</p>
