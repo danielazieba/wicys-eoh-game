@@ -46,6 +46,9 @@ function logKey(e) {
   //   }
   // }
   if (e.code === "Escape") {
+    if (gameSceneCoffee.visible || gameSceneWhiteboard.visible || gameSceneLockedScreen.visible
+    || gameSceneTerminal.visible || gameSceneLock.visible || gameSceneToaster.visible
+    || gameSceneFridge.visible)
     closeWindow = true;
   }
 
@@ -285,7 +288,7 @@ var numRemove = 0;
 function play() {
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
     && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible
-    && !gameSceneLock.visible && !gameSceneFridge.visible) {
+    && !gameSceneFridge.visible) {
     g.move(cat);
     g.move(cat2);
     g.move(cat3);
