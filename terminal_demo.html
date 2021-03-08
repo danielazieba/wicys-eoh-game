@@ -53,11 +53,33 @@
             oldP.setAttribute("id", "terminalPrompt" + (terminal_archive.length - 1));
             document.body.insertBefore(oldP, prevLine);
             document.getElementById("terminalPrompt" + (terminal_archive.length - 1)).innerHTML = terminal_archive[terminal_archive.length - 1];
+            // process previous user input
+            processOutput();
             // add current terminal prompt inside header div
             prevLine.insertBefore(newP, currLine);
             prevLine.insertBefore(newCursor, currLine);
 
             document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ ";
+        }
+
+        function processOutput() {
+            prev_output_index = terminal_archive.length - 1;
+            command_to_process = terminal_archive[prev_output_index].split(" ");
+            output_text = "";
+
+            // check for a possibly-valid command and produce the relevant output
+            if (command_to_process[1] === "LS") {
+                output_text = "TODO: return current directory.";
+            } else {
+                output_text = "Error: invalid command.";
+            }
+
+            // now that output text is procured, push output to terminal
+            const prevLine = document.getElementById("header");
+            const prevOutput = document.createElement("p");
+            prevOutput.setAttribute("id", "terminalOutput" + prev_output_index);
+            document.body.insertBefore(prevOutput, prevLine);
+            document.getElementById("terminalOutput" + prev_output_index).innerHTML = output_text;
         }
     </script>
 </body>
