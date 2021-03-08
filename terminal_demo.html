@@ -22,11 +22,16 @@
             console.log(e);
             if (e.code === "Enter") {
                 updatePromptNewLine();
-            } else {
-                user_input += String.fromCharCode(e.keyCode);
-                console.log(e.code);
-                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ " + user_input;
+            } else if (e.code === "Backspace") {
+                if (user_input.length) {
+                    user_input = user_input.slice(0, -1);
+                    document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ " + user_input;
+                }
             }
+            else {
+                user_input += e.key;
+                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ " + user_input;
+            } 
         }
 
         function updatePromptNewLine() {
@@ -68,7 +73,7 @@
             output_text = "";
 
             // check for a possibly-valid command and produce the relevant output
-            if (command_to_process[1] === "LS") {
+            if (command_to_process[1].toLowerCase() === "ls") {
                 output_text = "TODO: return current directory.";
             } else {
                 output_text = "Error: invalid command.";
