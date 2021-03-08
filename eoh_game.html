@@ -92,6 +92,7 @@ function logKey(e) {
       console.log("TO DO: process commands!");
       terminal_archive.push("$ " + terminal_string);
       terminal_string = "";
+      gameSceneTerminal.visible = true; // manual trigger?
 
       // update display here
       for (var i = 0; i < terminal_archive.length; i++) {
@@ -368,7 +369,10 @@ function play() {
       passwordDisplayExists = true;
     } else if (!gameSceneTerminal.visible){
       gameSceneTerminal.visible = true; // TODO change this to real computer screen
-     // console.log("??");
+      console.log("Pausing game....");
+      g.pause();
+    
+      // console.log("??");
     }
 
     // if (message4) {

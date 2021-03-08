@@ -1,0 +1,63 @@
+<!doctype html>
+<meta charset = "utf-8">
+<title>Cybersecurity Breakfast Adventure</title>
+<head>
+    <link rel="stylesheet" href="css/terminal.css">
+</head>
+<body>
+    <div id="header">
+        <p id="terminalPrompt0"></p>
+        <div id="cursor"></div>
+        <div id="terminalEnding"></div>
+    </div>
+    <script>
+        // todo: add new paragraphs for each line for cursor reasons
+        var terminal_archive = [];
+        var user_input = "";
+        document.getElementById("terminalPrompt0").innerHTML = "~$ " + user_input;
+
+        document.addEventListener('keydown', logKey);
+
+        function logKey(e) {
+            console.log(e);
+            if (e.code === "Enter") {
+                updatePromptNewLine();
+            } else {
+                user_input += String.fromCharCode(e.keyCode);
+                console.log(e.code);
+                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ " + user_input;
+            }
+        }
+
+        function updatePromptNewLine() {
+            // push user input to terminal archive
+            terminal_archive.push("~$ " + user_input);
+            // reset user input
+            user_input = "";
+            // create new paragraph
+            const newP = document.createElement("p");
+            newP.setAttribute("id", "terminalPrompt" + terminal_archive.length);
+            // delete existing cursor
+            document.getElementById("cursor").remove();
+            // create new cursor
+            const newCursor = document.createElement("div");
+            newCursor.setAttribute("id", "cursor");
+            // get the necessary HTML tags for inserting into the right place
+            const currLine = document.getElementById("terminalEnding");
+            const prevLine = document.getElementById("header");
+
+            // remove current terminal prompt from header
+            document.getElementById("terminalPrompt" + (terminal_archive.length - 1)).remove();
+            // re-add terminal prompt, but outside of header
+            const oldP = document.createElement("p");
+            oldP.setAttribute("id", "terminalPrompt" + (terminal_archive.length - 1));
+            document.body.insertBefore(oldP, prevLine);
+            document.getElementById("terminalPrompt" + (terminal_archive.length - 1)).innerHTML = terminal_archive[terminal_archive.length - 1];
+            // add current terminal prompt inside header div
+            prevLine.insertBefore(newP, currLine);
+            prevLine.insertBefore(newCursor, currLine);
+
+            document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ ";
+        }
+    </script>
+</body>
