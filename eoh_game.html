@@ -32,25 +32,29 @@ var password_string = " ";
 var terminal_string = "";
 var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP",
   "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyX", "KeyY", "KeyZ"];
+var allowed_combo_keys = ["Digit0", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9"];
 var computerUnlocked = false;
 var terminal_archive = [];
 var cat, cat2, cat3, message;
 
 function logKey(e) {
 //  console.log(e.code);
-  if (e.code === "Slash") {
-    display_hint = !display_hint;
-    if (hint_index === 2 && hint_has_been_viewed[hint_index]) {
-      hint_index++;
-    }
-  }
+  // if (e.code === "Slash") {
+  //   display_hint = !display_hint;
+  //   if (hint_index === 2 && hint_has_been_viewed[hint_index]) {
+  //     hint_index++;
+  //   }
+  // }
   if (e.code === "Escape") {
+    if (gameSceneCoffee.visible || gameSceneWhiteboard.visible || gameSceneLockedScreen.visible
+    || gameSceneTerminal.visible || gameSceneLock.visible || gameSceneToaster.visible
+    || gameSceneFridge.visible)
     closeWindow = true;
   }
 
-  if (e.code === "KeyH") {
+  if (e.code === "Slash") {
     if (document.getElementById("hintsText").innerHTML === hints[hint_index]) {
-      document.getElementById("hintsText").innerHTML = "Press H to toggle hint!";
+      document.getElementById("hintsText").innerHTML = "Press ? to toggle hint!";
     } else {
       document.getElementById("hintsText").innerHTML = hints[hint_index];
     }
@@ -67,9 +71,13 @@ function logKey(e) {
     }
     // add being able to delete a character as a quality of life update
     // if needed; lower priority than getting game to work
-    // if (e.code === "Backspace") {
-    //   password_string = password_string.slice(0, -1);
-    // }
+    if (e.code === "Backspace") {
+      if (password_string.length <= 1) {
+        password_string = " ";
+      } else {
+        password_string = password_string.substring(0, password_string.length-1);
+      }
+    }
   }
 
   if (gameSceneTerminal.visible) {
@@ -281,7 +289,7 @@ var numRemove = 0;
 function play() {
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
     && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible
-    && !gameSceneLock.visible && !gameSceneFridge.visible) {
+    && !gameSceneFridge.visible) {
     g.move(cat);
     g.move(cat2);
     g.move(cat3);
@@ -476,7 +484,7 @@ function play() {
 
 </script>
 <!--Add hints or description to bottom-->
-  <p id="hintsText">Hints: press H to toggle!</p>
+  <p id="hintsText">Hints: press ? to toggle!</p>
   <div id="tastList">
     <p>Remaining tasks:</p>
     <p id="unlockComputer">- Unlock the computer</p>
