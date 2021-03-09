@@ -32,6 +32,8 @@
         };
 
         var curr_directory = "~";
+        var curr_display_dir = "~";
+        var directory_archive = ["~"];
         var terminal_archive = [];
         var user_input = "";
         document.getElementById("terminalPrompt0").innerHTML =  curr_directory + "$ " + user_input;
@@ -39,24 +41,26 @@
         document.addEventListener('keydown', logKey);
 
         function logKey(e) {
-//            console.log(e); uncomment for some ez debugging
+            console.log(e); 
             if (e.code === "Enter") {
                 updatePromptNewLine();
+            } else if (e.key === "Shift") {
+                // do nothing
             } else if (e.code === "Backspace") {
                 if (user_input.length) {
                     user_input = user_input.slice(0, -1);
-                    document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_directory + "$ " + user_input;
+                    document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ " + user_input;
                 }
             }
             else {
                 user_input += e.key;
-                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_directory + "$ " + user_input;
+                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ " + user_input;
             } 
         }
 
         function updatePromptNewLine() {
             // push user input to terminal archive
-            terminal_archive.push(curr_directory + "$ " + user_input);
+            terminal_archive.push(curr_display_dir + "$ " + user_input);
             // reset user input
             user_input = "";
             // create new paragraph
@@ -84,7 +88,7 @@
             prevLine.insertBefore(newP, currLine);
             prevLine.insertBefore(newCursor, currLine);
 
-            document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ ";
+            document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ ";
         }
 
         function processOutput() {
@@ -109,8 +113,33 @@
                         output_text += executable_arr[k] + "  ";
                     }
                 }
+            } else if (command_to_process[1].toLowerCase() === "cd") {
+                if (command_to_process.length > 2) {
+                    // means a directory was specified. need to check if the directory is valid
+                    var dir_array = directory["directories"];
+                    var subdir_arr = dir_array[curr_directory]["directories"];
+                    var found = false;
+
+                    // search for valid directories
+                    for (var j = 0; j < subdir_arr.length; j++) {
+                        if (subdir_arr[j] == command_to_process[2]) {
+                            curr_directory = subdir_arr[j];
+                            directory_archive.push(curr_directory);
+                            curr_display_dir = getCurrDirectory();
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        output_text = "Error: specified directory not found.";
+                    }
+                }
+                else {
+                    output_text = "Error: directory not specified.";
+                }
             } else {
-                output_text = "Error: invalid command.";
+                output_text = "Error: invalid/unrecognized command.";
             }
 
             // now that output text is procured, push output to terminal
@@ -119,6 +148,19 @@
             prevOutput.setAttribute("id", "terminalOutput" + prev_output_index);
             document.body.insertBefore(prevOutput, prevLine);
             document.getElementById("terminalOutput" + prev_output_index).innerHTML = output_text;
+        }
+
+        // loop through and append everything in directory archive
+        function getCurrDirectory() {
+            var output_dir = "";
+            for (var i = 0; i < directory_archive.length; i++) {
+                if (i > 0) {
+                    output_dir += "/";
+                }
+                output_dir += directory_archive[i];
+            }
+
+            return output_dir;
         }
     </script>
 </body>
