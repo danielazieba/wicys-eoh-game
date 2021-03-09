@@ -11,32 +11,52 @@
         <div id="terminalEnding"></div>
     </div>
     <script>
-        // todo: add new paragraphs for each line for cursor reasons
+        var directory = {
+            "defaultDirectory": "~",
+            "directories": {
+                "~": {
+                    "directories": [
+                        "fridge_app"
+                    ],
+                    "executables": [
+                        "lineDolphin.exe"
+                    ]
+                },
+                "fridge_app": {
+                    "directories": [],
+                    "executables": [
+                        "fridgeShell.exe"
+                    ]
+                }
+            }
+        };
+
+        var curr_directory = "~";
         var terminal_archive = [];
         var user_input = "";
-        document.getElementById("terminalPrompt0").innerHTML = "~$ " + user_input;
+        document.getElementById("terminalPrompt0").innerHTML =  curr_directory + "$ " + user_input;
 
         document.addEventListener('keydown', logKey);
 
         function logKey(e) {
-            console.log(e);
+//            console.log(e); uncomment for some ez debugging
             if (e.code === "Enter") {
                 updatePromptNewLine();
             } else if (e.code === "Backspace") {
                 if (user_input.length) {
                     user_input = user_input.slice(0, -1);
-                    document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ " + user_input;
+                    document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_directory + "$ " + user_input;
                 }
             }
             else {
                 user_input += e.key;
-                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = "~$ " + user_input;
+                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_directory + "$ " + user_input;
             } 
         }
 
         function updatePromptNewLine() {
             // push user input to terminal archive
-            terminal_archive.push("~$ " + user_input);
+            terminal_archive.push(curr_directory + "$ " + user_input);
             // reset user input
             user_input = "";
             // create new paragraph
@@ -74,7 +94,21 @@
 
             // check for a possibly-valid command and produce the relevant output
             if (command_to_process[1].toLowerCase() === "ls") {
-                output_text = "TODO: return current directory.";
+                var dir_array = directory["directories"];
+                if (curr_directory in dir_array) {
+                    var subdir_arr = dir_array[curr_directory]["directories"];
+                    var executable_arr = dir_array[curr_directory]["executables"];
+
+                    // search for and add directories
+                    for (var j = 0; j < subdir_arr.length; j++) {
+                        output_text += subdir_arr[j] + "  ";
+                    }
+
+                    // search for and add executables
+                    for (var k = 0; k < executable_arr.length; k++) {
+                        output_text += executable_arr[k] + "  ";
+                    }
+                }
             } else {
                 output_text = "Error: invalid command.";
             }
