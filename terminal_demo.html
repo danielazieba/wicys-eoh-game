@@ -19,7 +19,8 @@
                         "fridge_app"
                     ],
                     "executables": [
-                        "lineDolphin.exe"
+                        "lineDolphin.exe",
+                        "coffeeRequestSender.exe"
                     ]
                 },
                 "fridge_app": {
@@ -105,7 +106,27 @@
             output_text = "";
 
             // check for a possibly-valid command and produce the relevant output
-            if (command_to_process[1].toLowerCase() === "ls") {
+            if (currently_in_executable) {
+                if (command_to_process[1].toLowerCase() === "exit") {
+                    currently_in_executable = false;
+                    output_text = "Exiting current executable.";
+                } 
+                // if command is anything other than exit,
+                // let's redirect to the specific executable
+                // in the future we want a JSON file to specify executable contents for cleaner code.
+                // but this is the present.
+                else if (curr_executable_name === "lineDolphin.exe") {
+                    output_text = "TODO lineDolphin.";
+                } else if (curr_executable_name === "coffeeRequestSender.exe") {
+                    output_text = "TODO coffeeRequests.";
+                } else if (curr_executable_name === "fridgeSQLShell.exe") {
+                    output_text = "TODO fridgeSQLShell.";
+                } else if (curr_executable_name === "fridgeLoginPortal.exe") {
+                    output_text = "TODO fridgeLoginPortal.";
+                }
+            }
+
+            else if (command_to_process[1].toLowerCase() === "ls") {
                 var dir_array = directory["directories"];
                 if (curr_directory in dir_array) {
                     var subdir_arr = dir_array[curr_directory]["directories"];
@@ -157,7 +178,6 @@
                     output_text = "Error: directory not specified.";
                 }
             } else if (command_to_process[1][0] === "." && command_to_process[1][1] === "/") {
-                output_text = "TODO: allow for executables!";
                 // need to check if executable is actually in curr directory
                 if (executableExists(command_to_process[1].slice(2))) {
                     curr_executable_name = command_to_process[1].slice(2);
@@ -166,12 +186,7 @@
                     output_text = "Error: specified executable does not exist.";
                 }
             } else if (command_to_process[1].toLowerCase() === "exit") {
-                if (currently_in_executable) {
-                    currently_in_executable = false;
-                    output_text = "Exiting current executable.";
-                } else {
-                    output_text = "Error: nothing to exit from.";
-                }
+                output_text = "Error: nothing to exit from.";
             } else {
                 output_text = "Error: invalid/unrecognized command.";
             }
