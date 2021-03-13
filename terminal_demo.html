@@ -115,24 +115,34 @@
                 }
             } else if (command_to_process[1].toLowerCase() === "cd") {
                 if (command_to_process.length > 2) {
-                    // means a directory was specified. need to check if the directory is valid
-                    var dir_array = directory["directories"];
-                    var subdir_arr = dir_array[curr_directory]["directories"];
-                    var found = false;
-
-                    // search for valid directories
-                    for (var j = 0; j < subdir_arr.length; j++) {
-                        if (subdir_arr[j] == command_to_process[2]) {
-                            curr_directory = subdir_arr[j];
-                            directory_archive.push(curr_directory);
+                    if (command_to_process[2] === "../") {
+                        if (directory_archive.length > 1) {
+                            directory_archive.pop();
+                            curr_directory = directory_archive[directory_archive.length - 1];
                             curr_display_dir = getCurrDirectory();
-                            found = true;
-                            break;
+                        } else {
+                            output_text = "Error: nowhere to go.";
                         }
-                    }
+                    } else {
+                        // means a directory was specified. need to check if the directory is valid
+                        var dir_array = directory["directories"];
+                        var subdir_arr = dir_array[curr_directory]["directories"];
+                        var found = false;
 
-                    if (!found) {
-                        output_text = "Error: specified directory not found.";
+                        // search for valid directories
+                        for (var j = 0; j < subdir_arr.length; j++) {
+                            if (subdir_arr[j] === command_to_process[2]) {
+                                curr_directory = subdir_arr[j];
+                                directory_archive.push(curr_directory);
+                                curr_display_dir = getCurrDirectory();
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        if (!found) {
+                            output_text = "Error: specified directory not found.";
+                        }
                     }
                 }
                 else {
