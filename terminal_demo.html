@@ -25,7 +25,8 @@
                 "fridge_app": {
                     "directories": [],
                     "executables": [
-                        "fridgeShell.exe"
+                        "fridgeSQLShell.exe",
+                        "fridgeLoginPortal.exe"
                     ]
                 }
             }
@@ -157,7 +158,20 @@
                 }
             } else if (command_to_process[1][0] === "." && command_to_process[1][1] === "/") {
                 output_text = "TODO: allow for executables!";
-                currently_in_executable = true;
+                // need to check if executable is actually in curr directory
+                if (executableExists(command_to_process[1].slice(2))) {
+                    curr_executable_name = command_to_process[1].slice(2);
+                    currently_in_executable = true;
+                } else {
+                    output_text = "Error: specified executable does not exist.";
+                }
+            } else if (command_to_process[1].toLowerCase() === "exit") {
+                if (currently_in_executable) {
+                    currently_in_executable = false;
+                    output_text = "Exiting current executable.";
+                } else {
+                    output_text = "Error: nothing to exit from.";
+                }
             } else {
                 output_text = "Error: invalid/unrecognized command.";
             }
@@ -168,6 +182,17 @@
             prevOutput.setAttribute("id", "terminalOutput" + prev_output_index);
             document.body.insertBefore(prevOutput, prevLine);
             document.getElementById("terminalOutput" + prev_output_index).innerHTML = output_text;
+        }
+
+        function executableExists(executable_name) {
+            var executable_arr = directory["directories"][curr_directory]["executables"];
+            for (var i = 0; i < executable_arr.length; i++) {
+                if (executable_arr[i] === executable_name) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         // loop through and append everything in directory archive
