@@ -36,6 +36,8 @@
         var directory_archive = ["~"];
         var terminal_archive = [];
         var user_input = "";
+        var currently_in_executable = false;
+        var curr_executable_name = "";
         document.getElementById("terminalPrompt0").innerHTML =  curr_directory + "$ " + user_input;
 
         document.addEventListener('keydown', logKey);
@@ -49,18 +51,22 @@
             } else if (e.code === "Backspace") {
                 if (user_input.length) {
                     user_input = user_input.slice(0, -1);
-                    document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ " + user_input;
+                    displayCurrLine(user_input);
                 }
             }
             else {
                 user_input += e.key;
-                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ " + user_input;
+                displayCurrLine(user_input);
             } 
         }
 
         function updatePromptNewLine() {
             // push user input to terminal archive
-            terminal_archive.push(curr_display_dir + "$ " + user_input);
+            if (currently_in_executable) {
+                terminal_archive.push(curr_executable_name + "> " + user_input);
+            } else {
+                terminal_archive.push(curr_display_dir + "$ " + user_input);
+            }
             // reset user input
             user_input = "";
             // create new paragraph
@@ -88,7 +94,8 @@
             prevLine.insertBefore(newP, currLine);
             prevLine.insertBefore(newCursor, currLine);
 
-            document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ ";
+            //document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ ";
+            displayCurrLine("");
         }
 
         function processOutput() {
@@ -144,10 +151,13 @@
                             output_text = "Error: specified directory not found.";
                         }
                     }
-                }
+                } 
                 else {
                     output_text = "Error: directory not specified.";
                 }
+            } else if (command_to_process[1][0] === "." && command_to_process[1][1] === "/") {
+                output_text = "TODO: allow for executables!";
+                currently_in_executable = true;
             } else {
                 output_text = "Error: invalid/unrecognized command.";
             }
@@ -171,6 +181,14 @@
             }
 
             return output_dir;
+        }
+
+        function displayCurrLine(text_input) {
+            if (currently_in_executable) {
+                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_executable_name + "> " + text_input;
+            } else {
+                document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ " + text_input;
+            }
         }
     </script>
 </body>
