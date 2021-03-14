@@ -10,7 +10,7 @@
       font-family: courier;
     }
 
-    a 
+    a
     {
       color: rgb(123, 213, 255);
     }
@@ -157,7 +157,7 @@ function logKey(e) {
       console.log("Checking correctness of password...");
       check_password_correctness();
     }
-    
+
     if (e.code === "Backspace") {
       if (combo_incorrect_message_visible) {
         combo_incorrect_message_visible = false;
@@ -224,10 +224,16 @@ var g = ga(700, 550, setup,
     "images/terminal.png",
     "images/zoomed_in_toaster_with_background.png",
     "images/combination_lock_with_numbers_on_cabinet.png",
-    "images/fridge_display_w_text.png"
+    "images/fridge_display_w_text.png",
+    "sounds/suburban-neighborhood.wav",
+    "sounds/liquid-pour.wav",
+    "sounds/memories.mp3",
+    "sounds/toaster-pop-up.wav",
+    "sounds/lock.wav"
   ]
 );
 g.start();
+var music, coffee, toaster, lock;
 
 //A `setup` function that will run only once.
 //Use it for initialization tasks
@@ -242,6 +248,8 @@ function setup() {
   zoomed_toaster = g.sprite("images/zoomed_in_toaster_with_background.png");
   lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet.png");
   zoomed_fridge = g.sprite("images/fridge_display_w_text.png");
+
+
 
   var catFrames = [
     "images/standing.png",
@@ -325,12 +333,23 @@ function setup() {
   rightArrow = g.keyboard(39);
   downArrow = g.keyboard(40);
 
+  // background music
+  music = g.sound("sounds/memories.mp3");
+  toaster = g.sound("sounds/toaster-pop-up.wav");
+  coffee = g.sound("sounds/liquid-pour.wav");
+  lock = g.sound("sounds/lock.wav");
+
+  //bgm.play();
+  music.play();
+  music.volume = 0.1;
+
   //Assign key `press` and release methods that
   //show and play the elf's different states
   leftArrow.press = function() {
     cat.playSequence(cat.states.walkLeft);
     cat2.playSequence(cat2.states.walkLeft);
     cat3.playSequence(cat3.states.walkLeft);
+
   };
   leftArrow.release = function() {
   };
@@ -352,6 +371,7 @@ function setup() {
 
   //Change the state to `play`
   g.state = play;
+
 }
 
 var passwordDisplayExists = false;
@@ -361,6 +381,7 @@ var numRemove = 0;
 
 //The `play` function will run in a loop
 function play() {
+
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
     && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible
     && !gameSceneFridge.visible) {
@@ -398,7 +419,7 @@ function play() {
       height: 500
     }
   );
-  
+
   kitchen_contains = g.contain(cat2,
     {
       x: 0,
@@ -460,7 +481,7 @@ function play() {
       gameSceneTerminal.visible = true; // TODO change this to real computer screen
       console.log("Pausing game....");
       g.pause();
-    
+
       // console.log("??");
     }
 
@@ -495,7 +516,7 @@ function play() {
     //   currTerminalString += terminal_archive[i] + '\n';
     // }
 
-    
+
   }
 
   //Display the edge of canvas that the cat hit
