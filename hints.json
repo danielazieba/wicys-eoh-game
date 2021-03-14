@@ -1,7 +1,11 @@
 {
     "hints" : {
         "unlockComputer": [
-            "Go to the whiteboard to find clues for your password!"
+            "Go to the whiteboard to find clues for your password!",
+            "Take a look at the Caesar Cipher guide!",
+            "To decrypt Caesar Ciphers, you need to find the right amount of rotations made in the alphabet. How many lives does a cat have?",
+            "How well do 9 rotations work on the whiteboard text?",
+            "Try mapping A to J."
         ],
         "makeToast": [
 
