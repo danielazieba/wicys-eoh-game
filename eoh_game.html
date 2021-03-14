@@ -144,10 +144,14 @@ function logKey(e) {
   }
 
   if (gameSceneLock.visible) {
-    if (allowed_combo_keys.includes(e.which) && combo_string.length < 18) {
+    if (allowed_combo_keys.includes(e.which) && combo_string.length < 9) {
       if (combo_incorrect_message_visible) {
         combo_incorrect_message_visible = false;
         g.remove(message7);
+      }
+
+      if ((combo_string.length) % 3 == 0) {
+        combo_string += " "
       }
 
       combo_string += String.fromCharCode(e.which);
@@ -167,6 +171,10 @@ function logKey(e) {
       if (combo_string.length <= 1) {
         combo_string = " ";
       } else {
+        // user only needs to delete the numbers they inputted, not the spaces in between
+        if (combo_string[combo_string.length - 1] == " ") {
+          combo_string = combo_string.substring(0, combo_string.length-1);
+        }
         combo_string = combo_string.substring(0, combo_string.length-1);
       }
     }
@@ -197,6 +205,10 @@ function check_password_correctness() {
       console.log("Combo correct!");
       lockUnlocked = true;
       document.getElementById("makeToast").innerHTML = "[x] Make toast";
+
+      // remove text and show completed task
+      g.remove(message10);
+      g.remove(message8);
     } else {
       if (!combo_incorrect_message_visible) {
         var combo_incorect_string = "Combo incorrect. Please try again.";
@@ -451,9 +463,16 @@ function play() {
     if (!lockUnlocked) {
       gameSceneLock.visible = true;
       if (comboDisplayExists) {
+        g.remove(message10);
         g.remove(message8);
       }
-      message8 = g.text(combo_string, "30px sans-serif", "black", 200, 410);
+      
+      // always display combo given
+      var combo_given = "56 25 31";
+      message10 = g.text(combo_given, "30px sans-serif", "black", 15, 15);
+
+      // user combo input
+      message8 = g.text(combo_string, "30px sans-serif", "black", 275, 410);
       comboDisplayExists = true;
     }
   }
