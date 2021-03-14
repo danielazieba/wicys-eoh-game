@@ -51,6 +51,11 @@ function logKey(e) {
     || gameSceneTerminal.visible || gameSceneLock.visible || gameSceneToaster.visible
     || gameSceneFridge.visible)
     closeWindow = true;
+
+    if (password_incorrect_message_visible) {
+      password_incorrect_message_visible = false;
+      g.remove(message6)
+    }
   }
 
   if (e.code === "Slash") {
