@@ -31,9 +31,11 @@ var closeWindow = false;
 var password_string = " ";
 var password_incorrect_message_visible = false;
 var terminal_string = "";
-var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP",
-  "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyX", "KeyY", "KeyZ"];
-var allowed_combo_keys = ["Digit0", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9"];
+// var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP",
+//  "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyX", "KeyY", "KeyZ"];  // e.code codes
+// var allowed_combo_keys = ["Digit0", "Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "Digit8", "Digit9"];  // e.code codes
+var allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]  // e.which codes
+var allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
 var computerUnlocked = false;
 var terminal_archive = [];
 var cat, cat2, cat3, message;
@@ -67,13 +69,14 @@ function logKey(e) {
   }
 
   if (gameSceneLockedScreen.visible) {
-    if (allowed_password_keys.includes(e.code) && password_string.length < 18) {
+    if ((allowed_password_keys.includes(e.which) || allowed_combo_keys.includes(e.which)) && password_string.length < 18) {
       if (password_incorrect_message_visible) {
         password_incorrect_message_visible = false;
         g.remove(message6)
       }
 
-      password_string += e.code[3];
+      //password_string += e.code[3];
+      password_string += String.fromCharCode(e.which);
     }
 
     if (e.code === "Enter") {
