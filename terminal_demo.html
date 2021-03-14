@@ -26,7 +26,6 @@
                 "fridge_app": {
                     "directories": [],
                     "executables": [
-                        "fridgeSQLShell.exe",
                         "fridgeLoginPortal.exe"
                     ]
                 }
@@ -40,6 +39,9 @@
         var user_input = "";
         var currently_in_executable = false;
         var curr_executable_name = "";
+        var fridge_is_locked = true;
+        var user_is_authenticated = false;
+        
         document.getElementById("terminalPrompt0").innerHTML =  curr_directory + "$ " + user_input;
 
         document.addEventListener('keydown', logKey);
@@ -119,10 +121,51 @@
                     output_text = "TODO lineDolphin.";
                 } else if (curr_executable_name === "coffeeRequestSender.exe") {
                     output_text = "TODO coffeeRequests.";
-                } else if (curr_executable_name === "fridgeSQLShell.exe") {
-                    output_text = "TODO fridgeSQLShell.";
                 } else if (curr_executable_name === "fridgeLoginPortal.exe") {
-                    output_text = "TODO fridgeLoginPortal.";
+                    if (command_to_process[1].toLowerCase() === "stock") {
+                        output_text = "Current fridge contents: 1x baking soda. 6x bell pepper. 3x Golden Harbor soup dumpling. 1x half and half. 34x chicken egg. 10x quail egg.";
+                    } else if (command_to_process[1].toLowerCase() === "lock") {
+                        if (user_is_authenticated) {
+                            if (fridge_is_locked) {
+                                output_text = "Fridge is already locked!";
+                            } else {
+                                output_text = "Fridge locked.";
+                                fridge_is_locked = true;
+                            }
+                        } else {
+                            output_text = "Error: user has not been logged in.";
+                        }
+                    } else if (command_to_process[1].toLowerCase() === "unlock") {
+                        if (user_is_authenticated) {
+                            if (fridge_is_locked) {
+                                output_text = "Fridge unlocked!";
+                                fridge_is_locked = false;
+                                //TODO: set a game flag for puzzle being solved.
+                            } else {
+                                output_text = "Fridge is already unlocked.";
+                            }
+                        } else {
+                            output_text = "Error: user has not been logged in.";
+                        }
+                    } else if (command_to_process[1][0] === "l") {
+                        // check if command is valid
+                        parsed_command = command_to_process[1].split(";");
+                        if (parsed_command[0] === "login"
+                            && parsed_command[1].slice(0, 9) === "username="
+                            && parsed_command[2].slice(0, 9) === "password="
+                            && parsed_command[1][9] === '"'
+                            && parsed_command[1].slice(-1) === '"'
+                            && parsed_command[2][9] === '"'
+                            && parsed_command[2].slice(-1) === '"'
+                        ) {
+                            output_text = "seems pretty correct";
+                        } else {
+                            output_text = "Error: invalid login formatting.";
+                        }
+                    }
+                    else {
+                        output_text = "Error: command not recognized.";
+                    }
                 }
             }
 
@@ -182,6 +225,7 @@
                 if (executableExists(command_to_process[1].slice(2))) {
                     curr_executable_name = command_to_process[1].slice(2);
                     currently_in_executable = true;
+                    output_text = getExecutableWelcomeMessage();
                 } else {
                     output_text = "Error: specified executable does not exist.";
                 }
@@ -228,6 +272,16 @@
                 document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_executable_name + "> " + text_input;
             } else {
                 document.getElementById("terminalPrompt" + terminal_archive.length).innerHTML = curr_display_dir + "$ " + text_input;
+            }
+        }
+
+        function getExecutableWelcomeMessage() {
+            if (curr_executable_name === "lineDolphin.exe") {
+                return "Welcome to lineDolphin! TODO: log data.";
+            } else if (curr_executable_name === "coffeeRequestSender.exe") {
+                return "Welcome to the coffee request portal! TODO prompt request.";
+            } else if (curr_executable_name === "fridgeLoginPortal.exe") {
+                return "Welcome to your smart fridge portal! Your username is GreenStreet. However, to access fridge features, you must authenticate yourself.";
             }
         }
     </script>
