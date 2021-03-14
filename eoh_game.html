@@ -430,8 +430,14 @@ function play() {
     if (!lockUnlocked) {
       gameSceneLock.visible = true;
       if (comboDisplayExists) {
+        g.remove(message10);
         g.remove(message8);
       }
+      
+      // always display combo given
+      var combo_given = "56 25 31";
+      message10 = g.text(combo_given, "30px sans-serif", "black", 15, 15);
+
       message8 = g.text(combo_string, "30px sans-serif", "black", 200, 410);
       comboDisplayExists = true;
     }
