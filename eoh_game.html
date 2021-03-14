@@ -205,6 +205,10 @@ function check_password_correctness() {
       console.log("Combo correct!");
       lockUnlocked = true;
       document.getElementById("makeToast").innerHTML = "[x] Make toast";
+
+      // remove text and show completed task
+      g.remove(message10);
+      g.remove(message8);
     } else {
       if (!combo_incorrect_message_visible) {
         var combo_incorect_string = "Combo incorrect. Please try again.";
