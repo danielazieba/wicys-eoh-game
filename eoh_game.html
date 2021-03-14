@@ -30,6 +30,8 @@ var hint_has_been_viewed = [false, false, false, false];
 var closeWindow = false;
 var password_string = " ";
 var password_incorrect_message_visible = false;
+var combo_string = " ";
+var combo_incorrect_message_visible = false;
 var terminal_string = "";
 // var allowed_password_keys = ["KeyA", "KeyB", "KeyC", "KeyD", "KeyE", "KeyF", "KeyG", "KeyH", "KeyI", "KeyJ", "KeyK", "KeyL", "KeyM", "KeyN", "KeyO", "KeyP",
 //  "KeyQ", "KeyR", "KeyS", "KeyT", "KeyU", "KeyV", "KeyW", "KeyX", "KeyY", "KeyZ"];  // e.code codes
@@ -37,6 +39,7 @@ var terminal_string = "";
 var allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]  // e.which codes
 var allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
 var computerUnlocked = false;
+var lockUnlocked = false;
 var terminal_archive = [];
 var cat, cat2, cat3, message;
 
@@ -139,11 +142,40 @@ function logKey(e) {
     //   password_string = password_string.slice(0, -1);
     // }
   }
+
+  if (gameSceneLock.visible) {
+    if (allowed_combo_keys.includes(e.which) && combo_string.length < 18) {
+      if (combo_incorrect_message_visible) {
+        combo_incorrect_message_visible = false;
+        g.remove(message7);
+      }
+
+      combo_string += String.fromCharCode(e.which);
+    }
+
+    if (e.code === "Enter") {
+      console.log("Checking correctness of password...");
+      check_password_correctness();
+    }
+    
+    if (e.code === "Backspace") {
+      if (combo_incorrect_message_visible) {
+        combo_incorrect_message_visible = false;
+        g.remove(message7)
+      }
+
+      if (combo_string.length <= 1) {
+        combo_string = " ";
+      } else {
+        combo_string = combo_string.substring(0, combo_string.length-1);
+      }
+    }
+  }
 }
 
 
 function check_password_correctness() {
-  if (!computerUnlocked) {
+  if (!computerUnlocked && gameSceneLockedScreen.visible) {
     if (password_string === " DELILAH") {
       closeWindow = true;
       console.log("Password correct!");
@@ -154,6 +186,22 @@ function check_password_correctness() {
         var password_incorrect_string = "Password incorrect. Please try again.";
         password_incorrect_message_visible = true;
         message6 = g.text(password_incorrect_string, "25px sans-serif", "red", 130, 150);
+      }
+    }
+  }
+
+  if (!lockUnlocked && gameSceneLock.visible) {
+    // TODO: EDIT THE CODE IN THIS CONDITIONAL TO FIT WITH COMBO PUZZLE
+    if (combo_string === " 86 37 49") {
+      closeWindow = true;
+      console.log("Combo correct!");
+      lockUnlocked = true;
+      document.getElementById("makeToast").innerHTML = "[x] Make toast";
+    } else {
+      if (!combo_incorrect_message_visible) {
+        var combo_incorect_string = "Combo incorrect. Please try again.";
+        combo_incorrect_message_visible = true;
+        message7 = g.text(combo_incorect_string, "25px sans-serif", "red", 150, 450);
       }
     }
   }
@@ -308,6 +356,7 @@ function setup() {
 
 var passwordDisplayExists = false;
 var terminalDisplayExists = false;
+var comboDisplayExists = false;
 var numRemove = 0;
 
 //The `play` function will run in a loop
@@ -378,7 +427,14 @@ function play() {
   }
 
   if (gameSceneKitchen.visible && cat2.x > 20 && cat2.x < 90 && cat2.y < 250) {
-    gameSceneLock.visible = true;
+    if (!lockUnlocked) {
+      gameSceneLock.visible = true;
+      if (comboDisplayExists) {
+        g.remove(message8);
+      }
+      message8 = g.text(combo_string, "30px sans-serif", "black", 200, 410);
+      comboDisplayExists = true;
+    }
   }
 
   if (gameSceneKitchen.visible && cat2.x > 90 && cat2.x < 180 && cat2.y < 250) {
