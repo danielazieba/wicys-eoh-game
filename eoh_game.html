@@ -73,6 +73,7 @@ function logKey(e) {
 
   if (gameSceneLockedScreen.visible) {
     if ((allowed_password_keys.includes(e.which) || allowed_combo_keys.includes(e.which)) && password_string.length < 18) {
+      computer.play();
       if (password_incorrect_message_visible) {
         password_incorrect_message_visible = false;
         g.remove(message6)
@@ -155,9 +156,11 @@ function logKey(e) {
       }
 
       combo_string += String.fromCharCode(e.which);
+      lock.play();
     }
 
     if (e.code === "Enter") {
+
       console.log("Checking correctness of password...");
       check_password_correctness();
     }
@@ -205,7 +208,7 @@ function check_password_correctness() {
       console.log("Combo correct!");
       lockUnlocked = true;
       document.getElementById("makeToast").innerHTML = "[x] Make toast";
-
+      lock_open.play();
       // remove text and show completed task
       g.remove(message10);
       g.remove(message8);
@@ -215,6 +218,7 @@ function check_password_correctness() {
         combo_incorrect_message_visible = true;
         message7 = g.text(combo_incorect_string, "25px sans-serif", "red", 150, 450);
       }
+      lock_fail.play();
     }
   }
 }
@@ -239,13 +243,16 @@ var g = ga(700, 550, setup,
     "images/fridge_display_w_text.png",
     "sounds/suburban-neighborhood.wav",
     "sounds/liquid-pour.wav",
-    "sounds/memories.mp3",
+    "sounds/memories.mp3", // music from https://www.bensound.com/royalty-free-music/track/memories
     "sounds/toaster-pop-up.wav",
-    "sounds/lock.wav"
+    "sounds/lock.wav",
+    "sounds/lock-open-fail.wav",
+    "sounds/lock-open.wav",
+    "sounds/computer.wav"
   ]
 );
 g.start();
-var music, coffee, toaster, lock;
+var music, coffee, toaster, lock, lock_fail, lock_open, computer;
 
 //A `setup` function that will run only once.
 //Use it for initialization tasks
@@ -350,8 +357,12 @@ function setup() {
   toaster = g.sound("sounds/toaster-pop-up.wav");
   coffee = g.sound("sounds/liquid-pour.wav");
   lock = g.sound("sounds/lock.wav");
+  lock_fail = g.sound("sounds/lock-open-fail.wav");
+  lock_open = g.sound("sounds/lock-open.wav");
+  computer = g.sound("sounds/computer.wav");
 
   //bgm.play();
+  music.loop = true;
   music.play();
   music.volume = 0.1;
 
@@ -466,7 +477,7 @@ function play() {
         g.remove(message10);
         g.remove(message8);
       }
-      
+
       // always display combo given
       var combo_given = "56 25 31";
       message10 = g.text(combo_given, "30px sans-serif", "black", 15, 15);
