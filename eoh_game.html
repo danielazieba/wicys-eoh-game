@@ -61,6 +61,11 @@ function logKey(e) {
       password_incorrect_message_visible = false;
       g.remove(message6)
     }
+
+    if (combo_incorrect_message_visible) {
+      combo_incorrect_message_visible = false;
+      g.remove(message7)
+    }
   }
 
   if (e.code === "Slash") {
@@ -597,6 +602,13 @@ function play() {
       g.remove(message5);
       gameSceneTerminal.visible = false;
       terminalDisplayExists = false;
+    }
+
+    if (gameSceneLock.visible) {
+      g.remove(message10);
+      g.remove(message8);
+      gameSceneLock.visible = false;
+      combo_string = " ";
     }
 
     gameSceneToaster.visible = false;
