@@ -40,7 +40,12 @@
         var currently_in_executable = false;
         var curr_executable_name = "";
         var fridge_is_locked = true;
-        var user_is_authenticated = false;
+        var user_is_authenticated = true; // change to false later when login required
+        var currCoffeeState = "";
+        var currHostName = "";
+        var currPortName = "";
+        var currRequestType = "";
+        var currRequestURL = "";
 
         var coffee_text = ["Pinging CYBA brewer using saved configuration...",
                         "Request sent:", 
@@ -118,6 +123,7 @@
             command_to_process = terminal_archive[prev_output_index].split(" ");
             output_text = "";
             var displayCoffeeArr = false;
+            var displayBrewRequestArr = false;
 
             // check for a possibly-valid command and produce the relevant output
             if (currently_in_executable) {
@@ -130,13 +136,52 @@
                 // in the future we want a JSON file to specify executable contents for cleaner code.
                 // but this is the present.
                 else if (curr_executable_name === "lineDolphin.exe") {
-                    output_text = "TODO lineDolphin.";
-                } else if (curr_executable_name === "coffeeRequestSender.exe") {
                     if (command_to_process[1].toLowerCase() === "capture") {
                         output_text = "STATUS: OK, READY TO BREW";
                         displayCoffeeArr = true;
                     } else {
                         output_text = "Error: invalid command.";
+                    }
+                } else if (curr_executable_name === "coffeeRequestSender.exe") {
+                    console.log(currCoffeeState);
+                    if (command_to_process[1].toLowerCase() === "start" && currCoffeeState === "") {
+                        output_text = "What host would you like to send a request to?";
+                        currCoffeeState = "port";
+                        console.log(currCoffeeState);
+                    }
+                    else if (currCoffeeState === "port") {
+                        currHostName = command_to_process[1].toLowerCase();
+                        output_text = "Which port number are you sending to?";
+                        currCoffeeState = "type";
+                    } else if (currCoffeeState === "type") {
+                        currPortName = command_to_process[1].toLowerCase();
+                        output_text = "What type of request are you sending? (GET or POST)";
+                        currCoffeeState = "url";
+                    } else if (currCoffeeState === "url") {
+                        currRequestType = command_to_process[1].toLowerCase();
+                        output_text = "Which URL are you sending this request to?";
+                        currCoffeeState = "process";
+                    } else if (currCoffeeState === "process") {
+                        currRequestURL = command_to_process[1].toLowerCase();
+                        // now we have all info, process and set error messages accordingly
+                        if (currHostName != "mycyba") {
+                            output_text = "Error: could not reach specified host.";
+                        } else if (currPortName != "5000") {
+                            output_text = "Error: host is reachable, but port number is incorrect.";
+                        } else if (currRequestType != "get") {
+                            output_text = "Error: not the expected request type.";
+                        } else if (currRequestURL === "mycyba/brewer/brew") {
+                            output_text = "STATUS: BREW REQUEST RECEIVED. WILL PROCEED TO FULFILL REQUEST.";
+                        } else if (currRequestURL === "mycyba/brewer/status") {
+                            output_text = "STATUS: OK, READY TO BREW";
+                        } else {
+                            output_text = "Error: valid request, but invalid URL.";
+                        }
+                        // reset state
+                        currCoffeeState = "";
+                    } else {
+                        output_text = "Error: invalid command.";
+                        currCoffeeState = "";
                     }
                 } else if (curr_executable_name === "fridgeLoginPortal.exe") {
                     if (command_to_process[1].toLowerCase() === "stock") {
@@ -175,7 +220,7 @@
                             && parsed_command[2][9] === '"'
                             && parsed_command[2].slice(-1) === '"'
                         ) {
-                            output_text = "seems pretty correct";
+                            output_text = "Correctly formed login request, though you are already authenticated.";
                         } else {
                             output_text = "Error: invalid login formatting.";
                         }
@@ -312,7 +357,8 @@
             } else if (curr_executable_name === "coffeeRequestSender.exe") {
                 return "Welcome to the coffee request portal! Here, one can send requests to the CYBA coffee brewer.";
             } else if (curr_executable_name === "fridgeLoginPortal.exe") {
-                return "Welcome to your smart fridge portal! Your username is GreenStreet. However, to access fridge features, you must authenticate yourself.";
+                //return "Welcome to your smart fridge portal! Your username is GreenStreet. However, to access fridge features, you must authenticate yourself.";
+                return "Welcome to your smart fridge control portal!";
             }
         }
     </script>
