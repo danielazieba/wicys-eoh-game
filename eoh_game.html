@@ -715,10 +715,13 @@ function play() {
     document.addEventListener('keydown', logKey);
 
     function logKey(e) {
-        console.log(e); 
         if (e.code === "Enter") {
             updatePromptNewLine();
-        } else if (e.key === "Shift") {
+        } else if (e.key === "Shift" || 
+                  e.code === "ArrowRight" || 
+                  e.code === "ArrowLeft" ||
+                  e.code === "ArrowUp" ||
+                  e.code === "ArrowDown") {
             // do nothing
         } else if (e.code === "Backspace") {
             if (user_input.length) {
