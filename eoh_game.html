@@ -55,7 +55,7 @@ function logKey(e) {
   if (e.code === "Escape") {
     if (gameSceneCoffee.visible || gameSceneWhiteboard.visible || gameSceneLockedScreen.visible
     || gameSceneTerminal.visible || gameSceneLock.visible || gameSceneToaster.visible
-    || gameSceneFridge.visible)
+    || gameSceneFridge.visible || gameSceneUnlockedFridge.visible)
     closeWindow = true;
 
     if (password_incorrect_message_visible) {
@@ -247,6 +247,7 @@ var g = ga(700, 550, setup,
     "images/zoomed_in_toaster_with_background.png",
     "images/combination_lock_with_numbers_on_cabinet.png",
     "images/fridge_display_w_text.png",
+    "images/fridge_display.png",
     "sounds/suburban-neighborhood.wav",
     "sounds/liquid-pour.wav",
     "sounds/memories.mp3", // music from https://www.bensound.com/royalty-free-music/track/memories
@@ -273,6 +274,7 @@ function setup() {
   zoomed_toaster = g.sprite("images/zoomed_in_toaster_with_background.png");
   lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet.png");
   zoomed_fridge = g.sprite("images/fridge_display_w_text.png");
+  unlocked_fridge = g.sprite("images/fridge_display.png");
 
 
 
@@ -337,6 +339,7 @@ function setup() {
   gameSceneLock = g.group(lock_on_cabinet_w_num);
   gameSceneToaster = g.group(zoomed_toaster);
   gameSceneFridge = g.group(zoomed_fridge);
+  gameSceneUnlockedFridge = g.group(unlocked_fridge);
 
   gameScene.visible = true;
   gameSceneKitchen.visible = false;
@@ -348,6 +351,7 @@ function setup() {
   gameSceneLock.visible = false;
   gameSceneToaster.visible = false;
   gameSceneFridge.visible = false;
+  gameSceneUnlockedFridge.visible = false;
 
   // var customKey = g.keyboard(122);
   // customKey.press = function() {
@@ -495,7 +499,11 @@ function play() {
   }
 
   if (gameSceneKitchen.visible && cat2.x > 90 && cat2.x < 180 && cat2.y < 250) {
-    gameSceneFridge.visible = true;
+    if (fridge_is_locked) {
+      gameSceneFridge.visible = true;
+    } else {
+      gameSceneUnlockedFridge.visible = true;
+    }
   }
 
   if (gameSceneBedroom.visible && cat3.x > 260 && cat3.x < 460 && cat3.y < 160) {
@@ -617,6 +625,7 @@ function play() {
     gameSceneFridge.visible = false;
     gameSceneCoffee.visible = false;
     gameSceneWhiteboard.visible = false;
+    gameSceneUnlockedFridge.visible = false;
   //  gameSceneLockedScreen.visible = false;
     //gameSceneTerminal.visible = false;
 
@@ -847,6 +856,7 @@ function play() {
                         if (fridge_is_locked) {
                             output_text = "Fridge unlocked!";
                             fridge_is_locked = false;
+                            document.getElementById("openFridge").innerHTML = "[x] Open the fridge";
                             //TODO: set a game flag for puzzle being solved.
                         } else {
                             output_text = "Fridge is already unlocked.";
