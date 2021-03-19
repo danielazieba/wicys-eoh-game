@@ -3,15 +3,30 @@ p {
 }
 
 /*source for this CSS: https://codepen.io/delgar/pen/rvRvZM*/
-body {
+/*#terminal-body {
     background: #222;
     color: lime;
     font-family: monospace;
+    min-width: 500px;
+    min-height: 400px;
+}*/
+
+.terminalLine {
+  display: flex;
+  align-items: baseline;
+  background: #222;
+  color: lime;
+  font-family: monospace;
 }
   
 #header {
     display: flex;
     align-items: baseline;
+    background: #222;
+    color: lime;
+    font-family: monospace;
+    min-width: 500px;
+    min-height: 400px;
 /*    margin: 15px; */
 }
   
