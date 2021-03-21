@@ -55,7 +55,8 @@ function logKey(e) {
   if (e.code === "Escape") {
     if (gameSceneCoffee.visible || gameSceneWhiteboard.visible || gameSceneLockedScreen.visible
     || gameSceneTerminal.visible || gameSceneLock.visible || gameSceneToaster.visible
-    || gameSceneFridge.visible || gameSceneUnlockedFridge.visible)
+    || gameSceneFridge.visible || gameSceneUnlockedFridge.visible
+    || gameSceneToasterComplete.visible || gameSceneCoffeeComplete.visible)
     closeWindow = true;
 
     if (password_incorrect_message_visible) {
@@ -255,7 +256,9 @@ var g = ga(700, 550, setup,
     "sounds/lock.wav",
     "sounds/lock-open-fail.wav",
     "sounds/lock-open.wav",
-    "sounds/computer.wav"
+    "sounds/computer.wav",
+    "images/coffee_task_complete_w_text.png",
+    "images/toaster_task_complete.png"
   ]
 );
 g.start();
@@ -275,6 +278,8 @@ function setup() {
   lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet_w_box1.png");
   zoomed_fridge = g.sprite("images/fridge_display_w_text.png");
   unlocked_fridge = g.sprite("images/fridge_display.png");
+  zoomed_toaster_complete = g.sprite("images/toaster_task_complete.png");
+  zoomed_coffee_complete = g.sprite("images/coffee_task_complete_w_text.png");
 
 
 
@@ -340,6 +345,8 @@ function setup() {
   gameSceneToaster = g.group(zoomed_toaster);
   gameSceneFridge = g.group(zoomed_fridge);
   gameSceneUnlockedFridge = g.group(unlocked_fridge);
+  gameSceneToasterComplete = g.group(zoomed_toaster_complete);
+  gameSceneCoffeeComplete = g.group(zoomed_coffee_complete);
 
   gameScene.visible = true;
   gameSceneKitchen.visible = false;
@@ -352,6 +359,8 @@ function setup() {
   gameSceneToaster.visible = false;
   gameSceneFridge.visible = false;
   gameSceneUnlockedFridge.visible = false;
+  gameSceneToasterComplete.visible = false;
+  gameSceneCoffeeComplete.visible = false;
 
   // var customKey = g.keyboard(122);
   // customKey.press = function() {
@@ -417,7 +426,7 @@ function play() {
 
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
     && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible
-    && !gameSceneFridge.visible) {
+    && !gameSceneFridge.visible && !gameSceneToasterComplete.visible && !gameSceneCoffeeComplete.visible) {
     g.move(cat);
     g.move(cat2);
     g.move(cat3);
@@ -477,12 +486,16 @@ function play() {
   }
 
   if (gameSceneKitchen.visible && cat2.x > 250 && cat2.x < 300 && cat2.y < 230) {
-    gameSceneToaster.visible = true;
+    if (!lockUnlocked) {
+      gameSceneToaster.visible = true;
+    } else {
+      gameSceneToasterComplete.visible = true;
+    }
   }
 
   if (gameSceneKitchen.visible && cat2.x > 20 && cat2.x < 90 && cat2.y < 250) {
     if (!lockUnlocked) {
-      gameSceneLock.visible = true;
+      gameSceneLock.visible = true; // if combo is unlocked, doesn't zoom into cabinet to show lock
       if (comboDisplayExists) {
         g.remove(message10);
         g.remove(message8);
@@ -626,6 +639,8 @@ function play() {
     gameSceneCoffee.visible = false;
     gameSceneWhiteboard.visible = false;
     gameSceneUnlockedFridge.visible = false;
+    gameSceneCoffeeComplete.visible = false;
+    gameSceneToasterComplete.visible = false;
   //  gameSceneLockedScreen.visible = false;
     //gameSceneTerminal.visible = false;
 
