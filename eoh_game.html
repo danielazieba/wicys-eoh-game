@@ -222,7 +222,7 @@ function check_password_correctness() {
       if (!combo_incorrect_message_visible) {
         var combo_incorect_string = "Combo incorrect. Please try again.";
         combo_incorrect_message_visible = true;
-        message7 = g.text(combo_incorect_string, "25px sans-serif", "red", 150, 450);
+        message7 = g.text(combo_incorect_string, "25px sans-serif", "red", 150, 460);
       }
       lock_fail.play();
     }
@@ -240,12 +240,12 @@ var g = ga(700, 550, setup,
     "images/step2_left.png",
     "images/standing.png",
     "images/coffee_blank_displayw_text.png",
-    "images/whiteboard2.png",
+    "images/whiteboard_w_lock_clue.png",
     "images/bedroom.png",
     "images/locked_computer.png",
     "images/terminal.png",
     "images/zoomed_in_toaster_with_background.png",
-    "images/combination_lock_with_numbers_on_cabinet.png",
+    "images/combination_lock_with_numbers_on_cabinet_w_box1.png",
     "images/fridge_display_w_text.png",
     "images/fridge_display.png",
     "sounds/suburban-neighborhood.wav",
@@ -267,12 +267,12 @@ function setup() {
   forest = g.sprite("images/big-out-living.png");
   kitchen = g.sprite("images/new_new_kitchen.png");
   coffee = g.sprite("images/coffee_blank_displayw_text.png")
-  whiteboard = g.sprite("images/whiteboard2.png");
+  whiteboard = g.sprite("images/whiteboard_w_lock_clue.png");
   bedroom = g.sprite("images/bedroom.png");
   locked_screen = g.sprite("images/locked_computer.png");
   terminal = g.sprite("images/terminal.png");
   zoomed_toaster = g.sprite("images/zoomed_in_toaster_with_background.png");
-  lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet.png");
+  lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet_w_box1.png");
   zoomed_fridge = g.sprite("images/fridge_display_w_text.png");
   unlocked_fridge = g.sprite("images/fridge_display.png");
 
@@ -493,7 +493,7 @@ function play() {
       message10 = g.text(combo_given, "30px sans-serif", "black", 15, 15);
 
       // user combo input
-      message8 = g.text(combo_string, "30px sans-serif", "black", 275, 410);
+      message8 = g.text(combo_string, "30px sans-serif", "black", 275, 420);
       comboDisplayExists = true;
     }
   }
