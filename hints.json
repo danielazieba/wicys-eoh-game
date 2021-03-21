@@ -1,6 +1,7 @@
 {
     "hints" : {
         "unlockComputer": [
+            "Try unlocking the computer.",
             "Go to the whiteboard to find clues for your password!",
             "Take a look at the Caesar Cipher guide!",
             "To decrypt Caesar Ciphers, you need to find the right amount of rotations made in the alphabet. How many lives does a cat have?",
