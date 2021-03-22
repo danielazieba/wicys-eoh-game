@@ -54,7 +54,7 @@ function logKey(e) {
   // }
   if (e.code === "Escape") {
     if (gameSceneCoffee.visible || gameSceneWhiteboard.visible || gameSceneLockedScreen.visible
-    || gameSceneTerminal.visible || gameSceneLock.visible || gameSceneToaster.visible
+    /*|| gameSceneTerminal.visible*/ || gameSceneLock.visible || gameSceneToaster.visible
     || gameSceneFridge.visible || gameSceneUnlockedFridge.visible
     || gameSceneToasterComplete.visible || gameSceneCoffeeComplete.visible)
     closeWindow = true;
@@ -110,7 +110,7 @@ function logKey(e) {
     }
   }
 
-  if (gameSceneTerminal.visible) {
+  /*if (gameSceneTerminal.visible) {
     if (allowed_password_keys.includes(e.code) && terminal_string.length < 40) {
       terminal_string += e.code[3];
       // update display here
@@ -149,7 +149,7 @@ function logKey(e) {
     // if (e.code === "Backspace") {
     //   password_string = password_string.slice(0, -1);
     // }
-  }
+  }*/
 
   if (gameSceneLock.visible) {
     if (allowed_combo_keys.includes(e.which) && combo_string.length < 9) {
@@ -244,11 +244,13 @@ var g = ga(700, 550, setup,
     "images/whiteboard_w_lock_clue.png",
     "images/bedroom.png",
     "images/locked_computer.png",
-    "images/terminal.png",
+//    "images/terminal.png",
     "images/zoomed_in_toaster_with_background.png",
     "images/combination_lock_with_numbers_on_cabinet_w_box1.png",
     "images/fridge_display_w_text.png",
     "images/fridge_display.png",
+    "images/coffee_task_complete_w_text.png",
+    "images/finished_toast.png",
     "sounds/suburban-neighborhood.wav",
     "sounds/liquid-pour.wav",
     "sounds/memories.mp3", // music from https://www.bensound.com/royalty-free-music/track/memories
@@ -257,8 +259,6 @@ var g = ga(700, 550, setup,
     "sounds/lock-open-fail.wav",
     "sounds/lock-open.wav",
     "sounds/computer.wav",
-    "images/coffee_task_complete_w_text.png",
-    "images/toaster_task_complete.png"
   ]
 );
 g.start();
@@ -273,12 +273,12 @@ function setup() {
   whiteboard = g.sprite("images/whiteboard_w_lock_clue.png");
   bedroom = g.sprite("images/bedroom.png");
   locked_screen = g.sprite("images/locked_computer.png");
-  terminal = g.sprite("images/terminal.png");
+//  terminal = g.sprite("images/terminal.png");
   zoomed_toaster = g.sprite("images/zoomed_in_toaster_with_background.png");
   lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet_w_box1.png");
   zoomed_fridge = g.sprite("images/fridge_display_w_text.png");
   unlocked_fridge = g.sprite("images/fridge_display.png");
-  zoomed_toaster_complete = g.sprite("images/toaster_task_complete.png");
+  zoomed_toaster_complete = g.sprite("images/finished_toast.png");
   zoomed_coffee_complete = g.sprite("images/coffee_task_complete_w_text.png");
 
 
@@ -340,7 +340,7 @@ function setup() {
   gameSceneCoffee = g.group(coffee);
   gameSceneWhiteboard = g.group(whiteboard);
   gameSceneLockedScreen = g.group(locked_screen);
-  gameSceneTerminal = g.group(terminal);
+//  gameSceneTerminal = g.group(terminal);
   gameSceneLock = g.group(lock_on_cabinet_w_num);
   gameSceneToaster = g.group(zoomed_toaster);
   gameSceneFridge = g.group(zoomed_fridge);
@@ -354,11 +354,12 @@ function setup() {
   gameSceneBedroom.visible = false;
   gameSceneWhiteboard.visible = false;
   gameSceneLockedScreen.visible = false;
-  gameSceneTerminal.visible = false;
+//  gameSceneTerminal.visible = false;
   gameSceneLock.visible = false;
   gameSceneToaster.visible = false;
   gameSceneFridge.visible = false;
   gameSceneUnlockedFridge.visible = false;
+  gameSceneToasterComplete.visible = true;
   gameSceneToasterComplete.visible = false;
   gameSceneCoffeeComplete.visible = false;
 
@@ -425,7 +426,7 @@ var numRemove = 0;
 function play() {
 
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
-    && !gameSceneTerminal.visible && !gameSceneLock.visible && !gameSceneToaster.visible
+   /* && !gameSceneTerminal.visible*/ && !gameSceneLock.visible && !gameSceneToaster.visible
     && !gameSceneFridge.visible && !gameSceneToasterComplete.visible && !gameSceneCoffeeComplete.visible) {
     g.move(cat);
     g.move(cat2);
@@ -534,20 +535,22 @@ function play() {
       }
       message4 = g.text(password_string, "30px sans-serif", "black", 140, 235);
       passwordDisplayExists = true;
-    } else if (!gameSceneTerminal.visible){
+    } 
+    
+    /*else if (!gameSceneTerminal.visible){
       gameSceneTerminal.visible = true; // TODO change this to real computer screen
       console.log("Pausing game....");
       g.pause();
 
       // console.log("??");
-    }
+    }*/
 
     // if (message4) {
     //   g.remove(message4);
     // }
     // message4 = g.text(password_string, "30px sans-serif", "black", 300, 300);
   }
-
+/*
   if (gameSceneTerminal.visible) {
     if (terminalDisplayExists) {
     //   for (var i = 0; i < terminal_archive.length; i++) {
@@ -574,7 +577,7 @@ function play() {
     // }
 
 
-  }
+  }*/
 
   //Display the edge of canvas that the cat hit
   if (catHitsEdges) {
@@ -616,7 +619,7 @@ function play() {
       gameSceneLockedScreen.visible = false;
     }
 
-    if (gameSceneTerminal.visible) {
+  /*  if (gameSceneTerminal.visible) {
       terminal_string = "";
       for (var i = 0; i < terminal_archive.length; i++) {
         g.remove(message5);
@@ -624,7 +627,7 @@ function play() {
       g.remove(message5);
       gameSceneTerminal.visible = false;
       terminalDisplayExists = false;
-    }
+    }*/
 
     if (gameSceneLock.visible) {
       g.remove(message10);
