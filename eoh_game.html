@@ -81,7 +81,7 @@ var hints = [
 //   "TODO",
 //   "TODO"
 // ];
-while(hints.length--) hint_has_been_viewed[hints.length] = false;
+//while(hints.length--) hint_has_been_viewed[hints.length] = false;
 var closeWindow = false;
 var password_string = " ";
 var password_incorrect_message_visible = false;
@@ -97,6 +97,7 @@ var computerUnlocked = false;
 var lockUnlocked = false;
 var terminal_archive = [];
 var cat, cat2, cat3, message;
+var coffeeBrewed = false;
 
 function logKey(e) {
 //  console.log(e.code);
@@ -294,7 +295,7 @@ var g = ga(700, 550, setup,
     "images/step2.png",
     "images/step2_left.png",
     "images/standing.png",
-    "images/coffee_blank_displayw_text.png",
+    "images/coffee_blank_display.png",
     "images/whiteboard_w_lock_clue.png",
     "images/bedroom.png",
     "images/locked_computer.png",
@@ -323,7 +324,7 @@ var music, coffee, toaster, lock, lock_fail, lock_open, computer;
 function setup() {
   forest = g.sprite("images/big-out-living.png");
   kitchen = g.sprite("images/new_new_kitchen.png");
-  coffee = g.sprite("images/coffee_blank_displayw_text.png")
+  coffee = g.sprite("images/coffee_blank_display.png")
   whiteboard = g.sprite("images/whiteboard_w_lock_clue.png");
   bedroom = g.sprite("images/bedroom.png");
   locked_screen = g.sprite("images/locked_computer.png");
@@ -537,14 +538,17 @@ function play() {
   var catHitsEdges = living_room_contains || kitchen_contains || bedroom_contains;
 
   if (gameSceneKitchen.visible && cat2.x > 470 && cat2.y < 230 && cat2.x < 570) {
-    gameSceneCoffee.visible = true;
+    if (!coffeeBrewed) {
+      gameSceneCoffee.visible = true;
+    }
+    
   }
 
   if (gameSceneKitchen.visible && cat2.x > 250 && cat2.x < 300 && cat2.y < 230) {
     if (!lockUnlocked) {
       gameSceneToaster.visible = true;
     } else {
-      gameSceneToasterComplete.visible = true;
+     // gameSceneToasterComplete.visible = true;
     }
   }
 
@@ -723,7 +727,7 @@ function play() {
     <p>Resources</p>
     <p><a href="guides/caesar_ciphers.pdf" target="_blank" rel="noopener noreferrer">On Caesar Ciphers</a></p>
     <p><a href="guides/number_systems_and_ascii.pdf" target="_blank" rel="noopener noreferrer">Number Systems and ASCII</a></p>
-    <p><a href="guides/sql.pdf" target="_blank" rel="noopener noreferrer">A Light Intro on SQL</a></p>
+    <p><a href="guides/cli.pdf" target="_blank" rel="noopener noreferrer">Navigating a Command-Line Interface</a></p>
   </div>
 
 
@@ -901,7 +905,9 @@ function play() {
                         output_text = "Error: not the expected request type.";
                     } else if (currRequestURL === "mycyba/brewer/brew") {
                         output_text = "STATUS: BREW REQUEST RECEIVED. WILL PROCEED TO FULFILL REQUEST.";
-                    } else if (currRequestURL === "mycyba/brewer/status") {
+                        coffeeBrewed = true;
+                        document.getElementById("makeCoffee").innerHTML = "[x] Make coffee";
+                      } else if (currRequestURL === "mycyba/brewer/status") {
                         output_text = "STATUS: OK, READY TO BREW";
                     } else {
                         output_text = "Error: valid request, but invalid URL.";
