@@ -574,7 +574,7 @@ function play() {
     if (fridge_is_locked) {
       gameSceneFridge.visible = true;
     } else {
-      gameSceneUnlockedFridge.visible = true;
+      //gameSceneUnlockedFridge.visible = true;
     }
   }
 
@@ -730,6 +730,8 @@ function play() {
     <p><a href="guides/cli.pdf" target="_blank" rel="noopener noreferrer">Navigating a Command-Line Interface</a></p>
   </div>
 
+  <br><br>
+
 
  <!--<div id="terminal-body">-->
     <div id="header">
@@ -812,6 +814,7 @@ function play() {
     }
 
     function updatePromptNewLine() {
+
         // push user input to terminal archive
         if (currently_in_executable) {
             terminal_archive.push(curr_executable_name + "> " + user_input);
@@ -859,7 +862,10 @@ function play() {
         var displayBrewRequestArr = false;
 
         // check for a possibly-valid command and produce the relevant output
-        if (currently_in_executable) {
+        if (!computerUnlocked) {
+          output_text = "Error: not logged in yet.";
+        }
+        else if (currently_in_executable) {
             if (command_to_process[1].toLowerCase() === "exit") {
                 currently_in_executable = false;
                 output_text = "Exiting current executable.";
