@@ -304,8 +304,8 @@ var g = ga(700, 550, setup,
     "images/combination_lock_with_numbers_on_cabinet_w_box1.png",
     "images/fridge_display_w_text.png",
     "images/fridge_display.png",
+    "images/toaster_task_complete.png",
     "images/coffee_task_complete_w_text.png",
-    "images/finished_toast.png",
     "sounds/suburban-neighborhood.wav",
     "sounds/liquid-pour.wav",
     "sounds/memories.mp3", // music from https://www.bensound.com/royalty-free-music/track/memories
@@ -333,7 +333,7 @@ function setup() {
   lock_on_cabinet_w_num = g.sprite("images/combination_lock_with_numbers_on_cabinet_w_box1.png");
   zoomed_fridge = g.sprite("images/fridge_display_w_text.png");
   unlocked_fridge = g.sprite("images/fridge_display.png");
-  zoomed_toaster_complete = g.sprite("images/finished_toast.png");
+  zoomed_toaster_complete = g.sprite("images/toaster_task_complete.png");
   zoomed_coffee_complete = g.sprite("images/coffee_task_complete_w_text.png");
 
 
@@ -414,7 +414,7 @@ function setup() {
   gameSceneToaster.visible = false;
   gameSceneFridge.visible = false;
   gameSceneUnlockedFridge.visible = false;
-  gameSceneToasterComplete.visible = true;
+  //gameSceneToasterComplete.visible = true;
   gameSceneToasterComplete.visible = false;
   gameSceneCoffeeComplete.visible = false;
 
