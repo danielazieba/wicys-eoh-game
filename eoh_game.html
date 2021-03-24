@@ -19,6 +19,8 @@
 </head>
 <body>
   <h2>Cybersecurity Breakfast Adventure</h2>
+<p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
+<br>
 <script src="ga.js"></script>
 <script src="plugins.js"></script>
 <script>
@@ -26,61 +28,67 @@
 document.addEventListener('keydown', logKey);
 var display_hint = false;
 var hint_index = 0;
-var hints = [
-  // unlock computer hints below
-  "Try unlocking the computer.",
-  "Go to the whiteboard to find clues for your password!",
-  "Take a look at the Caesar Cipher guide!",
-  "To decrypt Caesar Ciphers, you need to find the right amount of rotations made in the alphabet. How many lives does a cat have?",
-  "How well do 9 rotations work on the whiteboard text?",
-  "Try mapping A to J.",
-  // make toast hints below
-  "Go to the whiteboard to find the right number conversion for the lock.",
-  "Take a look at the Number Systems and ASCII guide!",
-  "The binary code given on the whiteboard translates to ‘hexadec’ in ASCII.",
-  "The lock combination is in hexadecimal form. The correct combination is in decimal form.",
-  // unlock fridge hints below
-  "Go to the computer to find where you can access your smart fridge.",
-  "Take a look at the A Light Intro on SQL guide and CLI guide!",
-  "User accounts are stored in a SQL table named users, with fields named username and password. How would you access these fields?",
-  "What would be a command that is always true?",
-  "Try the command ‘TODO’",
-  "Once you’re logged in, type “lock” to lock, and “unlock” to unlock your fridge.",
-  // brew coffee hints below
-  "Go to the computer to find where you can access your smart coffee brewer.",
-  "Take a look at the CLI guide!",
-  "TODO",
-  "TODO"
-];
-// Different hints lists for different puzzles
-// var unlock_computer_hints = [
+var separated_hints = [
+  [
+    // unlock computer hints below
+    "Try unlocking the computer.",
+    "Go to the whiteboard to find clues for your password!",
+    "Take a look at the Caesar Cipher guide!",
+    "To decrypt Caesar Ciphers, you need to find the right amount of rotations made in the alphabet. How many lives does a cat have?",
+    "How well do 9 rotations work on the whiteboard text?",
+    "Try mapping A to J."
+  ],
+  [
+    // make toast hints below
+    "Go to the whiteboard to find the right number conversion for the lock.",
+    "Take a look at the Number Systems and ASCII guide!",
+    "The binary code given on the whiteboard translates to ‘hexadec’ in ASCII.",
+    "The lock combination is in hexadecimal form. The correct combination is in decimal form."
+  ],
+  [
+    // unlock fridge hints below
+    "Go to the terminal to try to access your smart fridge.",
+    "Take a look at the A Light Intro on SQL guide and CLI guide!",
+    "User accounts are stored in a SQL table named users, with fields named username and password. How would you access these fields?",
+    "What would be a command that is always true?",
+    "Try the command ‘TODO’",
+    "Once you’re logged in, type “lock” to lock, and “unlock” to unlock your fridge."
+  ],
+  [
+    // brew coffee hints below
+    "Go to the terminal to try to access your smart coffee brewer.",
+    "Take a look at the CLI guide!",
+    "TODO",
+    "TODO"
+  ],
+]
+// var hints = [
+//   // unlock computer hints below
 //   "Try unlocking the computer.",
 //   "Go to the whiteboard to find clues for your password!",
 //   "Take a look at the Caesar Cipher guide!",
 //   "To decrypt Caesar Ciphers, you need to find the right amount of rotations made in the alphabet. How many lives does a cat have?",
 //   "How well do 9 rotations work on the whiteboard text?",
-//   "Try mapping A to J."
-// ];
-// var make_toast_hints = [
+//   "Try mapping A to J.",
+//   // make toast hints below
 //   "Go to the whiteboard to find the right number conversion for the lock.",
 //   "Take a look at the Number Systems and ASCII guide!",
 //   "The binary code given on the whiteboard translates to ‘hexadec’ in ASCII.",
-//   "The lock combination is in hexadecimal form. The correct combination is in decimal form."
-// ];
-// var unlock_fridge_hints = [
+//   "The lock combination is in hexadecimal form. The correct combination is in decimal form.",
+//   // unlock fridge hints below
 //   "Go to the computer to find where you can access your smart fridge.",
 //   "Take a look at the A Light Intro on SQL guide and CLI guide!",
 //   "User accounts are stored in a SQL table named users, with fields named username and password. How would you access these fields?",
 //   "What would be a command that is always true?",
 //   "Try the command ‘TODO’",
-//   "Once you’re logged in, type “lock” to lock, and “unlock” to unlock your fridge."
-// ];
-// var brew_coffee_hints = [
+//   "Once you’re logged in, type “lock” to lock, and “unlock” to unlock your fridge.",
+//   // brew coffee hints below
 //   "Go to the computer to find where you can access your smart coffee brewer.",
 //   "Take a look at the CLI guide!",
 //   "TODO",
 //   "TODO"
 // ];
+
 //while(hints.length--) hint_has_been_viewed[hints.length] = false;
 var closeWindow = false;
 var password_string = " ";
@@ -99,6 +107,8 @@ var terminal_archive = [];
 var cat, cat2, cat3, message;
 var coffeeBrewed = false;
 
+var hint_str = "";
+var toggle_index = 0;
 function logKey(e) {
 //  console.log(e.code);
   // if (e.code === "Slash") {
@@ -126,11 +136,29 @@ function logKey(e) {
   }
 
   if (e.code === "Slash") {
-    if (document.getElementById("hintsText").innerHTML === hints[hint_index]) {
-      document.getElementById("hintsText").innerHTML = "Press ? to toggle hint!";
-    } else {
-      document.getElementById("hintsText").innerHTML = hints[hint_index];
+    // var computerUnlocked = false;
+    // var lockUnlocked = false;
+    // fridge_is_locked
+    // var coffeeBrewed = false;
+    if (!computerUnlocked && toggle_index < separated_hints[0].length) {
+      hint_str = separated_hints[0][toggle_index] + "<br>" + hint_str;
+      document.getElementById("hintsList").innerHTML = hint_str;
+    } else if (!lockUnlocked && toggle_index < separated_hints[1].length){
+      hint_str = separated_hints[1][toggle_index] + "<br>" + hint_str;
+      document.getElementById("hintsList").innerHTML = hint_str;
+    } else if (fridge_is_locked && toggle_index < separated_hints[2].length) {
+      hint_str = separated_hints[2][toggle_index] + "<br>" + hint_str;
+      document.getElementById("hintsList").innerHTML = hint_str;
+    } else if (!coffeeBrewed && toggle_index < separated_hints[3].length) {
+      hint_str = separated_hints[3][toggle_index] + "<br>" + hint_str;
+      document.getElementById("hintsList").innerHTML = hint_str;
     }
+    toggle_index++;
+    // if (document.getElementById("hintsText").innerHTML === hints[hint_index]) {
+    //   document.getElementById("hintsText").innerHTML = "Press ? to toggle hint!";
+    // } else {
+    //   document.getElementById("hintsText").innerHTML = hints[hint_index];
+    // }
   }
 
   if (gameSceneLockedScreen.visible) {
@@ -253,6 +281,8 @@ function check_password_correctness() {
       closeWindow = true;
       console.log("Password correct!");
       computerUnlocked = true;
+      toggle_index = 0;
+      hint_str = "";
       document.getElementById("unlockComputer").innerHTML = "[x] Unlock the computer";
     } else {
       if (!password_incorrect_message_visible) {
@@ -269,6 +299,8 @@ function check_password_correctness() {
       closeWindow = true;
       console.log("Combo correct!");
       lockUnlocked = true;
+      toggle_index = 0;
+      hint_str = "";
       document.getElementById("makeToast").innerHTML = "[x] Make toast";
       lock_open.play();
       // remove text and show completed task
@@ -715,6 +747,9 @@ function play() {
 </script>
 <!--Add hints or description to bottom-->
   <p id="hintsText">Hints: press ? to toggle!</p>
+  <br>
+  <p id="hintsList"></p>
+  <br>
   <div id="tastList">
     <p>Remaining tasks:</p>
     <p id="unlockComputer">- Unlock the computer</p>
@@ -722,7 +757,7 @@ function play() {
     <p id="openFridge">- Open the fridge</p>
     <p id="makeCoffee">- Make coffee</p>
   </div>
-  <p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
+  <br>
   <div id="resources">
     <p>Resources</p>
     <p><a href="guides/caesar_ciphers.pdf" target="_blank" rel="noopener noreferrer">On Caesar Ciphers</a></p>
@@ -912,6 +947,8 @@ function play() {
                     } else if (currRequestURL === "mycyba/brewer/brew") {
                         output_text = "STATUS: BREW REQUEST RECEIVED. WILL PROCEED TO FULFILL REQUEST.";
                         coffeeBrewed = true;
+                        toggle_index = 0;
+                        hint_str = "";
                         document.getElementById("makeCoffee").innerHTML = "[x] Make coffee";
                       } else if (currRequestURL === "mycyba/brewer/status") {
                         output_text = "STATUS: OK, READY TO BREW";
@@ -943,6 +980,8 @@ function play() {
                         if (fridge_is_locked) {
                             output_text = "Fridge unlocked!";
                             fridge_is_locked = false;
+                            toggle_index = 0;
+                            hint_str = "";
                             document.getElementById("openFridge").innerHTML = "[x] Open the fridge";
                             //TODO: set a game flag for puzzle being solved.
                         } else {
