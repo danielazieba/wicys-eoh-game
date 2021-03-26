@@ -513,6 +513,10 @@ var numRemove = 0;
 
 //The `play` function will run in a loop
 function play() {
+  if (computerUnlocked && lockUnlocked && coffeeBrewed && !fridge_is_locked) {
+    console.log("GAME COMPLETE!")
+    window.location.href = "eoh_game_complete.html";
+  }
 
   if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
    /* && !gameSceneTerminal.visible*/ && !gameSceneLock.visible && !gameSceneToaster.visible
