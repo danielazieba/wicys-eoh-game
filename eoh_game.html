@@ -115,6 +115,7 @@ var coffeeBrewed = false;
 
 var hint_str = "";
 var toggle_index = 0;
+var test_string = ""; 
 function logKey(e) {
 //  console.log(e.code);
   // if (e.code === "Slash") {
@@ -123,6 +124,8 @@ function logKey(e) {
   //     hint_index++;
   //   }
   // }
+  
+
   if (e.code === "Escape") {
     if (gameSceneCoffee.visible || gameSceneWhiteboard.visible || gameSceneLockedScreen.visible
     /*|| gameSceneTerminal.visible*/ || gameSceneLock.visible || gameSceneToaster.visible
@@ -173,6 +176,7 @@ function logKey(e) {
 
       //password_string += e.code[3];
       password_string += String.fromCharCode(e.which);
+      document.getElementById("testParagraphCanvas").innerText = password_string;
     }
 
     if (e.code === "Enter") {
@@ -191,6 +195,7 @@ function logKey(e) {
         password_string = " ";
       } else {
         password_string = password_string.substring(0, password_string.length-1);
+        document.getElementById("testParagraphCanvas").innerText = password_string;
       }
     }
   }
@@ -282,6 +287,7 @@ function check_password_correctness() {
     if (password_string === " DELILAH") {
       closeWindow = true;
       console.log("Password correct!");
+      document.getElementById("testParagraphCanvas").innerText = "";
       computerUnlocked = true;
       toggle_index = 0;
       hint_str = "";
@@ -507,7 +513,9 @@ function setup() {
 }
 
 var passwordDisplayExists = false;
+var toasterDisplayExists = false;
 var terminalDisplayExists = false;
+var lockDisplayExists = false;
 var comboDisplayExists = false;
 var numRemove = 0;
 
@@ -583,15 +591,19 @@ function play() {
   }
 
   if (gameSceneKitchen.visible && cat2.x > 250 && cat2.x < 300 && cat2.y < 230) {
-    if (!lockUnlocked) {
+    if (!lockUnlocked && !toasterDisplayExists) {
+      gameSceneKitchen.visible = false;
       gameSceneToaster.visible = true;
+      console.log("jkdshsdkjfhd");
+      toasterDisplayExists = true;
     } else {
      // gameSceneToasterComplete.visible = true;
     }
   }
 
   if (gameSceneKitchen.visible && cat2.x > 20 && cat2.x < 90 && cat2.y < 250) {
-    if (!lockUnlocked) {
+    if (!lockUnlocked && !lockDisplayExists) {
+      lockDisplayExists = true;
       gameSceneLock.visible = true; // if combo is unlocked, doesn't zoom into cabinet to show lock
       if (comboDisplayExists) {
         g.remove(message10);
@@ -627,9 +639,9 @@ function play() {
     if (!computerUnlocked) {
       gameSceneLockedScreen.visible = true;
       if (passwordDisplayExists) {
-        g.remove(message4);
+  //      g.remove(message4);
       }
-      message4 = g.text(password_string, "30px sans-serif", "black", 140, 235);
+ //     message4 = g.text(password_string, "30px sans-serif", "black", 140, 235);
       passwordDisplayExists = true;
     } 
     
@@ -719,7 +731,8 @@ function play() {
     }
     if (gameSceneLockedScreen.visible) {
       password_string = " ";
-      g.remove(message4);
+      document.getElementById("testParagraphCanvas").innerText = "";
+    //  g.remove(message4);
       gameSceneLockedScreen.visible = false;
     }
 
@@ -734,20 +747,29 @@ function play() {
     }*/
 
     if (gameSceneLock.visible) {
+      gameSceneKitchen.visible = true;
+      lockDisplayExists = false;
+      console.log("Closing lock screen");
       g.remove(message10);
       g.remove(message8);
       gameSceneLock.visible = false;
       combo_string = " ";
     }
 
-    gameSceneToaster.visible = false;
-    gameSceneLock.visible = false;
+//    gameSceneToaster.visible = false;
+ //   gameSceneLock.visible = false;
     gameSceneFridge.visible = false;
     gameSceneCoffee.visible = false;
     gameSceneWhiteboard.visible = false;
     gameSceneUnlockedFridge.visible = false;
     gameSceneCoffeeComplete.visible = false;
-    gameSceneToasterComplete.visible = false;
+    if (gameSceneToaster.visible === true) {
+      gameSceneToaster.visible = false;
+      gameSceneKitchen.visible = true;
+      toasterDisplayExists = false;
+      console.log("Updating this");
+    }
+
   //  gameSceneLockedScreen.visible = false;
     //gameSceneTerminal.visible = false;
 
@@ -778,6 +800,8 @@ function play() {
     <p><a href="guides/number_systems_and_ascii.pdf" target="_blank" rel="noopener noreferrer">Number Systems and ASCII</a></p>
     <p><a href="guides/cli.pdf" target="_blank" rel="noopener noreferrer">Navigating a Command-Line Interface</a></p>
   </div>
+
+  <p id="testParagraphCanvas"></p>
 
   <br><br>
 

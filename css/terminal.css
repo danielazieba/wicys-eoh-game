@@ -11,6 +11,14 @@ p {
     min-height: 400px;
 }*/
 
+#testParagraphCanvas {
+  position: absolute !important;
+  left: 35% !important;
+  top: 444px !important;
+  font-size: 30px;
+  color: black;
+}
+
 .terminalLine {
   display: flex;
   align-items: baseline;
