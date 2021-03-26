@@ -64,7 +64,7 @@ var separated_hints = [
     "Run 'lineDolphin.exe' to capture network traffic.",
     "Type 'capture' to see what GET request looks like!",
     "Run 'coffeeRequestSender.exe' to send a request to the coffee machine.",
-    "To check the status, use the URL 'mycyba/brewer/status'.",
+    "To check the status, use the URL 'mycyba/brewer/status'. You can also brew coffee using a VERY similar URL.",
     "The host address is 'mycyba', port number is '5000', request type is 'GET', and URL is 'mycyba/brewer/brew'."
   ],
 ]
@@ -254,6 +254,7 @@ function logKey(e) {
 
       combo_string += String.fromCharCode(e.which);
       lock.play();
+      document.getElementById("comboUserInput").innerText = combo_string;
     }
 
     if (e.code === "Enter") {
@@ -276,6 +277,8 @@ function logKey(e) {
           combo_string = combo_string.substring(0, combo_string.length-1);
         }
         combo_string = combo_string.substring(0, combo_string.length-1);
+
+        document.getElementById("comboUserInput").innerText = combo_string;
       }
     }
   }
@@ -312,8 +315,8 @@ function check_password_correctness() {
       document.getElementById("makeToast").innerHTML = "[x] Make toast";
       lock_open.play();
       // remove text and show completed task
-      g.remove(message10);
-      g.remove(message8);
+ //     g.remove(message10);
+ //     g.remove(message8);
     } else {
       if (!combo_incorrect_message_visible) {
         var combo_incorect_string = "Combo incorrect. Please try again.";
@@ -606,16 +609,17 @@ function play() {
       lockDisplayExists = true;
       gameSceneLock.visible = true; // if combo is unlocked, doesn't zoom into cabinet to show lock
       if (comboDisplayExists) {
-        g.remove(message10);
-        g.remove(message8);
+ //       g.remove(message10);
+ //       g.remove(message8);
       }
 
       // always display combo given
-      var combo_given = "56 25 31";
-      message10 = g.text(combo_given, "30px sans-serif", "black", 15, 15);
+ //     var combo_given = "56 25 31";
+ //     message10 = g.text(combo_given, "30px sans-serif", "black", 15, 15);
+      document.getElementById("comboHint").innerText = "56 25 31";
 
       // user combo input
-      message8 = g.text(combo_string, "30px sans-serif", "black", 275, 420);
+ //     message8 = g.text(combo_string, "30px sans-serif", "black", 275, 420);
       comboDisplayExists = true;
     }
   }
@@ -750,10 +754,12 @@ function play() {
       gameSceneKitchen.visible = true;
       lockDisplayExists = false;
       console.log("Closing lock screen");
-      g.remove(message10);
-      g.remove(message8);
+      //g.remove(message10);
+   //   g.remove(message8);
       gameSceneLock.visible = false;
       combo_string = " ";
+      document.getElementById("comboHint").innerText = "";
+      document.getElementById("comboUserInput").innerText = combo_string;
     }
 
 //    gameSceneToaster.visible = false;
@@ -802,6 +808,8 @@ function play() {
   </div>
 
   <p id="testParagraphCanvas"></p>
+  <p id="comboHint"></p>
+  <p id="comboUserInput"></p>
 
   <br><br>
 
