@@ -700,6 +700,14 @@ function play() {
       }
   }
 
+  if (coffeeBrewed) {
+    gameSceneCoffee.visible = false;
+  }
+
+  if (!fridge_is_locked) {
+    gameSceneFridge.visible = false;
+  }
+
   if (closeWindow) {
     console.log("Closing window!");
     if (gameSceneLockedScreen.visible && hint_index === 0) {
