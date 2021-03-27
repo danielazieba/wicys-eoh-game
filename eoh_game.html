@@ -184,7 +184,7 @@ function logKey(e) {
     }
 
     if (e.code === "Enter") {
-      console.log("Checking correctness of password...");
+      // console.log("Checking correctness of password...");
       check_password_correctness();
     }
     // add being able to delete a character as a quality of life update
@@ -271,7 +271,7 @@ function logKey(e) {
 
     if (e.code === "Enter") {
 
-      console.log("Checking correctness of password...");
+      // console.log("Checking correctness of password...");
       check_password_correctness();
     }
 
@@ -305,7 +305,7 @@ function check_password_correctness() {
   if (!computerUnlocked && gameSceneLockedScreen.visible) {
     if (password_string === " DELILAH") {
       closeWindow = true;
-      console.log("Password correct!");
+      // console.log("Password correct!");
       password_element = document.getElementById("testParagraphCanvas");
       password_element.innerText = password_string;
       new_x_y = getPixelOffsetsPasswordInput();
@@ -328,7 +328,7 @@ function check_password_correctness() {
     // TODO: EDIT THE CODE IN THIS CONDITIONAL TO FIT WITH COMBO PUZZLE
     if (combo_string === " 86 37 49") {
       closeWindow = true;
-      console.log("Combo correct!");
+      // console.log("Combo correct!");
       lockUnlocked = true;
       toggle_index = 0;
       hint_str = "";
@@ -545,7 +545,7 @@ var numRemove = 0;
 //The `play` function will run in a loop
 function play() {
   if (computerUnlocked && lockUnlocked && coffeeBrewed && !fridge_is_locked) {
-    console.log("GAME COMPLETE!")
+    // console.log("GAME COMPLETE!")
     window.location.href = "eoh_game_complete.html";
   }
 
@@ -617,7 +617,7 @@ function play() {
     if (!lockUnlocked && !toasterDisplayExists) {
       gameSceneKitchen.visible = false;
       gameSceneToaster.visible = true;
-      console.log("jkdshsdkjfhd");
+      // console.log("jkdshsdkjfhd");
       toasterDisplayExists = true;
     } else {
      // gameSceneToasterComplete.visible = true;
@@ -753,7 +753,7 @@ function play() {
   }
 
   if (closeWindow) {
-    console.log("Closing window!");
+    // console.log("Closing window!");
     if (gameSceneLockedScreen.visible && hint_index === 0) {
       hint_index++;
     }
@@ -781,7 +781,7 @@ function play() {
     if (gameSceneLock.visible) {
       gameSceneKitchen.visible = true;
       lockDisplayExists = false;
-      console.log("Closing lock screen");
+      // console.log("Closing lock screen");
       //g.remove(message10);
    //   g.remove(message8);
       gameSceneLock.visible = false;
@@ -805,7 +805,7 @@ function play() {
       gameSceneToaster.visible = false;
       gameSceneKitchen.visible = true;
       toasterDisplayExists = false;
-      console.log("Updating this");
+      // console.log("Updating this");
     }
 
   //  gameSceneLockedScreen.visible = false;
@@ -907,7 +907,7 @@ function play() {
 
     function getCanvasLocation() {
       possibleCanvas = document.getElementsByTagName("canvas");
-      console.log(possibleCanvas);
+      // console.log(possibleCanvas);
       if (!possibleCanvas.length) {
         return {};
       }
@@ -917,7 +917,7 @@ function play() {
 
     function getPixelOffsetsPasswordInput () {
       canvasData = getCanvasLocation();
-      console.log(canvasData);
+      // console.log(canvasData);
 
       x = 150 + canvasData.left;
       y = 240 + canvasData.top;
@@ -926,7 +926,7 @@ function play() {
 
     function getPixelOffsetsComboHint () {
       canvasData = getCanvasLocation();
-      console.log(canvasData);
+      // console.log(canvasData);
 
       x = 10 + canvasData.left;
       y = 10 + canvasData.top;
@@ -935,7 +935,7 @@ function play() {
 
     function getPixelOffsetsComboInput () {
       canvasData = getCanvasLocation();
-      console.log(canvasData);
+      // console.log(canvasData);
 
       x = 283 + canvasData.left;
       y = 419 + canvasData.top;
@@ -1032,11 +1032,11 @@ function play() {
                     output_text = "Error: invalid command.";
                 }
             } else if (curr_executable_name === "coffeeRequestSender.exe") {
-                console.log(currCoffeeState);
+                // console.log(currCoffeeState);
                 if (command_to_process[1].toLowerCase() === "start" && currCoffeeState === "") {
                     output_text = "What host would you like to send a request to?";
                     currCoffeeState = "port";
-                    console.log(currCoffeeState);
+                    // console.log(currCoffeeState);
                 }
                 else if (currCoffeeState === "port") {
                     currHostName = command_to_process[1].toLowerCase();
