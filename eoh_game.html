@@ -176,7 +176,11 @@ function logKey(e) {
 
       //password_string += e.code[3];
       password_string += String.fromCharCode(e.which);
-      document.getElementById("testParagraphCanvas").innerText = password_string;
+      password_element = document.getElementById("testParagraphCanvas");
+      password_element.innerText = password_string;
+      new_x_y = getPixelOffsetsPasswordInput();
+      password_element.style.left = new_x_y[0].toString() + "px"; 
+      password_element.style.top = new_x_y[1].toString() + "px"; 
     }
 
     if (e.code === "Enter") {
@@ -195,7 +199,11 @@ function logKey(e) {
         password_string = " ";
       } else {
         password_string = password_string.substring(0, password_string.length-1);
-        document.getElementById("testParagraphCanvas").innerText = password_string;
+        password_element = document.getElementById("testParagraphCanvas");
+        password_element.innerText = password_string;
+        new_x_y = getPixelOffsetsPasswordInput();
+        password_element.style.left = new_x_y[0].toString() + "px"; 
+        password_element.style.top = new_x_y[1].toString() + "px"; 
       }
     }
   }
@@ -254,7 +262,11 @@ function logKey(e) {
 
       combo_string += String.fromCharCode(e.which);
       lock.play();
-      document.getElementById("comboUserInput").innerText = combo_string;
+      combo_input_element = document.getElementById("comboUserInput");
+      combo_input_element.innerText = combo_string;
+      new_x_y = getPixelOffsetsComboInput();
+      combo_input_element.style.left = new_x_y[0].toString() + "px"; 
+      combo_input_element.style.top = new_x_y[1].toString() + "px"; 
     }
 
     if (e.code === "Enter") {
@@ -278,7 +290,11 @@ function logKey(e) {
         }
         combo_string = combo_string.substring(0, combo_string.length-1);
 
-        document.getElementById("comboUserInput").innerText = combo_string;
+        combo_input_element = document.getElementById("comboUserInput");
+        combo_input_element.innerText = combo_string;
+        new_x_y = getPixelOffsetsComboInput();
+        combo_input_element.style.left = new_x_y[0].toString() + "px"; 
+        combo_input_element.style.top = new_x_y[1].toString() + "px";
       }
     }
   }
@@ -290,7 +306,11 @@ function check_password_correctness() {
     if (password_string === " DELILAH") {
       closeWindow = true;
       console.log("Password correct!");
-      document.getElementById("testParagraphCanvas").innerText = "";
+      password_element = document.getElementById("testParagraphCanvas");
+      password_element.innerText = password_string;
+      new_x_y = getPixelOffsetsPasswordInput();
+      password_element.style.left = new_x_y[0].toString() + "px"; 
+      password_element.style.top = new_x_y[1].toString() + "px"; 
       computerUnlocked = true;
       toggle_index = 0;
       hint_str = "";
@@ -616,7 +636,11 @@ function play() {
       // always display combo given
  //     var combo_given = "56 25 31";
  //     message10 = g.text(combo_given, "30px sans-serif", "black", 15, 15);
-      document.getElementById("comboHint").innerText = "56 25 31";
+      combo_hint = document.getElementById("comboHint");
+      combo_hint.innerText = "56 25 31";
+      new_x_y = getPixelOffsetsComboHint();
+      combo_hint.style.left = new_x_y[0].toString() + "px"; 
+      combo_hint.style.top = new_x_y[1].toString() + "px";
 
       // user combo input
  //     message8 = g.text(combo_string, "30px sans-serif", "black", 275, 420);
@@ -735,7 +759,11 @@ function play() {
     }
     if (gameSceneLockedScreen.visible) {
       password_string = " ";
-      document.getElementById("testParagraphCanvas").innerText = "";
+      password_element = document.getElementById("testParagraphCanvas");
+      password_element.innerText = password_string;
+      new_x_y = getPixelOffsetsPasswordInput();
+      password_element.style.left = new_x_y[0].toString() + "px"; 
+      password_element.style.top = new_x_y[1].toString() + "px"; 
     //  g.remove(message4);
       gameSceneLockedScreen.visible = false;
     }
@@ -759,7 +787,11 @@ function play() {
       gameSceneLock.visible = false;
       combo_string = " ";
       document.getElementById("comboHint").innerText = "";
-      document.getElementById("comboUserInput").innerText = combo_string;
+      combo_input_element = document.getElementById("comboUserInput");
+      combo_input_element.innerText = combo_string;
+      new_x_y = getPixelOffsetsComboInput();
+      combo_input_element.style.left = new_x_y[0].toString() + "px"; 
+      combo_input_element.style.top = new_x_y[1].toString() + "px";
     }
 
 //    gameSceneToaster.visible = false;
@@ -872,6 +904,43 @@ function play() {
     document.getElementById("terminalPrompt0").innerHTML =  curr_directory + "$ " + user_input;
 
     document.addEventListener('keydown', logKey);
+
+    function getCanvasLocation() {
+      possibleCanvas = document.getElementsByTagName("canvas");
+      console.log(possibleCanvas);
+      if (!possibleCanvas.length) {
+        return {};
+      }
+
+      return possibleCanvas[0].getBoundingClientRect();
+    }
+
+    function getPixelOffsetsPasswordInput () {
+      canvasData = getCanvasLocation();
+      console.log(canvasData);
+
+      x = 150 + canvasData.left;
+      y = 240 + canvasData.top;
+      return [x, y];
+    }
+
+    function getPixelOffsetsComboHint () {
+      canvasData = getCanvasLocation();
+      console.log(canvasData);
+
+      x = 10 + canvasData.left;
+      y = 10 + canvasData.top;
+      return [x, y];
+    }
+
+    function getPixelOffsetsComboInput () {
+      canvasData = getCanvasLocation();
+      console.log(canvasData);
+
+      x = 283 + canvasData.left;
+      y = 419 + canvasData.top;
+      return [x, y];
+    }
 
     function logKey(e) {
         if (e.code === "Enter") {
