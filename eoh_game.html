@@ -762,7 +762,10 @@ function play() {
                   e.code === "ArrowRight" || 
                   e.code === "ArrowLeft" ||
                   e.code === "ArrowUp" ||
-                  e.code === "ArrowDown") {
+                  e.code === "ArrowDown" ||
+                  e.code === "Escape" ||
+                  e.code === "CapsLock" ||
+                  e.code === "Tab") {
             // do nothing
         } else if (e.code === "Backspace") {
             if (user_input.length) {
