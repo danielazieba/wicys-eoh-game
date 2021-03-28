@@ -560,30 +560,60 @@ function play() {
 
   //Display the edge of canvas that the cat hit
   if (catHitsEdges) {
-      var needs_centering = false;
+      var spawn_in_kitchen = false;
+      var spawn_in_living_room_from_kitchen = false;
+      var spawn_in_living_room_from_bedroom = false;
+      var spawn_in_bedroom = false;
 
       if (gameScene.visible && (living_room_contains === "top" || kitchen_contains === "top" || bedroom_contains === "top")) {
         gameScene.visible = false;
         gameSceneKitchen.visible = true;
-        needs_centering = true;
+        spawn_in_kitchen = true;
       } else if (gameScene.visible && (living_room_contains === "right" || kitchen_contains === "right" || bedroom_contains === "right")) {
         gameScene.visible = false;
         gameSceneBedroom.visible = true;
-        needs_centering = true;
+        spawn_in_bedroom = true;
       } else if (gameSceneKitchen.visible && (living_room_contains === "bottom" || kitchen_contains === "bottom" || bedroom_contains === "bottom")) {
         gameScene.visible = true;
         gameSceneKitchen.visible = false;
-        needs_centering = true;
+        spawn_in_living_room_from_kitchen = true;
       } else if (gameSceneBedroom.visible && (living_room_contains === "left" || kitchen_contains === "left" || bedroom_contains === "left")) {
         gameScene.visible = true;
         gameSceneBedroom.visible = false;
-        needs_centering = true;
+        spawn_in_living_room_from_bedroom = true;
       }
 
-      if (needs_centering) {
-        g.stage.putCenter(cat);
-        g.stage.putCenter(cat2);
-        g.stage.putCenter(cat3);
+      if (spawn_in_living_room_from_bedroom) {
+        cat.x = 636;
+        cat.y = 125;
+        cat2.x = 636;
+        cat2.y = 125;
+        cat3.x = 636;
+        cat3.y = 125;
+      }
+      if (spawn_in_living_room_from_kitchen) {
+        cat.x = 548;
+        cat.y = 5;
+        cat2.x = 548;
+        cat2.y = 5;
+        cat3.x = 548;
+        cat3.y = 5;
+      }
+      if (spawn_in_kitchen) {
+        cat.x = 332;
+        cat.y = 435;
+        cat2.x = 332;
+        cat2.y = 435;
+        cat3.x = 332;
+        cat3.y = 435;
+      }
+      if (spawn_in_bedroom) {
+        cat.x = 1;
+        cat.y = 165;
+        cat2.x = 1;
+        cat2.y = 165;
+        cat3.x = 1;
+        cat3.y = 165;
       }
   }
 
