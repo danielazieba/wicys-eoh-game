@@ -800,7 +800,10 @@ function play() {
                   e.code === "ArrowDown" ||
                   e.code === "Escape" ||
                   e.code === "CapsLock" ||
-                  e.code === "Tab") {
+                  e.code === "Tab" ||
+                  e.key === "Alt" || 
+                  e.key === "Meta" ||
+                  e.key === "Control") {
             // do nothing
         } else if (e.code === "Backspace") {
             if (user_input.length) {
