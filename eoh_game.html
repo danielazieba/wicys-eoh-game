@@ -332,9 +332,9 @@ function setup() {
   };
 
   //Center the cat
-  g.stage.putCenter(cat);
-  g.stage.putCenter(cat2);
-  g.stage.putCenter(cat3);
+  g.stage.putCenter(cat, 237, 32);  // second and third parameters are the x and y offset values, respectively
+  g.stage.putCenter(cat2, 237, 32);
+  g.stage.putCenter(cat3, 237, 32);
 
   // THIS STARTS CAT'S ANIMATION
   cat.fps = 5;
@@ -366,10 +366,10 @@ function setup() {
   gameSceneToasterComplete = g.group(zoomed_toaster_complete);
   gameSceneCoffeeComplete = g.group(zoomed_coffee_complete);
 
-  gameScene.visible = true;
+  gameScene.visible = false;
   gameSceneKitchen.visible = false;
   gameSceneCoffee.visible = false;
-  gameSceneBedroom.visible = false;
+  gameSceneBedroom.visible = true;
   gameSceneWhiteboard.visible = false;
   gameSceneLockedScreen.visible = false;
   gameSceneLock.visible = false;
@@ -438,6 +438,8 @@ var numRemove = 0;
 
 //The `play` function will run in a loop
 function play() {
+  console.log(cat.x + " " + cat.y)
+
   if (computerUnlocked && lockUnlocked && coffeeBrewed && !fridge_is_locked) {
     window.location.href = "eoh_game_complete.html";
   }
