@@ -273,6 +273,8 @@ var g = ga(700, 550, setup,
     "images/fridge_display.png",
     "images/toaster_task_complete.png",
     "images/coffee_task_complete_w_text.png",
+    "images/eceb.png",
+    "images/ecebtext.png",
     "sounds/suburban-neighborhood.wav",
     "sounds/liquid-pour.wav",
     "sounds/memories.mp3", // music from https://www.bensound.com/royalty-free-music/track/memories
@@ -309,6 +311,11 @@ function setup() {
     "images/standing.png",
     "images/step1_left.png",
     "images/step2_left.png"
+  ];
+
+  var ecebFrames = [
+    "images/eceb.png",
+    "images/ecebtext.png"
   ];
 
   var walkCycle = [1, 2];
@@ -353,6 +360,19 @@ function setup() {
   g.fourKeyController(cat2, 2, 38, 39, 40, 37);
   g.fourKeyController(cat3, 2, 38, 39, 40, 37);
 
+  eceb = g.sprite(ecebFrames);
+  eceb.states = {
+    toggle: [0, 1]
+  };
+
+  g.stage.putCenter(eceb, 0, 0);
+  eceb.fps = 2;
+  eceb.playSequence(eceb.states.toggle);
+  eceb.loop = true;
+  gameSceneStart = g.group(eceb);
+  console.log(eceb);
+  console.log(gameSceneStart);
+
   gameScene = g.group(forest, cat);
   gameSceneKitchen = g.group(kitchen, cat2);
   gameSceneBedroom = g.group(bedroom, cat3);
@@ -378,6 +398,8 @@ function setup() {
   gameSceneUnlockedFridge.visible = false;
   gameSceneToasterComplete.visible = false;
   gameSceneCoffeeComplete.visible = false;
+
+  gameSceneStart.visible = true;
 
   leftArrow = g.keyboard(37);
   upArrow = g.keyboard(38);
@@ -438,7 +460,6 @@ var numRemove = 0;
 
 //The `play` function will run in a loop
 function play() {
-  console.log(cat.x + " " + cat.y)
 
   if (computerUnlocked && lockUnlocked && coffeeBrewed && !fridge_is_locked) {
     window.location.href = "eoh_game_complete.html";
