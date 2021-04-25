@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset = "utf-8" name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cybersecurity Breakfast Adventure</title>
+<style>
+body {
+  background-color: black;
+  text-align: center;
+  color: white;
+  font-family: courier;
+}
+
+a
+{
+  color: rgb(123, 213, 255);
+}
+
+/* this part of the code makes the canvas only show at the top of the page--cannot position it */
+/* canvas {
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+} */
+</style>
+<!-- <link rel="stylesheet" href="css/alt.css"> -->
+</head>
+  <h2>Cybersecurity Breakfast Adventure</h2>
+  <h3>*For the best user experience, please use Mozilla Firefox. The game has experienced some issues in Google Chrome and Safari. If you ever have problems of the character getting stuck in place or the screen going black, please refresh the page. Note that your current progress in the game will be lost when the page is refreshed.*</h3>
+<p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
+<canvas id="myCanvas" width="700" height="500" style="border:1px solid #d3d3d3; background-color: #f1f1f1;"></canvas>
+<!-- <script src="plugins.js"></script> -->
+<br>
+<body onload="startGame()">
+  
+<script>
+
+function startGame() {
+    myGameArea.start();
+}
+
+var myGameArea = {
+    myCanvas : document.createElement("myCanvas"),
+    start : function() {
+        // this.myCanvas.width = 700;
+        // this.myCanvas.height = 500;
+        this.context = this.myCanvas.getContext("2d");
+        document.body.insertBefore(this.myCanvas, document.body.childNodes[0]);
+    }
+}
+
+</script>
+
+<p>We have created a game area! (or at least an empty canvas)</p>
+
+<!--Add hints or description to bottom-->
+  <p id="hintsText">Hints: press ? to get a new hint!</p>
+  <br>
+  <p id="hintsList"></p>
+  <br>
+  <div id="tastList">
+    <p>Remaining tasks:</p>
+    <p id="unlockComputer">- Unlock the computer &#128187</p>
+    <p id="makeToast">- Make toast &#127838 </p>
+    <p id="openFridge">- Open the fridge &#127859</p>
+    <p id="makeCoffee">- Make coffee &#9749</p>
+  </div>
+  <br>
+  <div id="resources">
+    <p>Resources</p>
+    <p><a href="guides/caesar_ciphers.pdf" target="_blank" rel="noopener noreferrer">On Caesar Ciphers</a></p>
+    <p><a href="guides/number_systems_and_ascii.pdf" target="_blank" rel="noopener noreferrer">Number Systems and ASCII</a></p>
+    <p><a href="guides/cli.pdf" target="_blank" rel="noopener noreferrer">Navigating a Command-Line Interface</a></p>
+  </div>
+
+</body>
+</html>
