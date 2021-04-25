@@ -589,21 +589,29 @@ function play() {
       var spawn_in_bedroom = false;
 
       if (gameScene.visible && (living_room_contains === "top" || kitchen_contains === "top" || bedroom_contains === "top")) {
-        gameScene.visible = false;
-        gameSceneKitchen.visible = true;
-        spawn_in_kitchen = true;
+        if (cat.x > 513 && cat.x < 585) {
+          gameScene.visible = false;
+          gameSceneKitchen.visible = true;
+          spawn_in_kitchen = true;
+        }
       } else if (gameScene.visible && (living_room_contains === "right" || kitchen_contains === "right" || bedroom_contains === "right")) {
-        gameScene.visible = false;
-        gameSceneBedroom.visible = true;
-        spawn_in_bedroom = true;
+        if (cat.y > 105 && cat.y < 150) {
+          gameScene.visible = false;
+          gameSceneBedroom.visible = true;
+          spawn_in_bedroom = true;
+        }
       } else if (gameSceneKitchen.visible && (living_room_contains === "bottom" || kitchen_contains === "bottom" || bedroom_contains === "bottom")) {
-        gameScene.visible = true;
-        gameSceneKitchen.visible = false;
-        spawn_in_living_room_from_kitchen = true;
+        if (cat2.x > 280 && cat2.x < 380) {
+          gameScene.visible = true;
+          gameSceneKitchen.visible = false;
+          spawn_in_living_room_from_kitchen = true;
+        }
       } else if (gameSceneBedroom.visible && (living_room_contains === "left" || kitchen_contains === "left" || bedroom_contains === "left")) {
-        gameScene.visible = true;
-        gameSceneBedroom.visible = false;
-        spawn_in_living_room_from_bedroom = true;
+        if (cat3.y < 195 && cat3.y > 135) {
+          gameScene.visible = true;
+          gameSceneBedroom.visible = false;
+          spawn_in_living_room_from_bedroom = true;
+        } 
       }
 
       if (spawn_in_living_room_from_bedroom) {
