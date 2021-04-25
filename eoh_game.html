@@ -123,6 +123,11 @@ function logKey(e) {
     toggle_index++;
   }
 
+  if (gameSceneStart.visible && e.code === "Enter") {
+    gameSceneStart.visible = false;
+    gameSceneBedroom.visible = true;
+  }
+
   if (gameSceneLockedScreen.visible) {
     if ((allowed_password_keys.includes(e.which) || allowed_combo_keys.includes(e.which)) && password_string.length < 18) {
       computer.play();
@@ -273,8 +278,8 @@ var g = ga(700, 550, setup,
     "images/fridge_display.png",
     "images/toaster_task_complete.png",
     "images/coffee_task_complete_w_text.png",
-    "images/eceb.png",
-    "images/ecebtext.png",
+    "images/eceb-1.png",
+    "images/eceb-2.png",
     "sounds/suburban-neighborhood.wav",
     "sounds/liquid-pour.wav",
     "sounds/memories.mp3", // music from https://www.bensound.com/royalty-free-music/track/memories
@@ -314,8 +319,8 @@ function setup() {
   ];
 
   var ecebFrames = [
-    "images/eceb.png",
-    "images/ecebtext.png"
+    "images/eceb-1.png",
+    "images/eceb-2.png"
   ];
 
   var walkCycle = [1, 2];
@@ -389,7 +394,7 @@ function setup() {
   gameScene.visible = false;
   gameSceneKitchen.visible = false;
   gameSceneCoffee.visible = false;
-  gameSceneBedroom.visible = true;
+  gameSceneBedroom.visible = false;
   gameSceneWhiteboard.visible = false;
   gameSceneLockedScreen.visible = false;
   gameSceneLock.visible = false;
@@ -465,7 +470,7 @@ function play() {
     window.location.href = "eoh_game_complete.html";
   }
 
-  if (!gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
+  if (!gameSceneStart.visible && !gameSceneCoffee.visible && !gameSceneWhiteboard.visible && !gameSceneLockedScreen.visible
     && !gameSceneLock.visible && !gameSceneToaster.visible && !gameSceneFridge.visible 
     && !gameSceneToasterComplete.visible && !gameSceneCoffeeComplete.visible) {
     g.move(cat);
