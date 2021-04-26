@@ -1,5 +1,9 @@
 # WiCyS: EOH 2021 JavaScript edition
 
+## About
+
+Some members of the Women in Cybersecurity chapter at UIUC came together to work on a project for Engineering Open House 2021, an annual UIUC event seeking to highlight its College of Engineering, especially for middle and high school attendees. We thought a game would be more interactive than the expectation of EOH exhibits being pre-recorded video activities, so we threw this together. Give it a try if you want to work on some beginner-friendly CTF-ish problems!
+
 ## Things you need
 
 - Node.js
