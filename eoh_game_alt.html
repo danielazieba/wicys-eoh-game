@@ -4,17 +4,19 @@
 <meta charset = "utf-8" name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Cybersecurity Breakfast Adventure</title>
 <style>
-body {
-  background-color: black;
-  text-align: center;
-  color: white;
-  font-family: courier;
-}
+  /* style for entire webpage */
+  body {
+    background-color: black;
+    text-align: center;
+    color: white;
+    font-family: courier;
+  }
 
-a
-{
-  color: rgb(123, 213, 255);
-}
+  /* style for guide hyperlinks */
+  a
+  {
+    color: rgb(123, 213, 255);
+  }
 
 /* this part of the code makes the canvas only show at the top of the page--cannot position it */
 /* canvas {
@@ -27,26 +29,75 @@ a
   <h2>Cybersecurity Breakfast Adventure</h2>
   <h3>*For the best user experience, please use Mozilla Firefox. The game has experienced some issues in Google Chrome and Safari. If you ever have problems of the character getting stuck in place or the screen going black, please refresh the page. Note that your current progress in the game will be lost when the page is refreshed.*</h3>
 <p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
-<canvas id="myCanvas" width="700" height="500" style="border:1px solid #d3d3d3; background-color: #f1f1f1;"></canvas>
+<!-- creating a canvas: -->
+<canvas id="myCanvas" width="700" height="500" style="background-color: #f1f1f1;"></canvas>
 <!-- <script src="plugins.js"></script> -->
 <br>
-<body onload="startGame()">
-  
+<!-- <body onload="startGame()"> -->
+<body onload="start()">
 <script>
+  // get the canvas element and context (context allows you to draw on the canvas)
+  const game_canvas = document.getElementById("myCanvas");
+  const game_context = game_canvas.getContext("2d");
 
-function startGame() {
-    myGameArea.start();
-}
+  console.log("BEGIN");
 
-var myGameArea = {
-    myCanvas : document.createElement("myCanvas"),
-    start : function() {
-        // this.myCanvas.width = 700;
-        // this.myCanvas.height = 500;
-        this.context = this.myCanvas.getContext("2d");
-        document.body.insertBefore(this.myCanvas, document.body.childNodes[0]);
-    }
-}
+  function start() {
+    drawBedroom();
+  }
+
+  // draw bedroom scene
+  function drawBedroom() {
+    const bedroom_img = new Image();
+    bedroom_img.src = "images/bedroom.png";
+    // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
+    game_context.drawImage(bedroom_img, sx=0, sy=0, swidth=700, sheight=500);
+    console.log("DRAWN");
+  }
+
+  console.log("OUT");
+
+
+
+
+
+
+  // THIRD ATTEMPT (similar to final attempt)
+  // const bedroom_img = new Image();
+  // bedroom_img.src = "images/bedroom.png";
+  // bedroom_img.onload = () => {
+  //   // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
+  //   game_context.drawImage(bedroom_img, 0, 0, 700, 500);
+  // };
+
+
+
+  // SECOND ATTEMPT
+  // window.onload = function() {
+  //   var canvas = document.getElementById("myCanvas");
+  //   var ctx = canvas.getContext("2d");
+
+  //   var gameScene = new Image();
+  //   gameScene.src = "images/bedroom.png";
+  //   ctx.drawImage(gameScene, 0, 0, 700, 500);
+  // };
+
+
+
+  // FIRST ATTEMPT
+  // function startGame() {
+  //     myGameArea.start();
+  // }
+
+  // var myGameArea = {
+  //     myCanvas : document.createElement("myCanvas"),
+  //     start : function() {
+  //         // this.myCanvas.width = 700;
+  //         // this.myCanvas.height = 500;
+  //         this.context = this.myCanvas.getContext("2d");
+  //         document.body.insertBefore(this.myCanvas, document.body.childNodes[0]);
+  //     }
+  // }
 
 </script>
 
