@@ -40,6 +40,7 @@
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
 
+  // FINAL ATTEMPT (SUCCESSFUL!!)
   console.log("BEGIN");
 
   function start() {
@@ -50,8 +51,19 @@
   function drawBedroom() {
     const bedroom_img = new Image();
     bedroom_img.src = "images/bedroom.png";
-    // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
-    game_context.drawImage(bedroom_img, sx=0, sy=0, swidth=700, sheight=500);
+
+    // load images first
+    // - Note: the following line is needed to fix the problem of the background img not always
+    // displaying when the page is refreshed
+    // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
+    bedroom_img.addEventListener("load", drawRoom, false); 
+
+    function drawRoom() {
+      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
+      game_context.drawImage(bedroom_img, sx=0, sy=0, swidth=700, sheight=500);
+    }
+    drawRoom();
+
     console.log("DRAWN");
   }
 
