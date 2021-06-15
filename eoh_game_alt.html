@@ -40,31 +40,122 @@
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
 
+
+  // scene attributes
+  var scene_pic;
+
+  var is_bedroom_scene = true;
+
+  // character attributes
+  var char_pic;
+
+  var char_x_pos = 587;
+  var char_y_pos = 282;
+
+  var char_speed = 5;
+
+
+
+
+
   // FINAL ATTEMPT (SUCCESSFUL!!)
   console.log("BEGIN");
 
+  // begins game
   function start() {
-    drawBedroom();
+    console.log("starting")
+
+    loadBackground();
+    loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
+    
+    setInterval(update, 2)  // infinite loop, runs every 2 ms
+
+    console.log("ending")
   }
 
-  // draw bedroom scene
-  function drawBedroom() {
-    const bedroom_img = new Image();
-    bedroom_img.src = "images/bedroom.png";
+
+  // updates game visuals and stats
+  function update() {
+    // steps:
+    // 1. clear the canvas
+    // 2. update any new positions
+    // 3. redraw
+
+    // step 1
+    clearCanvas();
+
+    // step 3
+    draw(scene_pic, 0, 0, 700, 500);
+    draw(char_pic, char_x_pos, char_y_pos, 64, 64);
+
+    console.log("CLEARED")
+  }
+
+
+  // clears canvas
+  function clearCanvas() {
+    // clears everything on the canvas
+    game_context.clearRect(0, 0, 700, 500);
+  }
+
+  
+  // initial loading and drawing of background
+  function loadBackground() {
+    const background_img = new Image();
+
+    if (is_bedroom_scene) {
+      background_img.src = "images/bedroom.png";
+    }
 
     // load images first
     // - Note: the following line is needed to fix the problem of the background img not always
     // displaying when the page is refreshed
     // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
-    bedroom_img.addEventListener("load", drawRoom, false); 
+    background_img.addEventListener("load", drawBackground, false);
 
-    function drawRoom() {
+    console.log("loaded")
+
+    function drawBackground() {
+      console.log("drawing")
+
       // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
-      game_context.drawImage(bedroom_img, sx=0, sy=0, swidth=700, sheight=500);
-    }
-    drawRoom();
+      // game_context.drawImage(background_img, sx=0, sy=0, swidth=700, sheight=500);
+      draw(background_img, 0, 0, 700, 500)
 
+      console.log("finished")
+    }
+
+    // update current scene pic
+    scene_pic = background_img;
     console.log("DRAWN");
+  }
+
+
+  // general function to initially load and draw components (i.e. character)
+  function loadCharacter(img_url, x, y, width, height) {
+    const img = new Image();
+    img.src = img_url;
+
+    // load images first
+    // - Note: the following line is needed to fix the problem of the background img not always
+    // displaying when the page is refreshed
+    // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
+    img.addEventListener("load", drawCharacter, false); 
+
+    function drawCharacter() {
+      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
+      // game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
+      draw(img, x, y, width, height);
+    }
+
+    // update current character pic
+    char_pic = img;
+  }
+
+
+  // need this function for redrawing images in infinite loop
+  function draw(img, x, y, width, height) {
+    game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
   }
 
   console.log("OUT");
