@@ -41,18 +41,30 @@
   const game_context = game_canvas.getContext("2d");
 
 
-  // scene attributes
-  var bedroom_scene;  // stores pic of bedroom scene
-
-  var scene_pic;  // current background picture being displayed
+  // SCENE ATTRIBUTES
+  // the following grouped variables store pics of the game scenes
+  var bedroom_scene;
+  var whiteboard_scene;
 
   var is_bedroom_scene = true;
+  var is_whiteboard_scene = false;
 
-  // character attributes
+  var scene_pic;  // current background picture being displayed
+  var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
+
+
+  // CHARACTER ATTRIBUTES
   var char_right1;  // stores pic of character facing right, step 1
   var char_right2;  // stores pic of character facing right, step 2
   var char_left1;  // stores pic of character facing left, step 1
   var char_left2;  // stores pic of character facing left, step 2
+
+  // used to determine what direction and step the
+  // current character image being displayed is
+  var is_right1 = true;
+  var is_right2 = false;
+  var is_left1 = false;
+  var is_left2 = false;
 
   var char_pic;  // current character picture being displayed
 
@@ -63,13 +75,6 @@
 
   var step_counter = 0;  // used to determine whether the character step changes
   var step_change = 25;  // every 25 ms, character step changes
-
-  // used to determine what direction and step the current character image
-  // being displayed is
-  var is_right1 = true;
-  var is_right2 = false;
-  var is_left1 = false;
-  var is_left2 = false;
 
   // boolean variables representing if the specific arrow key is being pressed by user
   var is_key_up = false;
@@ -87,13 +92,15 @@
     console.log("starting")
 
     // load initial components (i.e. game setting and character)
-    bedroom_scene = loadBackground();
+    bedroom_scene = loadBackground("images/bedroom.png");
+    whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png")
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
     char_right2 = loadCharacter("images/step2.png", char_x_pos, char_y_pos, 64, 64);
     char_left1 = loadCharacter("images/step1_left.png", char_x_pos, char_y_pos, 64, 64);
     char_left2 = loadCharacter("images/step2_left.png", char_x_pos, char_y_pos, 64, 64);
     
     scene_pic = bedroom_scene;
+    current_room = bedroom_scene;
     char_pic = char_right1;
 
     setInterval(update, 20)  // infinite loop, runs every 2 ms
@@ -113,7 +120,12 @@
 
     // step 3 - redraw
     draw(scene_pic, 0, 0, 700, 500);
-    draw(char_pic, char_x_pos, char_y_pos, 64, 64);
+    if (scene_pic == bedroom_scene) {  // only draw character if in a room
+      draw(char_pic, char_x_pos, char_y_pos, 64, 64);
+    }
+
+    console.log("x: " + char_x_pos);
+    console.log("y: " + char_y_pos);
 
     console.log("CLEARED")
   }
@@ -282,12 +294,9 @@
 
 
   // initial loading and drawing of background
-  function loadBackground() {
+  function loadBackground(img_url) {
     const background_img = new Image();
-
-    if (is_bedroom_scene) {
-      background_img.src = "images/bedroom.png";
-    }
+    background_img.src = img_url;
 
     // load images first
     // - Note: the following line is needed to fix the problem of the background img not always
@@ -302,7 +311,8 @@
 
       // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
       // game_context.drawImage(background_img, sx=0, sy=0, swidth=700, sheight=500);
-      draw(background_img, 0, 0, 700, 500)
+      
+      // draw(background_img, 0, 0, 700, 500)  // might not need...?
 
       console.log("finished")
     }
@@ -326,7 +336,8 @@
     function drawCharacter() {
       // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
       // game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
-      draw(img, x, y, width, height);
+      
+      // draw(img, x, y, width, height);  // might not need...?
     }
 
     return img;
