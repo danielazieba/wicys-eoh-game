@@ -41,7 +41,7 @@
   const game_context = game_canvas.getContext("2d");
 
 
-  // SCENE ATTRIBUTES
+  /* SCENE ATTRIBUTES */
   // the following grouped variables store pics of the game scenes
   var bedroom_scene;
   var whiteboard_scene;
@@ -53,7 +53,7 @@
   var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
 
 
-  // CHARACTER ATTRIBUTES
+  /* CHARACTER ATTRIBUTES */
   var char_right1;  // stores pic of character facing right, step 1
   var char_right2;  // stores pic of character facing right, step 2
   var char_left1;  // stores pic of character facing left, step 1
@@ -83,6 +83,12 @@
   var is_key_left = false;
 
 
+  /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
+  const whiteboard_left_bound = 267;
+  const whiteboard_right_bound = 382;
+  const whiteboard_bottom_bound = 117;
+
+
 
   // FINAL ATTEMPT (SUCCESSFUL!!)
   console.log("BEGIN");
@@ -99,6 +105,7 @@
     char_left1 = loadCharacter("images/step1_left.png", char_x_pos, char_y_pos, 64, 64);
     char_left2 = loadCharacter("images/step2_left.png", char_x_pos, char_y_pos, 64, 64);
     
+    // initialize values
     scene_pic = bedroom_scene;
     current_room = bedroom_scene;
     char_pic = char_right1;
@@ -114,9 +121,11 @@
     // step 1 - clear the canvas
     clearCanvas();
 
-    // step 2 - update character position
+    // step 2 - update character position + scene
     moveCharacter();
     step_counter++;
+
+    zoomInOnItem();
 
     // step 3 - redraw
     draw(scene_pic, 0, 0, 700, 500);
@@ -124,8 +133,9 @@
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
 
-    console.log("x: " + char_x_pos);
-    console.log("y: " + char_y_pos);
+    // can use to find current position of character
+    // console.log("x: " + char_x_pos);
+    // console.log("y: " + char_y_pos);
 
     console.log("CLEARED")
   }
@@ -140,32 +150,34 @@
 
   // moves character
   function moveCharacter() {
-    // move up
-    if (is_key_up && (char_y_pos - char_speed > 0) && (char_y_pos - char_speed <= 436)) {
-      char_y_pos -= char_speed;
+    if (scene_pic == bedroom_scene) {  // only allow character to be moved when in a room
+      // move up
+      if (is_key_up && (char_y_pos - char_speed > 0) && (char_y_pos - char_speed <= 436)) {
+        char_y_pos -= char_speed;
 
-      changeSteps(false, false, false);
-    }
+        changeSteps(false, false, false);
+      }
 
-    // move right
-    if (is_key_right && (char_x_pos + char_speed > 0) && (char_x_pos + char_speed <= 636)) {
-      char_x_pos += char_speed;
+      // move right
+      if (is_key_right && (char_x_pos + char_speed > 0) && (char_x_pos + char_speed <= 636)) {
+        char_x_pos += char_speed;
 
-      changeSteps(true, false, (char_pic == char_left1 || char_pic == char_left2));
-    }
+        changeSteps(true, false, (char_pic == char_left1 || char_pic == char_left2));
+      }
 
-    // move down
-    if (is_key_down && (char_y_pos + char_speed > 0) && (char_y_pos + char_speed <= 436)) {
-      char_y_pos += char_speed;
+      // move down
+      if (is_key_down && (char_y_pos + char_speed > 0) && (char_y_pos + char_speed <= 436)) {
+        char_y_pos += char_speed;
 
-      changeSteps(false, false, false);
-    }
+        changeSteps(false, false, false);
+      }
 
-    // move left
-    if (is_key_left && (char_x_pos - char_speed > 0) && (char_x_pos - char_speed <= 636)) {
-      char_x_pos -= char_speed;
+      // move left
+      if (is_key_left && (char_x_pos - char_speed > 0) && (char_x_pos - char_speed <= 636)) {
+        char_x_pos -= char_speed;
 
-      changeSteps(false, true, (char_pic == char_right1 || char_pic == char_right2));
+        changeSteps(false, true, (char_pic == char_right1 || char_pic == char_right2));
+      }
     }
   }
 
@@ -254,7 +266,21 @@
   }
 
 
-  // record key downs (specifically character movements)
+  // check if the character landed in any zoom in area
+  function zoomInOnItem() {
+    if (scene_pic == bedroom_scene && char_x_pos >= whiteboard_left_bound &&
+      char_x_pos <= whiteboard_right_bound && char_y_pos <= whiteboard_bottom_bound) {
+        // zoom into whiteboard
+        scene_pic = whiteboard_scene;
+
+        // update values
+        is_whiteboard_scene = true;
+        is_bedroom_scene = false;
+    }
+  }
+
+
+  /* RECORD KEY DOWNS (specifically character movements) */
   // source: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
   document.onkeydown = function(event) {
     if (event.code === "ArrowUp") {
@@ -289,6 +315,48 @@
 
     if (event.code === "ArrowLeft") {
       is_key_left = false;
+    }
+  }
+
+
+  /* RECORD KEY DOWNS (i.e. for closing windows, hints, etc) */
+  document.addEventListener('keydown', logKey)
+
+  function logKey(key) {
+    
+    if (key.code === "Escape") {
+      if (is_whiteboard_scene) {
+        // zoom out of whiteboard
+        scene_pic = current_room;
+        
+        // need the following to prevent the character from triggering the zoom in again
+        moveOutOfDetectionZone(whiteboard_left_bound, whiteboard_right_bound, whiteboard_bottom_bound);
+
+        // update values
+        is_whiteboard_scene = false;
+        if (current_room === bedroom_scene) {
+          is_bedroom_scene = true;
+        }
+      }
+    }
+  }
+
+
+  // moves the character out of the area that would trigger the zoom in again
+  function moveOutOfDetectionZone(left_bound, right_bound, bottom_bound) {
+    // the following conditionals essentially check which direction the character
+    // approached the item that caused it to zoom in; these checks will require
+    // the user to only press 'ESCAPE' once when they want to close the window
+
+    if (char_y_pos <= bottom_bound && char_y_pos + char_speed > bottom_bound) {
+      // came from bottom
+      char_y_pos += char_speed;
+    } else if (char_x_pos >= left_bound && char_x_pos - char_speed < left_bound) {
+      // came from left
+      char_x_pos -= char_speed;
+    } else if (char_x_pos <= right_bound && char_x_pos + char_speed > right_bound) {
+      // came from right
+      char_x_pos += char_speed;
     }
   }
 
@@ -354,9 +422,24 @@
 
 
   // TODO:
-  // - zoom in on whiteboard
   // - adjust borders
   // - reorganize code so that it can fit with multiple scenes
+
+
+  // Things to consider when incorporating the changing rooms:
+  // - load the background + make corresponding variables
+  // - add room variables to conditional that prevents character from being drawn
+  //   if not in a room
+  // - add room variables to conditional in 'moveCharacter()' function to prevent
+  //   the character's position from updating when zoomed into an item
+  // - remember to change the 'current_room' variable when the rooms change
+  // - if planning on incorporating zoom-ins, don't forget to...
+  //   - create constants that represent the bounds
+  //   - add the conditional for it to zoom in in the 'zoomInOnItem()' function
+  //   - add to the conditional for the 'ESCAPE' key down in the 'logKey()' function
+  // - when determining how to detect when to change the rooms, don't need to 
+  //   change any outer bounds (i.e. room bounds), just need to add in bounds
+  //   that would represent the doorways (i.e. x or y positions)
 
 
 
