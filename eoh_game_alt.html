@@ -158,10 +158,15 @@
   }
 
 
+  /**
+   * Changes the steps of the character to create an animation of the character walking.
+   * 
+   * @param is_moving_right Boolean representing if the user wants to move the character right
+   * @param is_moving_left Boolean representing if the user wants to move the character left
+   * @param is_changing Boolean that's true if the character is changing directions horizontally
+   *   (i.e. if the character is moving from right to left or vice versa)
+   */
   function changeSteps(is_moving_right, is_moving_left, is_changing) {
-    // Note: is_changing is true if the character is changing directions horizontally (i.e. if
-    //       the character is moving from right to left or vice versa)
-
     // determine if steps are changed
     if (step_counter % step_change == 0 || is_changing) {
       if (!is_moving_right && !is_moving_left) {  // i.e. moving up or down
