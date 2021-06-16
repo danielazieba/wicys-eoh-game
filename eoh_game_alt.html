@@ -42,18 +42,36 @@
 
 
   // scene attributes
-  var scene_pic;
+  var bedroom_scene;  // stores pic of bedroom scene
+
+  var scene_pic;  // current background picture being displayed
 
   var is_bedroom_scene = true;
 
   // character attributes
-  var char_pic;
+  var char_right1;  // stores pic of character facing right, step 1
+  var char_right2;  // stores pic of character facing right, step 2
+  var char_left1;  // stores pic of character facing left, step 1
+  var char_left2;  // stores pic of character facing left, step 2
+
+  var char_pic;  // current character picture being displayed
 
   var char_x_pos = 587;  // x pos of top left corner of char img
   var char_y_pos = 282;  // y pos of top left corner of char img
 
   const char_speed = 5;
 
+  var step_counter = 0;  // used to determine whether the character step changes
+  var step_change = 25;  // every 25 ms, character step changes
+
+  // used to determine what direction and step the current character image
+  // being displayed is
+  var is_right1 = true;
+  var is_right2 = false;
+  var is_left1 = false;
+  var is_left2 = false;
+
+  // boolean variables representing if the specific arrow key is being pressed by user
   var is_key_up = false;
   var is_key_right = false;
   var is_key_down = false;
@@ -69,9 +87,15 @@
     console.log("starting")
 
     // load initial components (i.e. game setting and character)
-    loadBackground();
-    loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
+    bedroom_scene = loadBackground();
+    char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
+    char_right2 = loadCharacter("images/step2.png", char_x_pos, char_y_pos, 64, 64);
+    char_left1 = loadCharacter("images/step1_left.png", char_x_pos, char_y_pos, 64, 64);
+    char_left2 = loadCharacter("images/step2_left.png", char_x_pos, char_y_pos, 64, 64);
     
+    scene_pic = bedroom_scene;
+    char_pic = char_right1;
+
     setInterval(update, 20)  // infinite loop, runs every 2 ms
 
     console.log("ending")
@@ -85,6 +109,7 @@
 
     // step 2 - update character position
     moveCharacter();
+    step_counter++;
 
     // step 3 - redraw
     draw(scene_pic, 0, 0, 700, 500);
@@ -106,21 +131,108 @@
     // move up
     if (is_key_up && (char_y_pos - char_speed > 0) && (char_y_pos - char_speed <= 436)) {
       char_y_pos -= char_speed;
+
+      changeSteps(false, false, false);
     }
 
     // move right
     if (is_key_right && (char_x_pos + char_speed > 0) && (char_x_pos + char_speed <= 636)) {
       char_x_pos += char_speed;
+
+      changeSteps(true, false, (char_pic == char_left1 || char_pic == char_left2));
     }
 
     // move down
     if (is_key_down && (char_y_pos + char_speed > 0) && (char_y_pos + char_speed <= 436)) {
       char_y_pos += char_speed;
+
+      changeSteps(false, false, false);
     }
 
     // move left
     if (is_key_left && (char_x_pos - char_speed > 0) && (char_x_pos - char_speed <= 636)) {
       char_x_pos -= char_speed;
+
+      changeSteps(false, true, (char_pic == char_right1 || char_pic == char_right2));
+    }
+  }
+
+
+  function changeSteps(is_moving_right, is_moving_left, is_changing) {
+    // Note: is_changing is true if the character is changing directions horizontally (i.e. if
+    //       the character is moving from right to left or vice versa)
+
+    // determine if steps are changed
+    if (step_counter % step_change == 0 || is_changing) {
+      if (!is_moving_right && !is_moving_left) {  // i.e. moving up or down
+        if (is_right1) {
+          // change char pic
+          char_pic = char_right2;
+          
+          is_right2 = true;
+          is_right1 = false;
+        } else if (is_right2) {
+          // change char pic
+          char_pic = char_right1;
+
+          is_right1 = true;
+          is_right2 = false;
+        } else if (is_left1) {
+          // change char pic
+          char_pic = char_left2;
+
+          is_left2 = true;
+          is_left1 = false;
+        } else if (is_left2) {
+          // change char pic
+          char_pic = char_left1;
+
+          is_left1 = true;
+          is_left2 = false;
+        }
+      } else if (is_moving_right && !is_moving_left) {
+        if (is_right1) {
+          // change char pic
+          char_pic = char_right2;
+          
+          is_right2 = true;
+          is_right1 = false;
+        } else if (is_right2) {
+          // change char pic
+          char_pic = char_right1;
+
+          is_right1 = true;
+          is_right2 = false;
+        } else {
+          // change char pic
+          char_pic = char_right1;
+
+          is_right1 = true;
+          is_left1 = false;
+          is_left2 = false;
+        }
+      } else if (is_moving_left && !is_moving_right) {
+        if (is_left1) {
+          // change char pic
+          char_pic = char_left2;
+          
+          is_left2 = true;
+          is_left1 = false;
+        } else if (is_left2) {
+          // change char pic
+          char_pic = char_left1;
+
+          is_left1 = true;
+          is_left2 = false;
+        } else {
+          // change char pic
+          char_pic = char_left1;
+
+          is_left1 = true;
+          is_right1 = false;
+          is_right2 = false;
+        }
+      }
     }
   }
 
@@ -190,8 +302,7 @@
       console.log("finished")
     }
 
-    // update current scene pic
-    scene_pic = background_img;
+    return background_img;
     console.log("DRAWN");
   }
 
@@ -213,8 +324,7 @@
       draw(img, x, y, width, height);
     }
 
-    // update current character pic
-    char_pic = img;
+    return img;
   }
 
 
@@ -224,6 +334,13 @@
   }
 
   console.log("OUT");
+
+
+
+  // TODO:
+  // - zoom in on whiteboard
+  // - adjust borders
+  // - reorganize code so that it can fit with multiple scenes
 
 
 
