@@ -49,12 +49,15 @@
   // character attributes
   var char_pic;
 
-  var char_x_pos = 587;
-  var char_y_pos = 282;
+  var char_x_pos = 587;  // x pos of top left corner of char img
+  var char_y_pos = 282;  // y pos of top left corner of char img
 
-  var char_speed = 5;
+  const char_speed = 5;
 
-
+  var is_key_up = false;
+  var is_key_right = false;
+  var is_key_down = false;
+  var is_key_left = false;
 
 
 
@@ -65,10 +68,11 @@
   function start() {
     console.log("starting")
 
+    // load initial components (i.e. game setting and character)
     loadBackground();
     loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
     
-    setInterval(update, 2)  // infinite loop, runs every 2 ms
+    setInterval(update, 20)  // infinite loop, runs every 2 ms
 
     console.log("ending")
   }
@@ -76,15 +80,13 @@
 
   // updates game visuals and stats
   function update() {
-    // steps:
-    // 1. clear the canvas
-    // 2. update any new positions
-    // 3. redraw
-
-    // step 1
+    // step 1 - clear the canvas
     clearCanvas();
 
-    // step 3
+    // step 2 - update character position
+    moveCharacter();
+
+    // step 3 - redraw
     draw(scene_pic, 0, 0, 700, 500);
     draw(char_pic, char_x_pos, char_y_pos, 64, 64);
 
@@ -98,7 +100,70 @@
     game_context.clearRect(0, 0, 700, 500);
   }
 
-  
+
+  // moves character
+  function moveCharacter() {
+    // move up
+    if (is_key_up && (char_y_pos - char_speed > 0) && (char_y_pos - char_speed <= 436)) {
+      char_y_pos -= char_speed;
+    }
+
+    // move right
+    if (is_key_right && (char_x_pos + char_speed > 0) && (char_x_pos + char_speed <= 636)) {
+      char_x_pos += char_speed;
+    }
+
+    // move down
+    if (is_key_down && (char_y_pos + char_speed > 0) && (char_y_pos + char_speed <= 436)) {
+      char_y_pos += char_speed;
+    }
+
+    // move left
+    if (is_key_left && (char_x_pos - char_speed > 0) && (char_x_pos - char_speed <= 636)) {
+      char_x_pos -= char_speed;
+    }
+  }
+
+
+  // record key downs (specifically character movements)
+  // source: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
+  document.onkeydown = function(event) {
+    if (event.code === "ArrowUp") {
+      is_key_up = true;
+    }
+
+    if (event.code === "ArrowRight") {
+      is_key_right = true;
+    }
+
+    if (event.code === "ArrowDown") {
+      is_key_down = true;
+    }
+
+    if (event.code === "ArrowLeft") {
+      is_key_left = true;
+    }
+  }
+
+  document.onkeyup = function(event) {
+    if (event.code === "ArrowUp") {
+      is_key_up = false;
+    }
+
+    if (event.code === "ArrowRight") {
+      is_key_right = false;
+    }
+
+    if (event.code === "ArrowDown") {
+      is_key_down = false;
+    }
+
+    if (event.code === "ArrowLeft") {
+      is_key_left = false;
+    }
+  }
+
+
   // initial loading and drawing of background
   function loadBackground() {
     const background_img = new Image();
