@@ -46,8 +46,14 @@
   var bedroom_scene;
   var whiteboard_scene;
 
+  //added while changing rooms is being developed
+  var kitchen_scene;
+  var livingroom_scene;
+
   var is_bedroom_scene = true;
   var is_whiteboard_scene = false;
+  var is_kitchen_scene = false;
+  var is_livingroom_scene = false;
 
   var scene_pic;  // current background picture being displayed
   var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
@@ -61,9 +67,9 @@
 
   // used to determine what direction and step the
   // current character image being displayed is
-  var is_right1 = true;
+  var is_right1 = false;
   var is_right2 = false;
-  var is_left1 = false;
+  var is_left1 = true;
   var is_left2 = false;
 
   var char_pic;  // current character picture being displayed
@@ -99,7 +105,11 @@
 
     // load initial components (i.e. game setting and character)
     bedroom_scene = loadBackground("images/bedroom.png");
+    kitchen_scene = loadBackground("images/new_new_kitchen.png");
+    livingroom_scene = loadBackground("images/big-out-living.png");
     whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png")
+
+    //initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
     char_right2 = loadCharacter("images/step2.png", char_x_pos, char_y_pos, 64, 64);
     char_left1 = loadCharacter("images/step1_left.png", char_x_pos, char_y_pos, 64, 64);
@@ -108,7 +118,7 @@
     // initialize values
     scene_pic = bedroom_scene;
     current_room = bedroom_scene;
-    char_pic = char_right1;
+    char_pic = char_left1;
 
     setInterval(update, 20)  // infinite loop, runs every 2 ms
 
@@ -127,9 +137,12 @@
 
     zoomInOnItem();
 
+    // update game scene by switching between rooms
+    changeRooms();
+
     // step 3 - redraw
     draw(scene_pic, 0, 0, 700, 500);
-    if (scene_pic == bedroom_scene) {  // only draw character if in a room
+    if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  // only draw character if in a room
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
 
@@ -150,8 +163,8 @@
 
   // moves character
   function moveCharacter() {
-    if (scene_pic == bedroom_scene) {  // only allow character to be moved when in a room
-      // move up
+    //only allow to move the character when it is in a room
+    if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  
       if (is_key_up && (char_y_pos - char_speed > 0) && (char_y_pos - char_speed <= 436)) {
         char_y_pos -= char_speed;
 
@@ -320,6 +333,7 @@
 
 
   /* RECORD KEY DOWNS (i.e. for closing windows, hints, etc) */
+  // special key down - escape the zoomed in window, hints etc
   document.addEventListener('keydown', logKey)
 
   function logKey(key) {
@@ -421,20 +435,68 @@
 
 
   // Things to consider when incorporating the changing rooms:
-  // - load the background + make corresponding variables
-  // - add room variables to conditional that prevents character from being drawn
+  // done - load the background + make corresponding variables 
+  // done- add room variables to conditional that prevents character from being drawn
   //   if not in a room
-  // - add room variables to conditional in 'moveCharacter()' function to prevent
-  //   the character's position from updating when zoomed into an item
-  // - remember to change the 'current_room' variable when the rooms change
+  // done - add room variables to conditional in 'moveCharacter()' function to prevent     
+  //   the character's position from updating when zoomed into an item 
+  // done- remember to change the 'current_room' variable when the rooms change
   // - if planning on incorporating zoom-ins, don't forget to...
   //   - create constants that represent the bounds
   //   - add the conditional for it to zoom in in the 'zoomInOnItem()' function
   //   - add to the conditional for the 'ESCAPE' key down in the 'logKey()' function
-  // - when determining how to detect when to change the rooms, don't need to 
+  // done- when determining how to detect when to change the rooms, don't need to 
   //   change any outer bounds (i.e. room bounds), just need to add in bounds
   //   that would represent the doorways (i.e. x or y positions)
+  function changeRooms(){
 
+    if(scene_pic == bedroom_scene && ((char_y_pos >= 125 && char_y_pos <= 2205) && char_x_pos <= 10)){
+      scene_pic = livingroom_scene;
+      current_room = livingroom_scene;
+      char_pic = char_left1;
+      char_x_pos = 550;
+      char_y_pos = 120
+      is_bedroom_scene = false;
+      is_livingroom_scene = true;
+    }
+
+    if(scene_pic == livingroom_scene && ((char_x_pos >= 500 && char_x_pos <= 590) && char_y_pos <= 10) ){
+      scene_pic = kitchen_scene;
+      current_room = kitchen_scene;
+      char_pic = char_right1;
+      char_x_pos = 400;
+      char_y_pos = 400;
+      is_kitchen_scene = true;
+      is_livingroom_scene = false;
+    }
+
+    if(scene_pic == kitchen_scene && ((char_x_pos >= 280 && char_x_pos <= 380) && char_y_pos >= 425)){
+      scene_pic = livingroom_scene;
+      current_room = livingroom_scene;
+      char_pic = char_right2;
+      char_x_pos = 550;
+      char_y_pos = 100;
+      is_kitchen_scene = false;
+      is_livingroom_scene = true;
+      //can use to find current position of character
+      console.log("x: " + char_x_pos);
+      console.log("y: " + char_y_pos);
+    }
+
+    if(scene_pic == livingroom_scene && ((char_y_pos >= 100 && char_y_pos <= 180) && char_x_pos >= 615) ){
+      scene_pic = bedroom_scene;
+      current_room = bedroom_scene;
+      char_pic = char_left1;
+      char_x_pos = 50;
+      char_y_pos = 130;
+      is_bedroom_scene = true;
+      is_livingroom_scene = false;
+       //can use to find current position of character
+      console.log("x: " + char_x_pos);
+      console.log("y: " + char_y_pos);
+    }
+
+  }
 
 
 
