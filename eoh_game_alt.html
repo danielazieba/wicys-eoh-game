@@ -46,7 +46,7 @@
   var bedroom_scene;
   var whiteboard_scene;
 
-  //added while changing rooms is being developed
+  // added while changing rooms is being developed
   var kitchen_scene;
   var livingroom_scene;
 
@@ -103,13 +103,13 @@
   function start() {
     console.log("starting")
 
-    // load initial components (i.e. game setting and character)
+    // load initial game setting components
     bedroom_scene = loadBackground("images/bedroom.png");
     kitchen_scene = loadBackground("images/new_new_kitchen.png");
     livingroom_scene = loadBackground("images/big-out-living.png");
     whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png")
 
-    //initial character components
+    // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
     char_right2 = loadCharacter("images/step2.png", char_x_pos, char_y_pos, 64, 64);
     char_left1 = loadCharacter("images/step1_left.png", char_x_pos, char_y_pos, 64, 64);
@@ -448,32 +448,31 @@
   // done- when determining how to detect when to change the rooms, don't need to 
   //   change any outer bounds (i.e. room bounds), just need to add in bounds
   //   that would represent the doorways (i.e. x or y positions)
-  function changeRooms(){
 
-    if(scene_pic == bedroom_scene && ((char_y_pos >= 125 && char_y_pos <= 2205) && char_x_pos <= 10)){
+  
+  function changeRooms() {
+
+    if (scene_pic == bedroom_scene && ((char_y_pos >= 125 && char_y_pos <= 205) && char_x_pos <= 10)){
       scene_pic = livingroom_scene;
       current_room = livingroom_scene;
-      char_pic = char_left1;
       char_x_pos = 550;
       char_y_pos = 120
       is_bedroom_scene = false;
       is_livingroom_scene = true;
     }
 
-    if(scene_pic == livingroom_scene && ((char_x_pos >= 500 && char_x_pos <= 590) && char_y_pos <= 10) ){
+    if (scene_pic == livingroom_scene && ((char_x_pos >= 500 && char_x_pos <= 590) && char_y_pos <= 10) ){
       scene_pic = kitchen_scene;
       current_room = kitchen_scene;
-      char_pic = char_right1;
       char_x_pos = 400;
       char_y_pos = 400;
       is_kitchen_scene = true;
       is_livingroom_scene = false;
     }
 
-    if(scene_pic == kitchen_scene && ((char_x_pos >= 280 && char_x_pos <= 380) && char_y_pos >= 425)){
+    if (scene_pic == kitchen_scene && ((char_x_pos >= 280 && char_x_pos <= 380) && char_y_pos >= 425)){
       scene_pic = livingroom_scene;
       current_room = livingroom_scene;
-      char_pic = char_right2;
       char_x_pos = 550;
       char_y_pos = 100;
       is_kitchen_scene = false;
@@ -483,10 +482,9 @@
       console.log("y: " + char_y_pos);
     }
 
-    if(scene_pic == livingroom_scene && ((char_y_pos >= 100 && char_y_pos <= 180) && char_x_pos >= 615) ){
+    if (scene_pic == livingroom_scene && ((char_y_pos >= 100 && char_y_pos <= 180) && char_x_pos >= 615) ){
       scene_pic = bedroom_scene;
       current_room = bedroom_scene;
-      char_pic = char_left1;
       char_x_pos = 50;
       char_y_pos = 130;
       is_bedroom_scene = true;
