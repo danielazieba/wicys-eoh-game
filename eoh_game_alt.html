@@ -455,8 +455,8 @@
     if (scene_pic == bedroom_scene && ((char_y_pos >= 125 && char_y_pos <= 205) && char_x_pos <= 10)){
       scene_pic = livingroom_scene;
       current_room = livingroom_scene;
-      char_x_pos = 550;
-      char_y_pos = 120
+      char_x_pos = 595;
+      char_y_pos = 110
       is_bedroom_scene = false;
       is_livingroom_scene = true;
     }
@@ -464,8 +464,8 @@
     if (scene_pic == livingroom_scene && ((char_x_pos >= 500 && char_x_pos <= 590) && char_y_pos <= 10) ){
       scene_pic = kitchen_scene;
       current_room = kitchen_scene;
-      char_x_pos = 400;
-      char_y_pos = 400;
+      char_x_pos = 320;
+      char_y_pos = 405;
       is_kitchen_scene = true;
       is_livingroom_scene = false;
     }
@@ -474,19 +474,16 @@
       scene_pic = livingroom_scene;
       current_room = livingroom_scene;
       char_x_pos = 550;
-      char_y_pos = 100;
+      char_y_pos = 30;
       is_kitchen_scene = false;
       is_livingroom_scene = true;
-      //can use to find current position of character
-      console.log("x: " + char_x_pos);
-      console.log("y: " + char_y_pos);
     }
 
-    if (scene_pic == livingroom_scene && ((char_y_pos >= 100 && char_y_pos <= 180) && char_x_pos >= 615) ){
+    if (scene_pic == livingroom_scene && ((char_y_pos >= 107 && char_y_pos <= 160) && char_x_pos >= 627) ){
       scene_pic = bedroom_scene;
       current_room = bedroom_scene;
-      char_x_pos = 50;
-      char_y_pos = 130;
+      char_x_pos = 30;
+      char_y_pos = 150;
       is_bedroom_scene = true;
       is_livingroom_scene = false;
     }
