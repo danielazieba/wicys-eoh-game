@@ -44,16 +44,20 @@
   /* SCENE ATTRIBUTES */
   // the following grouped variables store pics of the game scenes
   var bedroom_scene;
-  var whiteboard_scene;
-
-  // added while changing rooms is being developed
   var kitchen_scene;
   var livingroom_scene;
 
+  // the following grouped variables store pics of zoomed in objects
+  var whiteboard_scene;
+  var computer_scene;
+
+
   var is_bedroom_scene = true;
-  var is_whiteboard_scene = false;
   var is_kitchen_scene = false;
   var is_livingroom_scene = false;
+
+  var is_whiteboard_scene = false;
+  var is_computer_scene = false;
 
   var scene_pic;  // current background picture being displayed
   var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
@@ -91,8 +95,15 @@
 
   /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
   const whiteboard_left_bound = 267;
-  const whiteboard_right_bound = 382;
+  const whiteboard_right_bound = 380;
   const whiteboard_bottom_bound = 117;
+
+  //living room computer
+  const computer_left_bound = 567;
+  const computer_right_bound = 635;
+  const computer_bottom_bound = 347;
+  const computer_top_bound = 197;
+
 
 
 
@@ -107,7 +118,10 @@
     bedroom_scene = loadBackground("images/bedroom.png");
     kitchen_scene = loadBackground("images/new_new_kitchen.png");
     livingroom_scene = loadBackground("images/big-out-living.png");
+
+    //zoomed in images
     whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png")
+    computer_scene = loadBackground("images/locked_computer.png")
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -290,6 +304,15 @@
         is_whiteboard_scene = true;
         is_bedroom_scene = false;
     }
+
+    if(scene_pic == livingroom_scene && char_x_pos >= computer_left_bound && 
+    char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound && char_y_pos >= computer_top_bound){
+      
+      scene_pic = computer_scene;
+      is_computer_scene = true;
+      is_livingroom_scene = false;
+
+    }
   }
 
 
@@ -352,7 +375,22 @@
           is_bedroom_scene = true;
         }
       }
+      if(is_computer_scene){  
+
+        //zoom out of computer
+        scene_pic = current_room;
+        //move out of the zone that triggered zoom in
+        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound);
+
+        //update values of the game scene
+        is_computer_scene = false;
+        if(current_room == livingroom_scene){
+          is_livingroom_scene = true;
+        }
+      }
+    //closing the escape key conditional  
     }
+  //closing log key function
   }
 
 
@@ -371,6 +409,8 @@
     } else if (char_x_pos <= right_bound && char_x_pos + char_speed > right_bound) {
       // came from right
       char_x_pos += char_speed;
+    } else if (char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound){
+      char_y_pos -= char_speed
     }
   }
 
