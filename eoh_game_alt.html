@@ -98,7 +98,7 @@
   const whiteboard_right_bound = 380;
   const whiteboard_bottom_bound = 117;
 
-  //living room computer
+  // living room computer
   const computer_left_bound = 567;
   const computer_right_bound = 635;
   const computer_bottom_bound = 347;
@@ -119,7 +119,7 @@
     kitchen_scene = loadBackground("images/new_new_kitchen.png");
     livingroom_scene = loadBackground("images/big-out-living.png");
 
-    //zoomed in images
+    // zoomed in images
     whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png")
     computer_scene = loadBackground("images/locked_computer.png")
 
@@ -305,8 +305,8 @@
         is_bedroom_scene = false;
     }
 
-    if(scene_pic == livingroom_scene && char_x_pos >= computer_left_bound && 
-    char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound && char_y_pos >= computer_top_bound){
+    if (scene_pic == livingroom_scene && char_x_pos >= computer_left_bound && 
+      char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound && char_y_pos >= computer_top_bound){
       
       scene_pic = computer_scene;
       is_computer_scene = true;
@@ -375,23 +375,22 @@
           is_bedroom_scene = true;
         }
       }
-      if(is_computer_scene){  
+      if (is_computer_scene){  
 
-        //zoom out of computer
+        // zoom out of computer
         scene_pic = current_room;
-        //move out of the zone that triggered zoom in
+
+        // move out of the zone that triggered zoom in
         moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound);
 
-        //update values of the game scene
+        // update values of the game scene
         is_computer_scene = false;
-        if(current_room == livingroom_scene){
+        if (current_room == livingroom_scene){
           is_livingroom_scene = true;
         }
       }
-    //closing the escape key conditional  
-    }
-  //closing log key function
-  }
+    }  // closing the escape key conditional  
+  }  // closing log key function
 
 
   // moves the character out of the area that would trigger the zoom in again
@@ -409,7 +408,10 @@
     } else if (char_x_pos <= right_bound && char_x_pos + char_speed > right_bound) {
       // came from right
       char_x_pos += char_speed;
-    } else if (char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound){
+    }
+    
+    // conditionals for items that have a top bound
+    if (is_computer_scene && char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound){
       char_y_pos -= char_speed
     }
   }
