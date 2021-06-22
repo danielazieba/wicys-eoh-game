@@ -51,8 +51,10 @@
   var whiteboard_scene;
   var computer_scene;
   var combo_lock_scene;
+  var fridge_scene;
 
 
+  // booleans used for keeping track of current scene
   var is_bedroom_scene = true;
   var is_kitchen_scene = false;
   var is_livingroom_scene = false;
@@ -60,6 +62,7 @@
   var is_whiteboard_scene = false;
   var is_computer_scene = false;
   var is_combo_lock_scene = false;
+  var is_fridge_scene = false;
 
 
   var scene_pic;  // current background picture being displayed
@@ -114,6 +117,11 @@
   const combo_lock_bottom_bound = 235;
   const combo_lock_top_bound = 180;
 
+  // kitchen fridge
+  const fridge_left_bound = 75;
+  const fridge_right_bound = 195;
+  const fridge_bottom_bound = 235;
+  const fridge_top_bound = 50;
 
 
 
@@ -130,9 +138,10 @@
     livingroom_scene = loadBackground("images/big-out-living.png");
 
     // zoomed in images
-    whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png")
-    computer_scene = loadBackground("images/locked_computer.png")
-    combo_lock_scene = loadBackground("images/combination_lock_with_numbers_on_cabinet_w_box1.png")
+    whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png");
+    computer_scene = loadBackground("images/locked_computer.png");
+    combo_lock_scene = loadBackground("images/combination_lock_with_numbers_on_cabinet_w_box1.png");
+    fridge_scene = loadBackground("images/fridge_display_w_text.png");
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -330,11 +339,20 @@
       char_x_pos <= combo_lock_right_bound && char_y_pos <= combo_lock_bottom_bound &&
       char_y_pos >= combo_lock_top_bound) {
         
-        scene_pic = combo_lock_scene
-        is_combo_lock_scene = true;
-        is_kitchen_scene = false;
+      scene_pic = combo_lock_scene
+      is_combo_lock_scene = true;
+      is_kitchen_scene = false;
 
-      }
+    }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= fridge_left_bound &&
+      char_x_pos <= fridge_right_bound && char_y_pos <= fridge_bottom_bound &&
+      char_y_pos >= fridge_top_bound) {
+
+      scene_pic = fridge_scene;
+      is_fridge_scene = true;
+      is_kitchen_scene = false;
+    }
   }
 
 
@@ -425,6 +443,21 @@
           is_kitchen_scene = true;
         }
       }
+
+      if (is_fridge_scene) {
+        // zoom out of fridge
+        scene_pic = current_room;
+
+        // move out of the zone that triggered zoom in
+        moveOutOfDetectionZone(fridge_left_bound, fridge_right_bound, fridge_bottom_bound);
+
+        // update values
+        is_fridge_scene = false;
+        if (current_room === kitchen_scene) {
+          is_kitchen_scene = true;
+        }
+      }
+
     }  // closing the escape key conditional  
   }  // closing log key function
 
@@ -450,6 +483,8 @@
     if (is_computer_scene && char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound) {
       char_y_pos -= char_speed;
     } else if (is_combo_lock_scene && char_y_pos >= combo_lock_top_bound && char_y_pos - char_speed < combo_lock_top_bound) {
+      char_y_pos -= char_speed;
+    } else if (is_fridge_scene && char_y_pos >= fridge_top_bound && char_y_pos - char_speed < fridge_top_bound) {
       char_y_pos -= char_speed;
     }
   }
