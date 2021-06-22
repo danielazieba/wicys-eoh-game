@@ -358,22 +358,27 @@
 
 
   /* RECORD KEY DOWNS (specifically character movements) */
-  // source: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
+  // source for recording key downs: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
+  // source for stopping scrolling when using arrow keys: https://stackoverflow.com/questions/40905098/how-to-stop-scrolling-while-html5-game-is-playing
   document.onkeydown = function(event) {
     if (event.code === "ArrowUp") {
       is_key_up = true;
+      event.preventDefault();
     }
 
     if (event.code === "ArrowRight") {
       is_key_right = true;
+      event.preventDefault();
     }
 
     if (event.code === "ArrowDown") {
       is_key_down = true;
+      event.preventDefault();
     }
 
     if (event.code === "ArrowLeft") {
       is_key_left = true;
+      event.preventDefault();
     }
   }
 
