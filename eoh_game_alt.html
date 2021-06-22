@@ -101,9 +101,10 @@
 
   /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
   // bedroom whiteboard
-  const whiteboard_left_bound = 267;
-  const whiteboard_right_bound = 380;
+  const whiteboard_left_bound = 260;
+  const whiteboard_right_bound = 395;
   const whiteboard_bottom_bound = 117;
+  const whiteboard_top_bound = 0;
 
   // living room computer
   const computer_left_bound = 567;
@@ -407,7 +408,7 @@
         scene_pic = current_room;
         
         // need the following to prevent the character from triggering the zoom in again
-        moveOutOfDetectionZone(whiteboard_left_bound, whiteboard_right_bound, whiteboard_bottom_bound);
+        moveOutOfDetectionZone(whiteboard_left_bound, whiteboard_right_bound, whiteboard_bottom_bound, whiteboard_top_bound);
 
         // update values
         is_whiteboard_scene = false;
@@ -421,7 +422,7 @@
         scene_pic = current_room;
 
         // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound);
+        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
 
         // update values of the game scene
         is_computer_scene = false;
@@ -435,7 +436,7 @@
         scene_pic = current_room;
 
         // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(combo_lock_left_bound, combo_lock_right_bound, combo_lock_bottom_bound);
+        moveOutOfDetectionZone(combo_lock_left_bound, combo_lock_right_bound, combo_lock_bottom_bound, combo_lock_top_bound);
 
         // update values
         is_combo_lock_scene = false;
@@ -449,7 +450,7 @@
         scene_pic = current_room;
 
         // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(fridge_left_bound, fridge_right_bound, fridge_bottom_bound);
+        moveOutOfDetectionZone(fridge_left_bound, fridge_right_bound, fridge_bottom_bound, fridge_top_bound);
 
         // update values
         is_fridge_scene = false;
@@ -463,7 +464,7 @@
 
 
   // moves the character out of the area that would trigger the zoom in again
-  function moveOutOfDetectionZone(left_bound, right_bound, bottom_bound) {
+  function moveOutOfDetectionZone(left_bound, right_bound, bottom_bound, top_bound) {
     // the following conditionals essentially check which direction the character
     // approached the item that caused it to zoom in; these checks will require
     // the user to only press 'ESCAPE' once when they want to close the window
@@ -477,16 +478,19 @@
     } else if (char_x_pos <= right_bound && char_x_pos + char_speed > right_bound) {
       // came from right
       char_x_pos += char_speed;
+    } else if (char_y_pos >= top_bound && char_y_pos - char_speed < top_bound) {
+      // came from top
+      char_y_pos -= char_speed;
     }
     
     // conditionals for items that have a top bound
-    if (is_computer_scene && char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound) {
-      char_y_pos -= char_speed;
-    } else if (is_combo_lock_scene && char_y_pos >= combo_lock_top_bound && char_y_pos - char_speed < combo_lock_top_bound) {
-      char_y_pos -= char_speed;
-    } else if (is_fridge_scene && char_y_pos >= fridge_top_bound && char_y_pos - char_speed < fridge_top_bound) {
-      char_y_pos -= char_speed;
-    }
+    // if (is_computer_scene && char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound) {
+    //   char_y_pos -= char_speed;
+    // } else if (is_combo_lock_scene && char_y_pos >= combo_lock_top_bound && char_y_pos - char_speed < combo_lock_top_bound) {
+    //   char_y_pos -= char_speed;
+    // } else if (is_fridge_scene && char_y_pos >= fridge_top_bound && char_y_pos - char_speed < fridge_top_bound) {
+    //   char_y_pos -= char_speed;
+    // }
   }
 
 
