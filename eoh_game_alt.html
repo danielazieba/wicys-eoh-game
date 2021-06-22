@@ -50,6 +50,7 @@
   // the following grouped variables store pics of zoomed in objects
   var whiteboard_scene;
   var computer_scene;
+  var combo_lock_scene;
 
 
   var is_bedroom_scene = true;
@@ -58,6 +59,8 @@
 
   var is_whiteboard_scene = false;
   var is_computer_scene = false;
+  var is_combo_lock_scene = false;
+
 
   var scene_pic;  // current background picture being displayed
   var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
@@ -81,7 +84,7 @@
   var char_x_pos = 587;  // x pos of top left corner of char img
   var char_y_pos = 282;  // y pos of top left corner of char img
 
-  const char_speed = 5;
+  const char_speed = 3;
 
   var step_counter = 0;  // used to determine whether the character step changes
   var step_change = 25;  // every 25 ms, character step changes
@@ -94,6 +97,7 @@
 
 
   /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
+  // bedroom whiteboard
   const whiteboard_left_bound = 267;
   const whiteboard_right_bound = 380;
   const whiteboard_bottom_bound = 117;
@@ -103,6 +107,12 @@
   const computer_right_bound = 635;
   const computer_bottom_bound = 347;
   const computer_top_bound = 197;
+
+  // kitchen combo lock
+  const combo_lock_left_bound = 20;
+  const combo_lock_right_bound = 75;
+  const combo_lock_bottom_bound = 235;
+  const combo_lock_top_bound = 180;
 
 
 
@@ -122,6 +132,7 @@
     // zoomed in images
     whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png")
     computer_scene = loadBackground("images/locked_computer.png")
+    combo_lock_scene = loadBackground("images/combination_lock_with_numbers_on_cabinet_w_box1.png")
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -306,13 +317,24 @@
     }
 
     if (scene_pic == livingroom_scene && char_x_pos >= computer_left_bound && 
-      char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound && char_y_pos >= computer_top_bound){
+      char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound &&
+      char_y_pos >= computer_top_bound) {
       
       scene_pic = computer_scene;
       is_computer_scene = true;
       is_livingroom_scene = false;
 
     }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= combo_lock_left_bound &&
+      char_x_pos <= combo_lock_right_bound && char_y_pos <= combo_lock_bottom_bound &&
+      char_y_pos >= combo_lock_top_bound) {
+        
+        scene_pic = combo_lock_scene
+        is_combo_lock_scene = true;
+        is_kitchen_scene = false;
+
+      }
   }
 
 
@@ -375,8 +397,8 @@
           is_bedroom_scene = true;
         }
       }
-      if (is_computer_scene){  
 
+      if (is_computer_scene) {  
         // zoom out of computer
         scene_pic = current_room;
 
@@ -385,8 +407,22 @@
 
         // update values of the game scene
         is_computer_scene = false;
-        if (current_room == livingroom_scene){
+        if (current_room === livingroom_scene) {
           is_livingroom_scene = true;
+        }
+      }
+
+      if (is_combo_lock_scene) {
+        // zoom out of combo lock
+        scene_pic = current_room;
+
+        // move out of the zone that triggered zoom in
+        moveOutOfDetectionZone(combo_lock_left_bound, combo_lock_right_bound, combo_lock_bottom_bound);
+
+        // update values
+        is_combo_lock_scene = false;
+        if (current_room === kitchen_scene) {
+          is_kitchen_scene = true;
         }
       }
     }  // closing the escape key conditional  
@@ -411,8 +447,10 @@
     }
     
     // conditionals for items that have a top bound
-    if (is_computer_scene && char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound){
-      char_y_pos -= char_speed
+    if (is_computer_scene && char_y_pos >= computer_top_bound && char_y_pos - char_speed < computer_top_bound) {
+      char_y_pos -= char_speed;
+    } else if (is_combo_lock_scene && char_y_pos >= combo_lock_top_bound && char_y_pos - char_speed < combo_lock_top_bound) {
+      char_y_pos -= char_speed;
     }
   }
 
