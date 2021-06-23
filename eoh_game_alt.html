@@ -52,7 +52,8 @@
   var computer_scene;
   var combo_lock_scene;
   var fridge_scene;
-
+  var toaster_scene;
+  var coffee_maker_scene;
 
   // booleans used for keeping track of current scene
   var is_bedroom_scene = true;
@@ -63,7 +64,8 @@
   var is_computer_scene = false;
   var is_combo_lock_scene = false;
   var is_fridge_scene = false;
-
+  var is_toaster_scene = false;
+  var is_coffee_maker_scene = false;
 
   var scene_pic;  // current background picture being displayed
   var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
@@ -124,6 +126,18 @@
   const fridge_bottom_bound = 238;
   const fridge_top_bound = 46;
 
+  //kitchen toaster
+  const toaster_left_bound = 240;
+  const toaster_right_bound = 310;
+  const toaster_bottom_bound = 178;
+  const toaster_top_bound = 100;
+
+  //kitchen coffee maker
+  const coffee_maker_left_bound = 450;
+  const coffee_maker_right_bound = 560;
+  const coffee_maker_bottom_bound = 178;
+  const coffee_maker_top_bound = 80;
+
 
 
   // FINAL ATTEMPT (SUCCESSFUL!!)
@@ -143,6 +157,8 @@
     computer_scene = loadBackground("images/locked_computer.png");
     combo_lock_scene = loadBackground("images/combination_lock_with_numbers_on_cabinet_w_box1.png");
     fridge_scene = loadBackground("images/fridge_display_w_text.png");
+    toaster_scene = loadBackground("images/zoomed_in_toaster_with_background.png");
+    coffee_maker_scene = loadBackground("images/coffee.png");
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -316,6 +332,7 @@
 
   // check if the character landed in any zoom in area
   function zoomInOnItem() {
+    
     if (scene_pic == bedroom_scene && char_x_pos >= whiteboard_left_bound &&
       char_x_pos <= whiteboard_right_bound && char_y_pos <= whiteboard_bottom_bound) {
         // zoom into whiteboard
@@ -352,6 +369,24 @@
 
       scene_pic = fridge_scene;
       is_fridge_scene = true;
+      is_kitchen_scene = false;
+    }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= toaster_left_bound &&
+      char_x_pos <= toaster_right_bound && char_y_pos <= toaster_bottom_bound &&
+      char_y_pos >= toaster_top_bound) {
+
+      scene_pic = toaster_scene;
+      is_toaster_scene = true;
+      is_kitchen_scene = false;
+    }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= coffee_maker_left_bound &&
+      char_x_pos <= coffee_maker_right_bound && char_y_pos <= coffee_maker_bottom_bound &&
+      char_y_pos >= coffee_maker_top_bound) {
+
+      scene_pic = coffee_maker_scene;
+      is_coffee_maker_scene = true;
       is_kitchen_scene = false;
     }
   }
@@ -459,6 +494,34 @@
 
         // update values
         is_fridge_scene = false;
+        if (current_room === kitchen_scene) {
+          is_kitchen_scene = true;
+        }
+      }
+
+      if (is_toaster_scene) {
+        // zoom out of toaster
+        scene_pic = current_room;
+
+        // move out of the zone that triggered zoom in
+        moveOutOfDetectionZone(toaster_left_bound, toaster_right_bound, toaster_bottom_bound, toaster_top_bound);
+
+        // update values
+        is_toaster_scene = false;
+        if (current_room === kitchen_scene) {
+          is_kitchen_scene = true;
+        }
+      }
+
+      if (is_coffee_maker_scene) {
+        // zoom out of toaster
+        scene_pic = current_room;
+
+        // move out of the zone that triggered zoom in
+        moveOutOfDetectionZone(coffee_maker_left_bound, coffee_maker_right_bound, coffee_maker_bottom_bound, coffee_maker_top_bound);
+
+        // update values
+        is_coffee_maker_scene = false;
         if (current_room === kitchen_scene) {
           is_kitchen_scene = true;
         }
