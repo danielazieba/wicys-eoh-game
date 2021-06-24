@@ -67,6 +67,7 @@
   var is_toaster_scene = false;
   var is_coffee_maker_scene = false;
 
+
   var scene_pic;  // current background picture being displayed
   var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
 
@@ -139,6 +140,16 @@
   const coffee_maker_top_bound = 80;
 
 
+  /* PUZZLE ATTRIBUTES */
+  var allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
+
+  var lock_combo_string = " ";  // needs to have a space in between in order for backspace to work
+  var is_lock_combo_incorrect_message_visible = false;
+  var is_lock_unlocked = false;
+
+
+
+
 
   // FINAL ATTEMPT (SUCCESSFUL!!)
   console.log("BEGIN");
@@ -197,9 +208,13 @@
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
 
+    // display text (needs to be after scene pics are drawn in order to be seen)
+    displayUserInput();
+    displayIncorrectMessage();
+
     // can use to find current position of character
-    console.log("x: " + char_x_pos);
-    console.log("y: " + char_y_pos);
+    // console.log("x: " + char_x_pos);
+    // console.log("y: " + char_y_pos);
 
     console.log("CLEARED")
   }
@@ -357,9 +372,11 @@
       char_x_pos <= combo_lock_right_bound && char_y_pos <= combo_lock_bottom_bound &&
       char_y_pos >= combo_lock_top_bound) {
         
-      scene_pic = combo_lock_scene
-      is_combo_lock_scene = true;
-      is_kitchen_scene = false;
+      if (!is_lock_unlocked) {
+        scene_pic = combo_lock_scene
+        is_combo_lock_scene = true;
+        is_kitchen_scene = false;
+      }
 
     }
 
@@ -483,6 +500,9 @@
         if (current_room === kitchen_scene) {
           is_kitchen_scene = true;
         }
+
+        // clear text
+        lock_combo_string = " ";
       }
 
       if (is_fridge_scene) {
@@ -527,7 +547,35 @@
         }
       }
 
-    }  // closing the escape key conditional  
+    }  // closing the escape key conditional
+
+    if (key.code === "Backspace") {
+
+      if (is_combo_lock_scene) {
+        if (is_lock_combo_incorrect_message_visible) {
+          is_lock_combo_incorrect_message_visible = false;
+        }
+
+        if (lock_combo_string.length > 0) {
+          // user only needs to delete the numbers they inputted, not the spaces
+          if (lock_combo_string[lock_combo_string.length - 1] == " ") {
+            lock_combo_string = lock_combo_string.substring(0, lock_combo_string.length - 1);
+          }
+
+          // delete a character
+          lock_combo_string = lock_combo_string.substring(0, lock_combo_string.length - 1);
+        }
+      }  // closing lock scene conditional
+
+    }  // closing the backspace key conditional
+
+    if (key.code === "Enter") {
+      checkPasswordCorrectness();
+    }
+
+    // check for key downs for alphanumeric characters
+    updateUserInput(key);
+
   }  // closing log key function
 
 
@@ -667,6 +715,110 @@
     }
 
   }
+
+
+  /* FUNCTIONS FOR PUZZLES */
+  // displays text user types
+  function displayUserInput() {
+
+    if (is_combo_lock_scene) {
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "black";
+      game_context.fillText(lock_combo_string, 290, 443);
+    }
+
+  }
+
+  function displayIncorrectMessage() {
+
+    if (is_lock_combo_incorrect_message_visible) {
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "red";
+      game_context.fillText("Combo incorrect. Please try again.", 150, 480);
+    }
+
+  }
+
+  function updateUserInput(key) {
+
+    if (is_combo_lock_scene) {
+      if (allowed_combo_keys.includes(key.which) && lock_combo_string.length < 9) {
+        // remove incorrect message text
+        if (is_lock_combo_incorrect_message_visible) {
+          is_lock_combo_incorrect_message_visible = false;
+        }
+
+        // automatically add spaces between numbers for user
+        if ((lock_combo_string.length) % 3 == 0) {
+          lock_combo_string += " ";
+        }
+
+        // add user input
+        lock_combo_string += String.fromCharCode(key.which);
+      }
+    }  // closing lock conditional
+
+  }
+
+  // check passwords
+  function checkPasswordCorrectness() {
+
+    if (!is_lock_unlocked && is_combo_lock_scene) {
+      if (lock_combo_string === " 86 37 49") {  // correct combo
+        // zoom out of cabinet
+        scene_pic = current_room;
+        is_kitchen_scene = true;
+
+        moveOutOfDetectionZone(combo_lock_left_bound, combo_lock_right_bound, combo_lock_bottom_bound, combo_lock_top_bound);
+
+        if (scene_pic === kitchen_scene) {
+          is_combo_lock_scene = false;
+        }
+
+        // update status of puzzle
+        is_lock_unlocked = true;
+      } else {  // incorrect combo
+        if (!is_lock_combo_incorrect_message_visible) {
+          is_lock_combo_incorrect_message_visible = true;
+        }
+      }
+    }  // closing lock conditional
+
+  }
+
+
+
+
+  // Notes for incorporating password puzzles:
+  // - create a variable containing an array of allowed keys (can use same as last year's)
+  // - create associated variables for keeping track of the password, incorrect message, and
+  //   whether item has been unlocked
+  // - add conditional that prevents zoom in once puzzle is solved in zoomInOnItem()
+  // - add line that clears the text in ESCAPE key down for the item
+  // - add conditional for item in BACKSPACE key down (code should be similar to that of last year)
+  // - add respective text/code to...
+  //   - updateUserInput()
+  //   - displayUserInput()
+  //   - displayIncorrectMessage()
+  //   - checkPasswordCorrectness()
+  //     - code should be similar to that of last year--refer to line 215 in original code
+
+
+  // Suggested sequence that I kind of followed when trying to implement the puzzle:
+  // - adjust text size and position using a default text (i.e. set the variable to
+  //   some phrase for testing without taking in user input yet)
+  // - incorporate taking user input
+  // - incorporate key downs for backspace, enter, etc
+
+
+  // Notes to self (Megan):
+  // - create helper function for closing out of lock scene (maybe)
+
+  
+
+
+
+
 
 
 
