@@ -141,16 +141,19 @@
 
 
   /* PUZZLE ATTRIBUTES */
+  //combinationn lock puzzle
   var allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
 
   var lock_combo_string = " ";  // needs to have a space in between in order for backspace to work
   var is_lock_combo_incorrect_message_visible = false;
   var is_lock_unlocked = false;
 
-
-
-
-
+  //computer password puzzle
+  var allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90] //e.which codes
+  var computer_password_string = " "; //needs to have at least a space for backspace to work
+  var is_password_incorrect_message_visible = false;
+  var is_computer_unlocked = false;
+  
   // FINAL ATTEMPT (SUCCESSFUL!!)
   console.log("BEGIN");
 
@@ -362,10 +365,11 @@
       char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound &&
       char_y_pos >= computer_top_bound) {
       
-      scene_pic = computer_scene;
-      is_computer_scene = true;
-      is_livingroom_scene = false;
-
+      if(!is_computer_unlocked){
+        scene_pic = computer_scene;
+        is_computer_scene = true;
+        is_livingroom_scene = false;
+      }
     }
 
     if (scene_pic == kitchen_scene && char_x_pos >= combo_lock_left_bound &&
@@ -486,6 +490,9 @@
         if (current_room === livingroom_scene) {
           is_livingroom_scene = true;
         }
+
+        //clears text
+        computer_password_string = " ";
       }
 
       if (is_combo_lock_scene) {
@@ -566,6 +573,21 @@
           lock_combo_string = lock_combo_string.substring(0, lock_combo_string.length - 1);
         }
       }  // closing lock scene conditional
+
+      if(is_computer_scene){
+
+        if(is_password_incorrect_message_visible){
+          is_password_incorrect_message_visible = false;
+        }
+
+        if(computer_password_string.length <= 1){
+          //keep the blank space
+          computer_password_string = " ";
+        } 
+        else {
+          computer_password_string = computer_password_string.substring(0, computer_password_string.length - 1);
+        }
+      }   //closing computer scene conditional
 
     }  // closing the backspace key conditional
 
@@ -667,7 +689,7 @@
   // done - add room variables to conditional in 'moveCharacter()' function to prevent     
   //   the character's position from updating when zoomed into an item 
   // done- remember to change the 'current_room' variable when the rooms change
-  // - if planning on incorporating zoom-ins, don't forget to...
+  // done- if planning on incorporating zoom-ins, don't forget to...
   //   - create constants that represent the bounds
   //   - add the conditional for it to zoom in in the 'zoomInOnItem()' function
   //   - add to the conditional for the 'ESCAPE' key down in the 'logKey()' function
@@ -727,14 +749,26 @@
       game_context.fillText(lock_combo_string, 290, 443);
     }
 
+    if(is_computer_scene) {
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "black";
+      game_context.fillText(computer_password_string, 144, 270);
+    }
+
   }
 
   function displayIncorrectMessage() {
 
-    if (is_lock_combo_incorrect_message_visible) {
+    if (is_lock_combo_incorrect_message_visible && is_combo_lock_scene) {
       game_context.font = "25px Comic Sans MS";
       game_context.fillStyle = "red";
       game_context.fillText("Combo incorrect. Please try again.", 150, 480);
+    }
+
+    if(is_password_incorrect_message_visible && is_computer_scene){
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "red";
+      game_context.fillText("Password incorrect. Please try again.", 130, 350);
     }
 
   }
@@ -757,6 +791,18 @@
         lock_combo_string += String.fromCharCode(key.which);
       }
     }  // closing lock conditional
+
+    if(is_computer_scene){
+
+      if(allowed_password_keys.includes(key.which) && computer_password_string.length < 18){
+        // remove incorrect message text
+        if (is_password_incorrect_message_visible) {
+          is_password_incorrect_message_visible = false;
+        }
+
+        computer_password_string += String.fromCharCode(key.which);
+      }    
+    }    //closing computer password conditional
 
   }
 
@@ -784,23 +830,45 @@
       }
     }  // closing lock conditional
 
-  }
+    if(!is_computer_unlocked && is_computer_scene){
+      if(computer_password_string === " DELILAH"){
+
+        scene_pic = current_room;
+        is_livingroom_scene = true;
+
+        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
+        if(scene_pic === livingroom_scene){
+          is_computer_scene = false;
+        }
+        is_computer_unlocked = true;
+      }
+      else{    //incorrect password
+
+        if(!is_password_incorrect_message_visible) {
+          is_password_incorrect_message_visible = true;
+        }
+      }
+
+    }    //closing computer password conditional
+
+  }   //closing check password correctness function
 
 
 
 
   // Notes for incorporating password puzzles:
-  // - create a variable containing an array of allowed keys (can use same as last year's)
-  // - create associated variables for keeping track of the password, incorrect message, and
+  // done - create a variable containing an array of allowed keys (can use same as last year's)
+  // done - create associated variables for keeping track of the password, incorrect message, and
   //   whether item has been unlocked
-  // - add conditional that prevents zoom in once puzzle is solved in zoomInOnItem()
-  // - add line that clears the text in ESCAPE key down for the item
-  // - add conditional for item in BACKSPACE key down (code should be similar to that of last year)
+  // done- add conditional that prevents zoom in once puzzle is solved in zoomInOnItem()
+  // done - add line that clears the text in ESCAPE key down for the item
+  // done- add conditional for item in BACKSPACE key down (code should be similar to that of last year)
   // - add respective text/code to...
-  //   - updateUserInput()
-  //   - displayUserInput()
-  //   - displayIncorrectMessage()
-  //   - checkPasswordCorrectness()
+  // done  - updateUserInput()
+  // done  - displayUserInput() /
+              //check positioning of password
+  // done  - displayIncorrectMessage()
+  // done - checkPasswordCorrectness()
   //     - code should be similar to that of last year--refer to line 215 in original code
 
 
