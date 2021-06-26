@@ -127,13 +127,13 @@
   const fridge_bottom_bound = 238;
   const fridge_top_bound = 46;
 
-  //kitchen toaster
+  // kitchen toaster
   const toaster_left_bound = 240;
   const toaster_right_bound = 310;
   const toaster_bottom_bound = 178;
   const toaster_top_bound = 100;
 
-  //kitchen coffee maker
+  // kitchen coffee maker
   const coffee_maker_left_bound = 450;
   const coffee_maker_right_bound = 560;
   const coffee_maker_bottom_bound = 178;
@@ -141,16 +141,15 @@
 
 
   /* PUZZLE ATTRIBUTES */
-  //combinationn lock puzzle
+  // combinationn lock puzzle
   var allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
-
   var lock_combo_string = " ";  // needs to have a space in between in order for backspace to work
   var is_lock_combo_incorrect_message_visible = false;
   var is_lock_unlocked = false;
 
-  //computer password puzzle
+  // computer password puzzle
   var allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90] //e.which codes
-  var computer_password_string = " "; //needs to have at least a space for backspace to work
+  var computer_password_string = " ";  // needs to have a space in between in order for backspace to work
   var is_password_incorrect_message_visible = false;
   var is_computer_unlocked = false;
   
@@ -365,7 +364,7 @@
       char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound &&
       char_y_pos >= computer_top_bound) {
       
-      if(!is_computer_unlocked){
+      if (!is_computer_unlocked) {
         scene_pic = computer_scene;
         is_computer_scene = true;
         is_livingroom_scene = false;
@@ -491,8 +490,11 @@
           is_livingroom_scene = true;
         }
 
-        //clears text
+        // clear text
         computer_password_string = " ";
+        if (is_password_incorrect_message_visible) {
+          is_password_incorrect_message_visible = false;
+        }
       }
 
       if (is_combo_lock_scene) {
@@ -510,6 +512,9 @@
 
         // clear text
         lock_combo_string = " ";
+        if (is_lock_combo_incorrect_message_visible) {
+          is_lock_combo_incorrect_message_visible = false;
+        }
       }
 
       if (is_fridge_scene) {
@@ -574,20 +579,19 @@
         }
       }  // closing lock scene conditional
 
-      if(is_computer_scene){
-
-        if(is_password_incorrect_message_visible){
+      if (is_computer_scene) {
+        if (is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = false;
         }
 
-        if(computer_password_string.length <= 1) {
-          //keep the blank space
+        if (computer_password_string.length <= 1) {
+          // keep the blank space
           computer_password_string = " ";
-        } 
-        else {
+        } else {
+          // delete a character
           computer_password_string = computer_password_string.substring(0, computer_password_string.length - 1);
         }
-      }   //closing computer scene conditional
+      }  // closing computer scene conditional
 
     }  // closing the backspace key conditional
 
@@ -749,7 +753,7 @@
       game_context.fillText(lock_combo_string, 290, 443);
     }
 
-    if(is_computer_scene) {
+    if (is_computer_scene) {
       game_context.font = "25px Comic Sans MS";
       game_context.fillStyle = "black";
       game_context.fillText(computer_password_string, 144, 270);
@@ -759,13 +763,13 @@
 
   function displayIncorrectMessage() {
 
-    if (is_lock_combo_incorrect_message_visible && is_combo_lock_scene) {
+    if (is_lock_combo_incorrect_message_visible) {
       game_context.font = "25px Comic Sans MS";
       game_context.fillStyle = "red";
       game_context.fillText("Combo incorrect. Please try again.", 150, 480);
     }
 
-    if(is_password_incorrect_message_visible && is_computer_scene){
+    if (is_password_incorrect_message_visible) {
       game_context.font = "25px Comic Sans MS";
       game_context.fillStyle = "red";
       game_context.fillText("Password incorrect. Please try again.", 130, 350);
@@ -792,17 +796,17 @@
       }
     }  // closing lock conditional
 
-    if(is_computer_scene){
-
-      if(allowed_password_keys.includes(key.which) && computer_password_string.length < 18){
+    if (is_computer_scene) {
+      if (allowed_password_keys.includes(key.which) && computer_password_string.length < 18) {
         // remove incorrect message text
         if (is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = false;
         }
 
+        // add user input
         computer_password_string += String.fromCharCode(key.which);
       }    
-    }    //closing computer password conditional
+    }  // closing computer password conditional
 
   }
 
@@ -830,28 +834,27 @@
       }
     }  // closing lock conditional
 
-    if(!is_computer_unlocked && is_computer_scene){
-      if(computer_password_string === " DELILAH"){
-
+    if (!is_computer_unlocked && is_computer_scene) {
+      if (computer_password_string === " DELILAH") {
+        // zoom out of cabinet
         scene_pic = current_room;
         is_livingroom_scene = true;
 
         moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
-        if(scene_pic === livingroom_scene){
+        
+        if (scene_pic === livingroom_scene) {
           is_computer_scene = false;
         }
         is_computer_unlocked = true;
-      }
-      else{    //incorrect password
-
-        if(!is_password_incorrect_message_visible) {
+      } else {  // incorrect password
+        if (!is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = true;
         }
       }
 
-    }    //closing computer password conditional
+    }  // closing computer password conditional
 
-  }   //closing check password correctness function
+  }  // closing check password correctness function
 
 
 
