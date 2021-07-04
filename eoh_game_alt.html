@@ -174,15 +174,30 @@
   var is_computer_unlocked = false;
 
   // terminal
-  // allowed keys - space, numbers, letters, minus, period, slash, quote
-  var allowed_terminal_keys = [32, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 71,
-                               72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
-                               90, 189, 190, 191, 222];  // e.which codes
   var current_directory = "~";
   var directory_archive = ["~"];
   var terminal_archive = [""];
   var user_input = "";
   var num_inputs = 0;
+  var input_number = num_inputs;  // used for moving between commands
+
+  var directory = {
+    "~" : {
+      "directories" : [
+        "fridge_app"
+      ],
+      "executables" : [
+        "lineDolphin.exe",
+        "coffeeRequestSender.exe"
+      ]
+    },
+    "fridge_app" : {
+      "directories" : [],
+      "executables" : [
+        "fridgeLoginPortal.exe"
+      ]
+    }
+  };
 
   
   // FINAL ATTEMPT (SUCCESSFUL!!)
@@ -637,9 +652,13 @@
         while (num_inputs > 0) {
           let terminal_line = document.getElementById("input" + num_inputs);
           game_terminal.removeChild(terminal_line);
+
+          let output_line = document.getElementById("output" + (num_inputs - 1));
+          game_terminal.removeChild(output_line);
           
           --num_inputs;
         }
+        input_number = num_inputs;
       }  // closing terminal conditional
 
     }  // closing the escape key conditional
@@ -686,6 +705,10 @@
     if (key.code === "Enter") {
       if (is_terminal_scene) {
 
+        // execute user input
+        var terminal_output = executeUserInput();
+        displayTerminalOutput(terminal_output);
+
         // create new divider to hold next line of user input
         // source1: https://www.encodedna.com/javascript/append-or-add-text-to-div-using-javascript.htm
         // source2: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
@@ -694,15 +717,18 @@
         new_divider.id = "input" + num_inputs;
 
         // display current directory for new line
-        var text = document.createTextNode(current_directory);
+        var directory_display = getFullDirectory()
+        var text = document.createTextNode(directory_display);
         new_divider.appendChild(text);
 
-        new_divider.scrollIntoView();  // doesn't work--supposed to scroll to newest element being added
+        // new_divider.scrollIntoView();  // doesn't work--supposed to scroll to newest element being added
         
         game_terminal.append(new_divider);
 
         // reset user input text
         user_input = "";
+        terminal_archive.push(user_input);
+        input_number = num_inputs;
 
       } else {
         checkPasswordCorrectness();
@@ -874,7 +900,8 @@
 
       // create the replacement elements
       var replacement_divider = document.createElement("div");
-      var replacement_text = document.createTextNode(current_directory + user_input);
+      var directory_display = getFullDirectory();
+      var replacement_text = document.createTextNode(directory_display + user_input);
       replacement_divider.appendChild(replacement_text);
 
       // retrieve the element to replace
@@ -908,7 +935,7 @@
 
   function updateUserInput(key) {
 
-    if (key.which == 32) {  // 32 = space key
+    if (key.code === "Space") {
       key.preventDefault();
     }
 
@@ -942,10 +969,39 @@
     }  // closing computer password conditional
 
     if (is_terminal_scene) {
-      if (allowed_terminal_keys.includes(key.which)) {
+      
+      if (key.key === "Shift" ||
+          key.key === "Alt" ||
+          key.key === "Meta" ||
+          key.key === "Control" ||
+          key.key === "Backspace" ||
+          key.key === "Enter" ||
+          key.key === "ArrowRight" ||
+          key.key === "ArrowLeft" ||
+          key.key === "Escape" ||
+          key.key === "CapsLock" ||
+          key.key === "Tab") {
+        // do nothing
+      } else if (key.key === "ArrowUp") {
+        // display previous terminal command from current command
+        if (input_number - 1 >= 0) {
+          user_input = terminal_archive[input_number - 1];
+          --input_number;
+        }
+      } else if (key.key === "ArrowDown") {
+        // display next terminal command from current command
+        if (input_number + 1 <= num_inputs) {
+          user_input = terminal_archive[input_number + 1];
+          ++input_number;
+        }
+      } else {
         // add to user input and store it
-        user_input += String.fromCharCode(key.which);
+        user_input += key.key;
         terminal_archive[num_inputs] = user_input;
+
+        // make new command typed out the most recent command (used
+        // for arrowup and arrowdown keys for viewing terminal archive)
+        input_number = num_inputs;
       }
     }  // closing terminal conditional
 
@@ -999,6 +1055,107 @@
   }  // closing check password correctness function
 
 
+  // execute user input by outputting corresponding messages
+  function executeUserInput() {
+    var command_to_process = [];
+    if (user_input.trim() != "") {
+      command_to_process = user_input.split(" ");
+    }
+    var output_text = "";
+
+    var subdirectories = directory[current_directory]["directories"];
+    var executables_in_current = directory[current_directory]["executables"];
+
+    // check commands
+    if (command_to_process.length != 0) {  // only check commands if command exists
+      if (command_to_process[0] === "cd") {
+        if (command_to_process.length == 1) {  // "cd"
+
+          // move to home directory if not already in it
+          if (current_directory != "~") {
+            current_directory = "~";
+            directory_archive = ["~"];
+          }
+
+        } else if (command_to_process.length == 2) {  // "cd" + other command
+
+          if (command_to_process[1] == "../") {  // "cd ../"
+            if (current_directory != "~" && directory_archive.length != 1) {
+              // move to parent/previous directory
+              directory_archive.pop();
+              current_directory = directory_archive[directory_archive.length - 1];
+            }
+          }
+
+          // NOTE: MOVING INTO OTHER DIRECTORIES WILL BE CHECKED HERE!
+          else {  // check if it's a valid directory
+            var valid_directory = false;
+
+            for (var s = 0; s < subdirectories.length; ++s) {
+              if (subdirectories[s] === command_to_process[1]) {
+                // change directory and save into archive
+                current_directory = subdirectories[s];
+                directory_archive.push(current_directory);
+                valid_directory = true;
+                break;
+              }
+            }
+
+            if (!valid_directory) {
+              output_text = "Error: specified directory not found.";
+            }
+          }
+
+        }
+      } else if (command_to_process[0] == "ls") {
+        if (command_to_process.length == 1) {  // "ls"
+
+          // display subdirectories and executables in current directory
+          for (var i = 0; i < subdirectories.length; ++i) {
+            output_text += subdirectories[i] + " ";
+          }
+
+          for (var j = 0; j < executables_in_current.length; ++j) {
+            output_text += executables_in_current[j] + " ";
+          }
+        }
+      } else {
+        output_text = "Error: invalid command";
+      }
+    }
+
+    return output_text;
+  }
+
+  // display output message for a terminal command
+  function displayTerminalOutput(output_text) {
+    // create divider to store output
+    var output_divider = document.createElement("div");
+    output_divider.id = "output" + num_inputs;
+
+    // display output text
+    var text = document.createTextNode(output_text);
+    output_divider.appendChild(text);
+
+    // add to terminal
+    game_terminal.append(output_divider);
+  }
+
+  // returns a string of the full directory to display in terminal
+  function getFullDirectory() {
+    var directory_string = directory_archive[0];  // "~" directory
+
+    // add in rest of directories
+    for (var dir = 1; dir < directory_archive.length; ++dir) {
+      directory_string += "/" + directory_archive[dir]; 
+    }
+
+    directory_string += "$ ";
+
+    return directory_string;
+  }
+
+
 
 
   // Notes for incorporating password puzzles:
@@ -1033,23 +1190,33 @@
   // DONE - find out how to wrap text when there is no space
   // DONE - remove browser detection for SPACE (like we did when using the arrow keys)
   // DONE - find way to keep track of user input so when commands like ESCAPE or RETURN
-  //   are pressed, it performs the way it does in a terminal
+  //   are pressed, it performs the way it does in a terminal (i.e. clears terminal history
+  //   and shows new line with directory)
   // DONE - set up display (~)
   // DONE - implement ENTER key down
   // DONE - take in user input
   // DONE - implement ESCAPE key down
-  // - fill in allowed keys
-  //   - fix these keys: minus, quote, period, slash
-  // - implement basic terminal commands
-  //   - cd
-  //   - ls
-  //   - cd ../
-  //   - KEY UP (to get previously used commands)
+  // DONE - fill in allowed keys
+  //   DONE - fix these keys: minus, quote, period, slash
+  // DONE - implement basic terminal commands
+  //   DONE - cd
+  //   DONE - ls
+  //   DONE - cd ../
+  //   DONE - KEY UP (to get previously used commands)
+  //   DONE - KEY DOWN (to get next commands if looking at previous commands)
   // - fix scrolling functionality (to have it scroll to show the line that is being written)
   // - adjust positioning and color of terminal (i.e. to make it look like it's being viewed
   //   from a computer)
   // - make sure functionality works properly (when using backspace and
   //   escaping the window)
+  // - display a cursor for the user
+  // - fix backspace key down for computer and combo puzzle
+
+
+  // DURING LAST WEEK:
+  // - remove commented out code
+  // - remove console.logs
+  // - check through all code + add missing comments + test thoroughly
 
 
 
