@@ -18,6 +18,19 @@
     color: rgb(123, 213, 255);
   }
 
+  /* source for how to style an element by id: https://blog.hubspot.com/website/css-id */
+  /* style for scrolling text box (i.e. terminal) */
+  #myTerminal {
+    background-color: darkgray;
+    width: 700px;
+    height: 500px;
+    overflow-y: scroll;
+    position: absolute;
+    visibility: hidden;
+    text-align: left;
+    word-break: break-all;  /* allows wraparound without spaces - https://css-tricks.com/almanac/properties/o/overflow-wrap/*/
+  }
+
 /* this part of the code makes the canvas only show at the top of the page--cannot position it */
 /* canvas {
     border: 1px solid #d3d3d3;
@@ -29,6 +42,9 @@
   <h2>Cybersecurity Breakfast Adventure</h2>
   <h3>*For the best user experience, please use Mozilla Firefox. The game has experienced some issues in Google Chrome and Safari. If you ever have problems of the character getting stuck in place or the screen going black, please refresh the page. Note that your current progress in the game will be lost when the page is refreshed.*</h3>
 <p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
+<div id="myTerminal">
+  <div id = "input0">~</div>
+</div>
 <!-- creating a canvas: -->
 <canvas id="myCanvas" width="700" height="500" style="background-color: #f1f1f1;"></canvas>
 <!-- <script src="plugins.js"></script> -->
@@ -39,6 +55,7 @@
   // get the canvas element and context (context allows you to draw on the canvas)
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
+  const game_terminal = document.getElementById("myTerminal");
 
 
   /* SCENE ATTRIBUTES */
@@ -54,6 +71,7 @@
   var fridge_scene;
   var toaster_scene;
   var coffee_maker_scene;
+  var terminal_scene;
 
   // booleans used for keeping track of current scene
   var is_bedroom_scene = true;
@@ -66,6 +84,7 @@
   var is_fridge_scene = false;
   var is_toaster_scene = false;
   var is_coffee_maker_scene = false;
+  var is_terminal_scene = false;
 
 
   var scene_pic;  // current background picture being displayed
@@ -148,10 +167,23 @@
   var is_lock_unlocked = false;
 
   // computer password puzzle
-  var allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90] //e.which codes
+  var allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+                               83, 84, 85, 86, 87, 88, 89, 90] // e.which codes
   var computer_password_string = " ";  // needs to have a space in between in order for backspace to work
   var is_password_incorrect_message_visible = false;
   var is_computer_unlocked = false;
+
+  // terminal
+  // allowed keys - space, numbers, letters, minus, period, slash, quote
+  var allowed_terminal_keys = [32, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 65, 66, 67, 68, 69, 70, 71,
+                               72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
+                               90, 189, 190, 191, 222];  // e.which codes
+  var current_directory = "~";
+  var directory_archive = ["~"];
+  var terminal_archive = [""];
+  var user_input = "";
+  var num_inputs = 0;
+
   
   // FINAL ATTEMPT (SUCCESSFUL!!)
   console.log("BEGIN");
@@ -172,6 +204,7 @@
     fridge_scene = loadBackground("images/fridge_display_w_text.png");
     toaster_scene = loadBackground("images/zoomed_in_toaster_with_background.png");
     coffee_maker_scene = loadBackground("images/coffee.png");
+    terminal_scene = loadBackground("images/terminal.png");
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -204,8 +237,24 @@
     // update game scene by switching between rooms
     changeRooms();
 
+    // update positioning and visibility for terminal - ensure it overlaps game canvas
+    // source1: https://www.w3schools.com/jsref/prop_element_offsettop.asp
+    // source2: https://www.w3schools.com/jsref/prop_style_left.asp
+    game_terminal.style.left = game_canvas.offsetLeft + "px";
+    game_terminal.style.top = game_canvas.offsetTop + "px";
+
+    // only display scrolling text box when terminal is open
+    // source: https://stackoverflow.com/questions/21070101/show-hide-div-using-javascript
+    if (is_terminal_scene) {
+      game_terminal.style.visibility = "visible";
+    } else {
+      game_terminal.style.visibility = "hidden";
+    }
+
     // step 3 - redraw
+    // redraw scene
     draw(scene_pic, 0, 0, 700, 500);
+    // redraw character
     if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  // only draw character if in a room
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
@@ -365,8 +414,14 @@
       char_y_pos >= computer_top_bound) {
       
       if (!is_computer_unlocked) {
+        // show computer lock screen
         scene_pic = computer_scene;
         is_computer_scene = true;
+        is_livingroom_scene = false;
+      } else {
+        // show terminal
+        scene_pic = terminal_scene;
+        is_terminal_scene = true;
         is_livingroom_scene = false;
       }
     }
@@ -559,6 +614,34 @@
         }
       }
 
+      if (is_terminal_scene) {
+        // zoom out of terminal
+        scene_pic = current_room;
+
+        // move out of the zone that triggered zoom in
+        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
+
+        // update values
+        is_terminal_scene = false;
+        if (current_room === livingroom_scene) {
+          is_livingroom_scene = true;
+        }
+
+        // reset terminal history
+        current_directory = "~";
+        directory_archive = ["~"];
+        terminal_archive = [""];
+        user_input = "";
+
+        // remove text from terminal display - https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
+        while (num_inputs > 0) {
+          let terminal_line = document.getElementById("input" + num_inputs);
+          game_terminal.removeChild(terminal_line);
+          
+          --num_inputs;
+        }
+      }  // closing terminal conditional
+
     }  // closing the escape key conditional
 
     if (key.code === "Backspace") {
@@ -593,10 +676,37 @@
         }
       }  // closing computer scene conditional
 
+      if (is_terminal_scene) {        
+        // delete a character
+        user_input = user_input.substring(0, user_input.length - 1);
+      }
+
     }  // closing the backspace key conditional
 
     if (key.code === "Enter") {
-      checkPasswordCorrectness();
+      if (is_terminal_scene) {
+
+        // create new divider to hold next line of user input
+        // source1: https://www.encodedna.com/javascript/append-or-add-text-to-div-using-javascript.htm
+        // source2: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
+        var new_divider = document.createElement("div");
+        ++num_inputs;
+        new_divider.id = "input" + num_inputs;
+
+        // display current directory for new line
+        var text = document.createTextNode(current_directory);
+        new_divider.appendChild(text);
+
+        new_divider.scrollIntoView();  // doesn't work--supposed to scroll to newest element being added
+        
+        game_terminal.append(new_divider);
+
+        // reset user input text
+        user_input = "";
+
+      } else {
+        checkPasswordCorrectness();
+      }
     }
 
     // check for key downs for alphanumeric characters
@@ -759,6 +869,25 @@
       game_context.fillText(computer_password_string, 144, 270);
     }
 
+    if (is_terminal_scene) {
+      // source: https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
+
+      // create the replacement elements
+      var replacement_divider = document.createElement("div");
+      var replacement_text = document.createTextNode(current_directory + user_input);
+      replacement_divider.appendChild(replacement_text);
+
+      // retrieve the element to replace
+      var divider_to_replace = document.getElementById("input" + num_inputs);
+
+      // rename dividers so new divider will have original divider name (for consistency)
+      divider_to_replace.id = "old" + num_inputs;
+      replacement_divider.id = "input" + num_inputs;
+
+      // replace current input line with updated user input
+      game_terminal.replaceChild(replacement_divider, divider_to_replace);
+    }
+
   }
 
   function displayIncorrectMessage() {
@@ -778,6 +907,10 @@
   }
 
   function updateUserInput(key) {
+
+    if (key.which == 32) {  // 32 = space key
+      key.preventDefault();
+    }
 
     if (is_combo_lock_scene) {
       if (allowed_combo_keys.includes(key.which) && lock_combo_string.length < 9) {
@@ -808,6 +941,14 @@
       }    
     }  // closing computer password conditional
 
+    if (is_terminal_scene) {
+      if (allowed_terminal_keys.includes(key.which)) {
+        // add to user input and store it
+        user_input += String.fromCharCode(key.which);
+        terminal_archive[num_inputs] = user_input;
+      }
+    }  // closing terminal conditional
+
   }
 
   // check passwords
@@ -815,6 +956,7 @@
 
     if (!is_lock_unlocked && is_combo_lock_scene) {
       if (lock_combo_string === " 86 37 49") {  // correct combo
+
         // zoom out of cabinet
         scene_pic = current_room;
         is_kitchen_scene = true;
@@ -827,6 +969,7 @@
 
         // update status of puzzle
         is_lock_unlocked = true;
+
       } else {  // incorrect combo
         if (!is_lock_combo_incorrect_message_visible) {
           is_lock_combo_incorrect_message_visible = true;
@@ -836,16 +979,15 @@
 
     if (!is_computer_unlocked && is_computer_scene) {
       if (computer_password_string === " DELILAH") {
-        // zoom out of cabinet
-        scene_pic = current_room;
-        is_livingroom_scene = true;
 
-        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
-        
-        if (scene_pic === livingroom_scene) {
-          is_computer_scene = false;
-        }
+        // show terminal
+        scene_pic = terminal_scene;
+        is_terminal_scene = true;
+        is_computer_scene = false;
+
+        // update status of computer => unlocked
         is_computer_unlocked = true;
+
       } else {  // incorrect password
         if (!is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = true;
@@ -884,6 +1026,34 @@
 
   // Notes to self (Megan):
   // - create helper function for closing out of lock scene (maybe)
+
+
+  // Notes for terminal implementation (7/3):
+  // DONE - render and position terminal
+  // DONE - find out how to wrap text when there is no space
+  // DONE - remove browser detection for SPACE (like we did when using the arrow keys)
+  // DONE - find way to keep track of user input so when commands like ESCAPE or RETURN
+  //   are pressed, it performs the way it does in a terminal
+  // DONE - set up display (~)
+  // DONE - implement ENTER key down
+  // DONE - take in user input
+  // DONE - implement ESCAPE key down
+  // - fill in allowed keys
+  //   - fix these keys: minus, quote, period, slash
+  // - implement basic terminal commands
+  //   - cd
+  //   - ls
+  //   - cd ../
+  //   - KEY UP (to get previously used commands)
+  // - fix scrolling functionality (to have it scroll to show the line that is being written)
+  // - adjust positioning and color of terminal (i.e. to make it look like it's being viewed
+  //   from a computer)
+  // - make sure functionality works properly (when using backspace and
+  //   escaping the window)
+
+
+
+
 
   
   // THIRD ATTEMPT (similar to final attempt)
