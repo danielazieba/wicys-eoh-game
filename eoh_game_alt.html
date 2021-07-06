@@ -55,9 +55,11 @@
   // get the canvas element and context (context allows you to draw on the canvas)
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
-  const game_terminal = document.getElementById("myTerminal");
-
-
+  var game_terminal = document.getElementById("myTerminal");
+  //didnt work forscrolling to bottom of scrollbox
+  //game_terminal.scrollTo(0, document.body.scrollHeight);
+  //game_terminal.scrollTop = game_terminal.scrollHeight;
+  
   /* SCENE ATTRIBUTES */
   // the following grouped variables store pics of the game scenes
   var bedroom_scene;
