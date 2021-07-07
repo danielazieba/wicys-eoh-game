@@ -55,7 +55,13 @@
   // get the canvas element and context (context allows you to draw on the canvas)
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
-  var game_terminal = document.getElementById("myTerminal");
+  const game_terminal = document.getElementById("myTerminal");
+
+  /* didnt work wither
+  function toBottom(){
+    game_terminal.scrollTo(0, document.body.scrollHeight);
+  }*/
+
   //didnt work forscrolling to bottom of scrollbox
   //game_terminal.scrollTo(0, document.body.scrollHeight);
   //game_terminal.scrollTop = game_terminal.scrollHeight;
