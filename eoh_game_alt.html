@@ -1067,45 +1067,11 @@
 
     // check commands
     if (command_to_process.length != 0) {  // only check commands if command exists
+      
       if (command_to_process[0] === "cd") {
-        if (command_to_process.length == 1) {  // "cd"
 
-          // move to home directory if not already in it
-          if (current_directory != "~") {
-            current_directory = "~";
-            directory_archive = ["~"];
-          }
+        output_text = executeCdCommand(command_to_process, subdirectories);
 
-        } else if (command_to_process.length == 2) {  // "cd" + other command
-
-          if (command_to_process[1] == "../") {  // "cd ../"
-            if (current_directory != "~" && directory_archive.length != 1) {
-              // move to parent/previous directory
-              directory_archive.pop();
-              current_directory = directory_archive[directory_archive.length - 1];
-            }
-          }
-
-          // NOTE: MOVING INTO OTHER DIRECTORIES WILL BE CHECKED HERE!
-          else {  // check if it's a valid directory
-            var valid_directory = false;
-
-            for (var s = 0; s < subdirectories.length; ++s) {
-              if (subdirectories[s] === command_to_process[1]) {
-                // change directory and save into archive
-                current_directory = subdirectories[s];
-                directory_archive.push(current_directory);
-                valid_directory = true;
-                break;
-              }
-            }
-
-            if (!valid_directory) {
-              output_text = "Error: specified directory not found.";
-            }
-          }
-
-        }
       } else if (command_to_process[0] == "ls") {
         if (command_to_process.length == 1) {  // "ls"
 
@@ -1121,6 +1087,49 @@
       } else {
         output_text = "Error: invalid command";
       }
+      
+    }
+
+    return output_text;
+  }
+
+  function executeCdCommand(command_to_process, subdirectories) {
+    let output_text = "";
+
+    if (command_to_process.length == 1) {  // "cd"
+
+      // move to home directory if not already in it
+      if (current_directory != "~") {
+        current_directory = "~";
+        directory_archive = ["~"];
+      }
+
+    } else if (command_to_process.length == 2) {  // "cd" + other command
+
+      if (command_to_process[1] == "../") {  // "cd ../"
+        if (current_directory != "~" && directory_archive.length != 1) {
+          // move to parent/previous directory
+          directory_archive.pop();
+          current_directory = directory_archive[directory_archive.length - 1];
+        }
+      } else {  // check if it's a valid directory (i.e. if the user wants to move into a directory)
+        var valid_directory = false;
+
+        for (var s = 0; s < subdirectories.length; ++s) {
+          if (subdirectories[s] === command_to_process[1]) {
+            // change directory and save into archive
+            current_directory = subdirectories[s];
+            directory_archive.push(current_directory);
+            valid_directory = true;
+            break;
+          }
+        }
+
+        if (!valid_directory) {
+          output_text = "Error: specified directory not found.";
+        }
+      }
+
     }
 
     return output_text;
