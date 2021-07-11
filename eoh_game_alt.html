@@ -176,11 +176,11 @@
   // terminal
   let current_directory = "~";
   let directory_archive = ["~"];
-  let terminal_archive = [""];
+  
   let currently_in_executable = false;
   let curr_executable_name = "";
-  let display_coffee_text = false;
-  let is_fridge_unlocked = false;
+  
+  let terminal_archive = [""];
   let user_input = "";
   let num_inputs = 0;
   let input_number = num_inputs;  // used for moving between commands
@@ -203,6 +203,16 @@
     }
   };
 
+  // terminal puzzle attributes
+  let is_fridge_unlocked = false;
+  let is_coffee_brewed = false;
+  let current_coffee_state = "";
+  let current_host_name = "";
+  let current_port_name = "";
+  let current_request_type = "";
+  let current_request_url = "";
+
+  let display_coffee_text = false;
   const coffee_text = ["Pinging CYBA brewer using saved configuration...",
                         "Request sent:", 
                         "GET mycyba/brewer/status CYBA/1.5",
@@ -1087,8 +1097,10 @@
   // execute user input by outputting corresponding messages
   function executeUserInput() {
     let command_to_process = [];
-    if (user_input.trim() != "") {
+    user_input = user_input.trim();
+    if (user_input != "") {
       command_to_process = user_input.split(" ");
+      console.log("COMMAND:" + command_to_process)
     }
     let output_text = "";
 
@@ -1102,7 +1114,7 @@
         output_text = executeExecutable(command_to_process);
       } else if (command_to_process[0] === "cd") {
         output_text = executeCdCommand(command_to_process, subdirectories);
-      } else if (command_to_process.length === 1 && command_to_process[0] == "ls") {  // "ls"
+      } else if (command_to_process.length === 1 && command_to_process[0].toLowerCase() == "ls") {  // "ls"
         output_text = executeLsCommand(command_to_process, subdirectories, executables_in_current);
       } else if (command_to_process[0].slice(0, 2) === "./") {
 
@@ -1117,7 +1129,7 @@
           output_text = "Error: specified executable does not exist.";
         }
 
-      } else if (command_to_process.length === 1 && command_to_process[0] === "exit") {
+      } else if (command_to_process.length === 1 && command_to_process[0].toLowerCase() === "exit") {
         output_text = "Error: nothing to exit from.";
       } else {
         output_text = "Error: Invalid Command";
@@ -1131,7 +1143,7 @@
   function executeCdCommand(command_to_process, subdirectories) {
     let output_text = "";
 
-    if (command_to_process.length == 1) {  // "cd"
+    if (command_to_process.length === 1) {  // "cd"
 
       // move to home directory if not already in it
       if (current_directory != "~") {
@@ -1139,7 +1151,7 @@
         directory_archive = ["~"];
       }
 
-    } else if (command_to_process.length == 2) {  // "cd" + other command
+    } else if (command_to_process.length === 2) {  // "cd" + other command
 
       if (command_to_process[1] == "../") {  // "cd ../"
         if (current_directory != "~" && directory_archive.length != 1) {
@@ -1165,6 +1177,8 @@
         }
       }
 
+    } else {
+      output_text = "Error: Invalid Command";
     }
 
     return output_text;
@@ -1196,7 +1210,7 @@
       if (curr_executable_name === "lineDolphin.exe") {
         output_text = executeLineDolphinExecutable(command_to_process);
       } else if (curr_executable_name === "coffeeRequestSender.exe") {
-        // TODO: ADD CODE FOR EXECUTION HERE
+        output_text = executeCoffeeRequestExecutable(command_to_process);
       } else if (curr_executable_name === "fridgeLoginPortal.exe") {
         output_text = executeFridgeLoginExecutable(command_to_process);
       }
@@ -1208,12 +1222,68 @@
   function executeLineDolphinExecutable(command_to_process) {
     let output_text = "";
 
-    if (command_to_process.length === 1 && command_to_process[0] === "capture") {
+    if (command_to_process.length === 1 && command_to_process[0].toLowerCase() === "capture") {
       display_coffee_text = true;
 
       output_text = "STATUS: OK, READY TO BREW";
     } else {
       output_text = "Error: Invalid Command";
+    }
+
+    return output_text;
+  }
+
+  function executeCoffeeRequestExecutable(command_to_process) {
+    let output_text = "";
+
+    if (command_to_process[0].toLowerCase() === "start" && current_coffee_state === "") {
+      output_text = "What host would you like to send a request to?";
+      current_coffee_state = "port";
+    } else if (current_coffee_state === "port") {
+      current_host_name = command_to_process[0].toLowerCase();
+      output_text = "Which port number are you sending to?";
+      current_coffee_state = "type";
+    } else if (current_coffee_state === "type") {
+      current_port_name = command_to_process[0].toLowerCase();
+      output_text = "What type of request are you sending? (GET or POST)";
+      current_coffee_state = "url";
+    } else if (current_coffee_state === "url") {
+      current_request_type = command_to_process[0].toLowerCase();
+      output_text = "Which URL are you sending this request to?";
+      current_coffee_state = "process";
+    } else if (current_coffee_state === "process") {
+      current_request_url = command_to_process[0].toLowerCase();
+
+      // now we have all info, process and set error messages accordingly
+      output_text = processCoffeeRequest();
+
+      // reset coffee state
+      current_coffee_state = "";
+    } else {
+      output_text = "Error: invalid command.";
+      current_coffee_state = "";
+    }
+
+    return output_text;
+  }
+
+  /* Verifies if the user's request is valid and outputs the corresponding message status or error */
+  function processCoffeeRequest() {
+    let output_text = "";
+
+    if (current_host_name != "mycyba") {
+      output_text = "Error: could not reach specified host.";
+    } else if (current_port_name != "5000") {
+      output_text = "Error: host is reachable, but port number is incorrect.";
+    } else if (current_request_type != "get") {
+      output_text = "Error: not the expected request type.";
+    } else if (current_request_url === "mycyba/brewer/brew") {
+      output_text = "STATUS: BREW REQUEST RECEIVED. WILL PROCEED TO FULFILL REQUEST.";
+      is_coffee_brewed = true;
+    } else if (current_request_url === "mycyba/brewer/status") {
+      output_text = "STATUS: OK, READY TO BREW";
+    } else {
+      output_text = "Error: valid request, but invalid URL.";
     }
 
     return output_text;
