@@ -180,7 +180,7 @@
   let currently_in_executable = false;
   let curr_executable_name = "";
   let display_coffee_text = false;
-  let fridge_is_locked = true;
+  let is_fridge_unlocked = false;
   let user_input = "";
   let num_inputs = 0;
   let input_number = num_inputs;  // used for moving between commands
@@ -1114,7 +1114,7 @@
       } else if (command_to_process.length === 1 && command_to_process[0] === "exit") {
         output_text = "Error: nothing to exit from.";
       } else {
-        output_text = "Error: invalid command";
+        output_text = "Error: Invalid Command";
       }
 
     }
@@ -1200,35 +1200,31 @@
 
   function executeFridgeLoginExecutable(command_to_process) {
     let output_text = "";
-    if(command_to_process.length === 1 && command_to_process[0] === "stock"){
 
-      output_text = "Current fridge contents: \n 1x baking soda. 6x bell pepper. 3x Golden Harbor Soup Dumplings. \n 1x half and half. 34x chicken eggs. 10x quail eggs.";
-    }
+    if (command_to_process.length === 1 && command_to_process[0] === "stock") {
 
-    else if(command_to_process.length === 1 && command_to_process[0] === "lock"){
+      output_text = "Current fridge contents: 1x baking soda. 6x bell pepper. 3x Golden Harbor Soup Dumplings. 1x half and half. 34x chicken eggs. 10x quail eggs.";
+    
+    } else if (command_to_process.length === 1 && command_to_process[0] === "lock") {
       
-      if(fridge_is_locked){
+      if (!is_fridge_unlocked) {
         output_text = "Fridge is already locked!";
-      }
-      else{
+      } else {
         output_text = "Fridge locked!";
-        fridge_is_locked = true;
+        is_fridge_unlocked = false;
       }
-    }
 
-    else if(command_to_process.length === 1 && command_to_process[0] === "unlock"){
+    } else if (command_to_process.length === 1 && command_to_process[0] === "unlock") {
 
-      if(fridge_is_locked){
+      if (!is_fridge_unlocked) {
         output_text = "Fridge unlocked!";
-        fridge_is_locked = false;
-      }
-      else{
+        is_fridge_unlocked = true;
+      } else {
         output_text = "Fridge is already unlocked!";
       }
-    }
 
-    else{
-      output_text = "Error: Invalid Command!";
+    } else {
+      output_text = "Error: Invalid Command";
     }
 
     return output_text;
