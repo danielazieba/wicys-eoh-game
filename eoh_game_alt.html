@@ -180,6 +180,7 @@
   let currently_in_executable = false;
   let curr_executable_name = "";
   let display_coffee_text = false;
+  let fridge_is_locked = true;
   let user_input = "";
   let num_inputs = 0;
   let input_number = num_inputs;  // used for moving between commands
@@ -1176,7 +1177,7 @@
       } else if (curr_executable_name === "coffeeRequestSender.exe") {
         // TODO: ADD CODE FOR EXECUTION HERE
       } else if (curr_executable_name === "fridgeLoginPortal.exe") {
-        // TODO: ADD CODE FOR EXECUTION HERE
+        output_text = executeFridgeLoginExecutable(command_to_process);
       }
     }
 
@@ -1191,7 +1192,43 @@
 
       output_text = "STATUS: OK, READY TO BREW";
     } else {
-      output_text = "Error: invalid command";
+      output_text = "Error: Invalid Command";
+    }
+
+    return output_text;
+  }
+
+  function executeFridgeLoginExecutable(command_to_process) {
+    let output_text = "";
+    if(command_to_process.length === 1 && command_to_process[0] === "stock"){
+
+      output_text = "Current fridge contents: \n 1x baking soda. 6x bell pepper. 3x Golden Harbor Soup Dumplings. \n 1x half and half. 34x chicken eggs. 10x quail eggs.";
+    }
+
+    else if(command_to_process.length === 1 && command_to_process[0] === "lock"){
+      
+      if(fridge_is_locked){
+        output_text = "Fridge is already locked!";
+      }
+      else{
+        output_text = "Fridge locked!";
+        fridge_is_locked = true;
+      }
+    }
+
+    else if(command_to_process.length === 1 && command_to_process[0] === "unlock"){
+
+      if(fridge_is_locked){
+        output_text = "Fridge unlocked!";
+        fridge_is_locked = false;
+      }
+      else{
+        output_text = "Fridge is already unlocked!";
+      }
+    }
+
+    else{
+      output_text = "Error: Invalid Command!";
     }
 
     return output_text;
