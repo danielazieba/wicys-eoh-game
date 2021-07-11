@@ -57,14 +57,6 @@
   const game_context = game_canvas.getContext("2d");
   const game_terminal = document.getElementById("myTerminal");
 
-  /* didnt work wither
-  function toBottom(){
-    game_terminal.scrollTo(0, document.body.scrollHeight);
-  }*/
-
-  //didnt work forscrolling to bottom of scrollbox
-  //game_terminal.scrollTo(0, document.body.scrollHeight);
-  //game_terminal.scrollTop = game_terminal.scrollHeight;
   
   /* SCENE ATTRIBUTES */
   // the following grouped variables store pics of the game scenes
@@ -729,9 +721,8 @@
         var text = document.createTextNode(directory_display);
         new_divider.appendChild(text);
 
-        // new_divider.scrollIntoView();  // doesn't work--supposed to scroll to newest element being added
-        //new_divider.scrollTop = new_divider.scrollHeight;  //does not work - to scroll the bar to the bottom
         game_terminal.append(new_divider);
+        game_terminal.scrollTop = game_terminal.scrollHeight;  // scroll down to show the newly added element/line
 
         // reset user input text
         user_input = "";
@@ -1212,7 +1203,7 @@
   //   DONE - cd ../
   //   DONE - KEY UP (to get previously used commands)
   //   DONE - KEY DOWN (to get next commands if looking at previous commands)
-  // - fix scrolling functionality (to have it scroll to show the line that is being written)
+  // DONE - fix scrolling functionality (to have it scroll to show the line that is being written)
   // - adjust positioning and color of terminal (i.e. to make it look like it's being viewed
   //   from a computer)
   // - make sure functionality works properly (when using backspace and
