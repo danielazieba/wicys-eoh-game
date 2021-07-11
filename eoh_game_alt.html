@@ -291,6 +291,7 @@
 
     // display text (needs to be after scene pics are drawn in order to be seen)
     displayUserInput();
+    displayComboLockHint();
     displayIncorrectMessage();
 
     // can use to find current position of character
@@ -951,6 +952,14 @@
       game_context.fillText("Password incorrect. Please try again.", 130, 350);
     }
 
+  }
+
+  function displayComboLockHint() {
+    if (is_combo_lock_scene) {
+      game_context.font = "30px courier";
+      game_context.fillStyle = "black";
+      game_context.fillText("56 25 31", 10, 30);
+    }
   }
 
   function updateUserInput(key) {
