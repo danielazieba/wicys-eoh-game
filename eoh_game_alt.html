@@ -724,6 +724,10 @@
         let terminal_output = executeUserInput();
         displayTerminalOutput(terminal_output);
 
+        // remove cursor from current line, so it'll only be displayed on the next line
+        let current_divider = document.getElementById("input" + num_inputs);
+        current_divider.removeChild(current_divider.lastChild);
+
         // create new divider to hold next line of user input
         // source1: https://www.encodedna.com/javascript/append-or-add-text-to-div-using-javascript.htm
         // source2: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
@@ -916,7 +920,9 @@
       let replacement_divider = document.createElement("div");
       let directory_display = getFullDirectory();
       let replacement_text = document.createTextNode(directory_display + user_input);
+      let cursor = document.createTextNode("\u258A");
       replacement_divider.appendChild(replacement_text);
+      replacement_divider.appendChild(cursor);
 
       // retrieve the element to replace
       let divider_to_replace = document.getElementById("input" + num_inputs);
@@ -1344,12 +1350,13 @@
   //   DONE - KEY UP (to get previously used commands)
   //   DONE - KEY DOWN (to get next commands if looking at previous commands)
   // DONE - fix scrolling functionality (to have it scroll to show the line that is being written)
+  // DONE - display a cursor for the user
   // - adjust positioning and color of terminal (i.e. to make it look like it's being viewed
   //   from a computer)
   // - make sure functionality works properly (when using backspace and
   //   escaping the window)
-  // - display a cursor for the user
   // - fix backspace key down for computer and combo puzzle
+  // - allow cursor to move left and right
 
 
   // DURING LAST WEEK:
