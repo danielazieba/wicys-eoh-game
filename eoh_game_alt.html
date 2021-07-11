@@ -177,6 +177,9 @@
   let current_directory = "~";
   let directory_archive = ["~"];
   let terminal_archive = [""];
+  let currently_in_executable = false;
+  let curr_executable_name = "";
+  let display_coffee_text = false;
   let user_input = "";
   let num_inputs = 0;
   let input_number = num_inputs;  // used for moving between commands
@@ -198,6 +201,17 @@
       ]
     }
   };
+
+  const coffee_text = ["Pinging CYBA brewer using saved configuration...",
+                        "Request sent:", 
+                        "GET mycyba/brewer/status CYBA/1.5",
+                        "Host: mycyba:5000", 
+                        "Connection: keep-alive",
+                        "...",
+                        "CYBA/1.5 response received:",
+                        "Host: mycyba",
+                        "Port: 5000"
+                        ];
 
   
   // FINAL ATTEMPT (SUCCESSFUL!!)
@@ -1068,10 +1082,10 @@
     // check commands
     if (command_to_process.length != 0) {  // only check commands if command exists
       
-      if (command_to_process[0] === "cd") {
-
+      if (currently_in_executable) {
+        output_text = executeExecutable(command_to_process);
+      } else if (command_to_process[0] === "cd") {
         output_text = executeCdCommand(command_to_process, subdirectories);
-
       } else if (command_to_process[0] == "ls") {
         if (command_to_process.length == 1) {  // "ls"
 
@@ -1084,6 +1098,20 @@
             output_text += executables_in_current[j] + " ";
           }
         }
+      } else if (command_to_process[0].slice(0, 2) === "./") {
+
+        // check if given executable is in the current directory
+        if (checkExecutableExistence(executables_in_current, command_to_process[0].slice(2))) {
+          currently_in_executable = true;
+          curr_executable_name = command_to_process[0].slice(2);
+          console.log(curr_executable_name)
+          output_text = getExecutableWelcomeMessage();
+        } else {
+          output_text = "Error: specified executable does not exist.";
+        }
+
+      } else if (command_to_process.length === 1 && command_to_process[0] === "exit") {
+        output_text = "Error: nothing to exit from.";
       } else {
         output_text = "Error: invalid command";
       }
@@ -1135,11 +1163,77 @@
     return output_text;
   }
 
+  function executeExecutable(command_to_process) {
+    let output_text = "";
+
+    if (command_to_process.length === 1 && command_to_process[0] === "exit") {
+      currently_in_executable = false;
+      output_text = "Exiting current executable.";
+    } else {
+      // redirect to the specific executable
+      if (curr_executable_name === "lineDolphin.exe") {
+        output_text = executeLineDolphinExecutable(command_to_process);
+      } else if (curr_executable_name === "coffeeRequestSender.exe") {
+        // TODO: ADD CODE FOR EXECUTION HERE
+      } else if (curr_executable_name === "fridgeLoginPortal.exe") {
+        // TODO: ADD CODE FOR EXECUTION HERE
+      }
+    }
+
+    return output_text;
+  }
+
+  function executeLineDolphinExecutable(command_to_process) {
+    let output_text = "";
+
+    if (command_to_process.length === 1 && command_to_process[0] === "capture") {
+      display_coffee_text = true;
+
+      output_text = "STATUS: OK, READY TO BREW";
+    } else {
+      output_text = "Error: invalid command";
+    }
+
+    return output_text;
+  }
+
+  function checkExecutableExistence(executables_in_current, executable_name) {
+    for (let i = 0; i < executables_in_current.length; ++i) {
+      if (executable_name === executables_in_current[i]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function getExecutableWelcomeMessage() {
+    if (curr_executable_name === "lineDolphin.exe") {
+      return "Welcome to lineDolphin! Default configuration: display CyberCoffee traffic.";
+    } else if (curr_executable_name === "coffeeRequestSender.exe") {
+      return "Welcome to the coffee request portal! Here, one can send requests to the CYBA coffee brewer.";
+    } else if (curr_executable_name === "fridgeLoginPortal.exe") {
+      //return "Welcome to your smart fridge portal! Your username is GreenStreet. However, to access fridge features, you must authenticate yourself.";
+      return "Welcome to your smart fridge control portal!";
+    }
+  }
+
   // display output message for a terminal command
   function displayTerminalOutput(output_text) {
     // create divider to store output
     let output_divider = document.createElement("div");
     output_divider.id = "output" + num_inputs;
+
+    if (display_coffee_text) {
+      // output coffee brew message
+      for (let i=0; i < coffee_text.length; ++i) {
+        let line_of_coffee_text = document.createTextNode(coffee_text[i]);
+        output_divider.appendChild(line_of_coffee_text);
+        output_divider.appendChild(document.createElement("br"))
+      }
+
+      display_coffee_text = false;
+    }
 
     // display output text
     let text = document.createTextNode(output_text);
@@ -1153,12 +1247,16 @@
   function getFullDirectory() {
     let directory_string = directory_archive[0];  // "~" directory
 
-    // add in rest of directories
-    for (let dir = 1; dir < directory_archive.length; ++dir) {
-      directory_string += "/" + directory_archive[dir]; 
-    }
+    if (currently_in_executable) {
+      directory_string = curr_executable_name + "> ";
+    } else {
+      // add in rest of directories
+      for (let dir = 1; dir < directory_archive.length; ++dir) {
+        directory_string += "/" + directory_archive[dir]; 
+      }
 
-    directory_string += "$ ";
+      directory_string += "$ ";
+    }
 
     return directory_string;
   }
