@@ -60,65 +60,65 @@
   
   /* SCENE ATTRIBUTES */
   // the following grouped variables store pics of the game scenes
-  var bedroom_scene;
-  var kitchen_scene;
-  var livingroom_scene;
+  let bedroom_scene;
+  let kitchen_scene;
+  let livingroom_scene;
 
   // the following grouped variables store pics of zoomed in objects
-  var whiteboard_scene;
-  var computer_scene;
-  var combo_lock_scene;
-  var fridge_scene;
-  var toaster_scene;
-  var coffee_maker_scene;
-  var terminal_scene;
+  let whiteboard_scene;
+  let computer_scene;
+  let combo_lock_scene;
+  let fridge_scene;
+  let toaster_scene;
+  let coffee_maker_scene;
+  let terminal_scene;
 
   // booleans used for keeping track of current scene
-  var is_bedroom_scene = true;
-  var is_kitchen_scene = false;
-  var is_livingroom_scene = false;
+  let is_bedroom_scene = true;
+  let is_kitchen_scene = false;
+  let is_livingroom_scene = false;
 
-  var is_whiteboard_scene = false;
-  var is_computer_scene = false;
-  var is_combo_lock_scene = false;
-  var is_fridge_scene = false;
-  var is_toaster_scene = false;
-  var is_coffee_maker_scene = false;
-  var is_terminal_scene = false;
+  let is_whiteboard_scene = false;
+  let is_computer_scene = false;
+  let is_combo_lock_scene = false;
+  let is_fridge_scene = false;
+  let is_toaster_scene = false;
+  let is_coffee_maker_scene = false;
+  let is_terminal_scene = false;
 
 
-  var scene_pic;  // current background picture being displayed
-  var current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
+  let scene_pic;  // current background picture being displayed
+  let current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
 
 
   /* CHARACTER ATTRIBUTES */
-  var char_right1;  // stores pic of character facing right, step 1
-  var char_right2;  // stores pic of character facing right, step 2
-  var char_left1;  // stores pic of character facing left, step 1
-  var char_left2;  // stores pic of character facing left, step 2
+  let char_right1;  // stores pic of character facing right, step 1
+  let char_right2;  // stores pic of character facing right, step 2
+  let char_left1;  // stores pic of character facing left, step 1
+  let char_left2;  // stores pic of character facing left, step 2
 
   // used to determine what direction and step the
   // current character image being displayed is
-  var is_right1 = false;
-  var is_right2 = false;
-  var is_left1 = true;
-  var is_left2 = false;
+  let is_right1 = false;
+  let is_right2 = false;
+  let is_left1 = true;
+  let is_left2 = false;
 
-  var char_pic;  // current character picture being displayed
+  let char_pic;  // current character picture being displayed
 
-  var char_x_pos = 587;  // x pos of top left corner of char img
-  var char_y_pos = 282;  // y pos of top left corner of char img
+  let char_x_pos = 587;  // x pos of top left corner of char img
+  let char_y_pos = 282;  // y pos of top left corner of char img
 
   const char_speed = 3;
 
-  var step_counter = 0;  // used to determine whether the character step changes
-  var step_change = 25;  // every 25 ms, character step changes
+  let step_counter = 0;  // used to determine whether the character step changes
+  let step_change = 25;  // every 25 ms, character step changes
 
   // boolean variables representing if the specific arrow key is being pressed by user
-  var is_key_up = false;
-  var is_key_right = false;
-  var is_key_down = false;
-  var is_key_left = false;
+  let is_key_up = false;
+  let is_key_right = false;
+  let is_key_down = false;
+  let is_key_left = false;
 
 
   /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
@@ -161,27 +161,27 @@
 
   /* PUZZLE ATTRIBUTES */
   // combinationn lock puzzle
-  var allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
-  var lock_combo_string = " ";  // needs to have a space in between in order for backspace to work
-  var is_lock_combo_incorrect_message_visible = false;
-  var is_lock_unlocked = false;
+  let allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
+  let lock_combo_string = " ";  // needs to have a space in between in order for backspace to work
+  let is_lock_combo_incorrect_message_visible = false;
+  let is_lock_unlocked = false;
 
   // computer password puzzle
-  var allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
+  let allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
                                83, 84, 85, 86, 87, 88, 89, 90] // e.which codes
-  var computer_password_string = " ";  // needs to have a space in between in order for backspace to work
-  var is_password_incorrect_message_visible = false;
-  var is_computer_unlocked = false;
+  let computer_password_string = " ";  // needs to have a space in between in order for backspace to work
+  let is_password_incorrect_message_visible = false;
+  let is_computer_unlocked = false;
 
   // terminal
-  var current_directory = "~";
-  var directory_archive = ["~"];
-  var terminal_archive = [""];
-  var user_input = "";
-  var num_inputs = 0;
-  var input_number = num_inputs;  // used for moving between commands
+  let current_directory = "~";
+  let directory_archive = ["~"];
+  let terminal_archive = [""];
+  let user_input = "";
+  let num_inputs = 0;
+  let input_number = num_inputs;  // used for moving between commands
 
-  var directory = {
+  const directory = {
     "~" : {
       "directories" : [
         "fridge_app"
@@ -706,19 +706,19 @@
       if (is_terminal_scene) {
 
         // execute user input
-        var terminal_output = executeUserInput();
+        let terminal_output = executeUserInput();
         displayTerminalOutput(terminal_output);
 
         // create new divider to hold next line of user input
         // source1: https://www.encodedna.com/javascript/append-or-add-text-to-div-using-javascript.htm
         // source2: https://developer.mozilla.org/en-US/docs/Web/API/Element/append
-        var new_divider = document.createElement("div");
+        let new_divider = document.createElement("div");
         ++num_inputs;
         new_divider.id = "input" + num_inputs;
 
         // display current directory for new line
-        var directory_display = getFullDirectory()
-        var text = document.createTextNode(directory_display);
+        let directory_display = getFullDirectory()
+        let text = document.createTextNode(directory_display);
         new_divider.appendChild(text);
 
         game_terminal.append(new_divider);
@@ -898,13 +898,13 @@
       // source: https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
 
       // create the replacement elements
-      var replacement_divider = document.createElement("div");
-      var directory_display = getFullDirectory();
-      var replacement_text = document.createTextNode(directory_display + user_input);
+      let replacement_divider = document.createElement("div");
+      let directory_display = getFullDirectory();
+      let replacement_text = document.createTextNode(directory_display + user_input);
       replacement_divider.appendChild(replacement_text);
 
       // retrieve the element to replace
-      var divider_to_replace = document.getElementById("input" + num_inputs);
+      let divider_to_replace = document.getElementById("input" + num_inputs);
 
       // rename dividers so new divider will have original divider name (for consistency)
       divider_to_replace.id = "old" + num_inputs;
@@ -1056,14 +1056,14 @@
 
   // execute user input by outputting corresponding messages
   function executeUserInput() {
-    var command_to_process = [];
+    let command_to_process = [];
     if (user_input.trim() != "") {
       command_to_process = user_input.split(" ");
     }
-    var output_text = "";
+    let output_text = "";
 
-    var subdirectories = directory[current_directory]["directories"];
-    var executables_in_current = directory[current_directory]["executables"];
+    let subdirectories = directory[current_directory]["directories"];
+    let executables_in_current = directory[current_directory]["executables"];
 
     // check commands
     if (command_to_process.length != 0) {  // only check commands if command exists
@@ -1076,18 +1076,18 @@
         if (command_to_process.length == 1) {  // "ls"
 
           // display subdirectories and executables in current directory
-          for (var i = 0; i < subdirectories.length; ++i) {
+          for (let i = 0; i < subdirectories.length; ++i) {
             output_text += subdirectories[i] + " ";
           }
 
-          for (var j = 0; j < executables_in_current.length; ++j) {
+          for (let j = 0; j < executables_in_current.length; ++j) {
             output_text += executables_in_current[j] + " ";
           }
         }
       } else {
         output_text = "Error: invalid command";
       }
-      
+
     }
 
     return output_text;
@@ -1113,9 +1113,9 @@
           current_directory = directory_archive[directory_archive.length - 1];
         }
       } else {  // check if it's a valid directory (i.e. if the user wants to move into a directory)
-        var valid_directory = false;
+        let valid_directory = false;
 
-        for (var s = 0; s < subdirectories.length; ++s) {
+        for (let s = 0; s < subdirectories.length; ++s) {
           if (subdirectories[s] === command_to_process[1]) {
             // change directory and save into archive
             current_directory = subdirectories[s];
@@ -1138,11 +1138,11 @@
   // display output message for a terminal command
   function displayTerminalOutput(output_text) {
     // create divider to store output
-    var output_divider = document.createElement("div");
+    let output_divider = document.createElement("div");
     output_divider.id = "output" + num_inputs;
 
     // display output text
-    var text = document.createTextNode(output_text);
+    let text = document.createTextNode(output_text);
     output_divider.appendChild(text);
 
     // add to terminal
@@ -1151,10 +1151,10 @@
 
   // returns a string of the full directory to display in terminal
   function getFullDirectory() {
-    var directory_string = directory_archive[0];  // "~" directory
+    let directory_string = directory_archive[0];  // "~" directory
 
     // add in rest of directories
-    for (var dir = 1; dir < directory_archive.length; ++dir) {
+    for (let dir = 1; dir < directory_archive.length; ++dir) {
       directory_string += "/" + directory_archive[dir]; 
     }
 
