@@ -21,9 +21,10 @@
   /* source for how to style an element by id: https://blog.hubspot.com/website/css-id */
   /* style for scrolling text box (i.e. terminal) */
   #myTerminal {
-    background-color: darkgray;
-    width: 700px;
-    height: 500px;
+    background-color: rgb(216, 255, 251);
+    color: black;
+    width: 605px;
+    height: 377px;
     overflow-y: scroll;
     position: absolute;
     visibility: hidden;
@@ -244,7 +245,7 @@
     fridge_scene = loadBackground("images/fridge_display_w_text.png");
     toaster_scene = loadBackground("images/zoomed_in_toaster_with_background.png");
     coffee_maker_scene = loadBackground("images/coffee.png");
-    terminal_scene = loadBackground("images/terminal.png");
+    terminal_scene = loadBackground("images/computer_screen.png");
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -280,8 +281,8 @@
     // update positioning and visibility for terminal - ensure it overlaps game canvas
     // source1: https://www.w3schools.com/jsref/prop_element_offsettop.asp
     // source2: https://www.w3schools.com/jsref/prop_style_left.asp
-    game_terminal.style.left = game_canvas.offsetLeft + "px";
-    game_terminal.style.top = game_canvas.offsetTop + "px";
+    game_terminal.style.left = game_canvas.offsetLeft + 50 + "px";
+    game_terminal.style.top = game_canvas.offsetTop + 54 + "px";
 
     // only display scrolling text box when terminal is open
     // source: https://stackoverflow.com/questions/21070101/show-hide-div-using-javascript
@@ -736,6 +737,7 @@
         displayTerminalOutput(terminal_output);
 
         // remove cursor from current line, so it'll only be displayed on the next line
+        // source: https://developer.mozilla.org/en-US/docs/Web/API/Node/lastChild
         let current_divider = document.getElementById("input" + num_inputs);
         current_divider.removeChild(current_divider.lastChild);
 
@@ -931,6 +933,7 @@
       let replacement_divider = document.createElement("div");
       let directory_display = getFullDirectory();
       let replacement_text = document.createTextNode(directory_display + user_input);
+      // source for cursor block: https://www.w3schools.com/charsets/ref_utf_block.asp
       let cursor = document.createTextNode("\u258A");
       replacement_divider.appendChild(replacement_text);
       replacement_divider.appendChild(cursor);
@@ -1436,7 +1439,7 @@
   //   DONE - KEY DOWN (to get next commands if looking at previous commands)
   // DONE - fix scrolling functionality (to have it scroll to show the line that is being written)
   // DONE - display a cursor for the user
-  // - adjust positioning and color of terminal (i.e. to make it look like it's being viewed
+  // DONE - adjust positioning and color of terminal (i.e. to make it look like it's being viewed
   //   from a computer)
   // - make sure functionality works properly (when using backspace and
   //   escaping the window)
