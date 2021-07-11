@@ -1098,26 +1098,17 @@
     // check commands
     if (command_to_process.length != 0) {  // only check commands if command exists
       
-      if (currently_in_executable) {
+      if (currently_in_executable) {  // execute executable
         output_text = executeExecutable(command_to_process);
       } else if (command_to_process[0] === "cd") {
         output_text = executeCdCommand(command_to_process, subdirectories);
-      } else if (command_to_process[0] == "ls") {
-        if (command_to_process.length == 1) {  // "ls"
-
-          // display subdirectories and executables in current directory
-          for (let i = 0; i < subdirectories.length; ++i) {
-            output_text += subdirectories[i] + " ";
-          }
-
-          for (let j = 0; j < executables_in_current.length; ++j) {
-            output_text += executables_in_current[j] + " ";
-          }
-        }
+      } else if (command_to_process.length === 1 && command_to_process[0] == "ls") {  // "ls"
+        output_text = executeLsCommand(command_to_process, subdirectories, executables_in_current);
       } else if (command_to_process[0].slice(0, 2) === "./") {
 
         // check if given executable is in the current directory
         if (checkExecutableExistence(executables_in_current, command_to_process[0].slice(2))) {
+          // enter executable
           currently_in_executable = true;
           curr_executable_name = command_to_process[0].slice(2);
           console.log(curr_executable_name)
@@ -1174,6 +1165,21 @@
         }
       }
 
+    }
+
+    return output_text;
+  }
+
+  function executeLsCommand(command_to_process, subdirectories, executables_in_current) {
+    let output_text = "";
+
+    // display subdirectories and executables in current directory
+    for (let i = 0; i < subdirectories.length; ++i) {
+      output_text += subdirectories[i] + " ";
+    }
+
+    for (let j = 0; j < executables_in_current.length; ++j) {
+      output_text += executables_in_current[j] + " ";
     }
 
     return output_text;
