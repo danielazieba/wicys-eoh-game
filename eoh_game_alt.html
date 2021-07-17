@@ -60,6 +60,10 @@
 
   
   /* SCENE ATTRIBUTES */
+  let hint_icon;
+  let hint_x_pos = 660;
+  let hint_y_pos = 5;
+
   // the following grouped variables store pics of the game scenes
   let bedroom_scene;
   let kitchen_scene;
@@ -123,6 +127,12 @@
 
 
   /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
+  // hint icon
+  // const hint_left_bound;
+  // const hint_right_bound;
+  // const hint_bottom_bound;
+  // const hint_top_bound;
+
   // bedroom whiteboard
   const whiteboard_left_bound = 253;
   const whiteboard_right_bound = 408;
@@ -233,6 +243,8 @@
   function start() {
     console.log("starting")
 
+    hint_icon = loadCharacter("images/hint_icon_filled_64x64_x0.5.png", hint_x_pos, hint_y_pos, 32, 32);
+
     // load initial game setting components
     bedroom_scene = loadBackground("images/bedroom.png");
     kitchen_scene = loadBackground("images/new_new_kitchen.png");
@@ -299,6 +311,7 @@
     if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  // only draw character if in a room
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
+    draw(hint_icon, hint_x_pos, hint_y_pos, 32, 32);
 
     // display text (needs to be after scene pics are drawn in order to be seen)
     displayUserInput();
