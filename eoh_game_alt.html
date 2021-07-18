@@ -32,6 +32,61 @@
     word-break: break-all;  /* allows wraparound without spaces - https://css-tricks.com/almanac/properties/o/overflow-wrap/*/
   }
 
+  /* source for how to style tab-related elements: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp*/
+  /* style the tab */
+  .tab {
+    float: left;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+
+    width: 200px; /* width of tab */
+    height: 500px; /* make the same as game canvas' height */
+    position: absolute;
+    visibility: hidden;
+  }
+
+  /* style the buttons inside the tab */
+  .tab button {
+    display: block;
+    background-color: inherit;
+    color: black;
+    padding: 22px 16px;
+    width: 100%;
+    border: none;
+    outline: none;
+    text-align: left;
+    cursor: pointer;
+    /* transition: 0.3s; */
+    font-size: 17px;
+  }
+
+  /* change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+
+  /* create an active/current "tab button" class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+
+  /* style the tab content */
+  .tabcontent {
+    float: left;
+    padding: 0px 12px;
+    border: 1px solid #ccc;
+    border-left: none;
+
+    width: 500px; /* width of tab content */
+    height: 500px;  /* make the same as game canvas' height */
+    position: absolute;
+
+    visibility: hidden;
+    background-color: white;
+    color:black;
+    text-align: left;
+  }
+
 /* this part of the code makes the canvas only show at the top of the page--cannot position it */
 /* canvas {
     border: 1px solid #d3d3d3;
@@ -43,9 +98,40 @@
   <h2>Cybersecurity Breakfast Adventure</h2>
   <h3>*For the best user experience, please use Mozilla Firefox. The game has experienced some issues in Google Chrome and Safari. If you ever have problems of the character getting stuck in place or the screen going black, please refresh the page. Note that your current progress in the game will be lost when the page is refreshed.*</h3>
 <p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
+<!-- creating the game terminal -->
 <div id="myTerminal">
   <div id = "input0">~</div>
 </div>
+
+<!-- creating the hint view -->
+<!-- source: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp -->
+<div class="tab">
+  <button class="tablinks" id="defaultOpen">Unlocking the computer</button>
+  <button class="tablinks" >Making toast</button>
+  <button class="tablinks" >Opening the fridge</button>
+  <button class="tablinks" >Brewing coffee</button>
+</div>
+
+<div id="Computer" class="tabcontent">
+  <h3>Hints for computer puzzle</h3>
+  <p>1)</p>
+</div>
+
+<div id="Toast" class="tabcontent">
+  <h3>Hints for toast puzzle</h3>
+  <p>1)</p> 
+</div>
+
+<div id="Fridge" class="tabcontent">
+  <h3>Hints for fridge puzzle</h3>
+  <p>1)</p>
+</div>
+
+<div id="Coffee" class="tabcontent">
+  <h3>Hints for coffee puzzle</h3>
+  <p>1)</p>
+</div>
+
 <!-- creating a canvas: -->
 <canvas id="myCanvas" width="700" height="500" style="background-color: #f1f1f1;"></canvas>
 <!-- <script src="plugins.js"></script> -->
@@ -57,6 +143,10 @@
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
   const game_terminal = document.getElementById("myTerminal");
+
+  const hint_options = document.getElementsByClassName("tab");
+  const hint_description = document.getElementsByClassName("tabcontent");
+  let is_hint_view_displayed = false;
 
   
   /* SCENE ATTRIBUTES */
@@ -128,10 +218,10 @@
 
   /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
   // hint icon
-  // const hint_left_bound;
-  // const hint_right_bound;
-  // const hint_bottom_bound;
-  // const hint_top_bound;
+  const hint_left_bound = 660;
+  const hint_right_bound = 697;
+  const hint_bottom_bound = 37;
+  const hint_top_bound = 5;
 
   // bedroom whiteboard
   const whiteboard_left_bound = 253;
@@ -304,6 +394,9 @@
       game_terminal.style.visibility = "hidden";
     }
 
+    // update positioning of hint view
+    positionHints();
+
     // step 3 - redraw
     // redraw scene
     draw(scene_pic, 0, 0, 700, 500);
@@ -335,8 +428,8 @@
 
   // moves character
   function moveCharacter() {
-    //only allow to move the character when it is in a room
-    if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  
+    //only allow to move the character when it is in a room and hint view is not displayed
+    if (!is_hint_view_displayed && (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene)) {  
       if (is_key_up && (char_y_pos - char_speed >= 0) && (char_y_pos - char_speed <= 436)) {
         char_y_pos -= char_speed;
 
@@ -450,6 +543,53 @@
     }
   }
 
+
+  function positionHints() {
+    // update position of every element in 'tab' class
+    // hint_options contains a list of the elements
+    for (let puzzle_num = 0; puzzle_num < hint_options.length; ++puzzle_num) {
+      hint_options[puzzle_num].style.left = game_canvas.offsetLeft + "px";
+      hint_options[puzzle_num].style.top = game_canvas.offsetTop + "px";
+    }
+    
+    // update position of every element in 'tab_content' class
+    // hint_description contains a list of the elements
+    for (let puzzle_hints = 0; puzzle_hints < hint_description.length; ++puzzle_hints) {
+      hint_description[puzzle_hints].style.left = game_canvas.offsetLeft + 200 + "px"; /* 100 is the width of the tab, thus need that offset */
+      hint_description[puzzle_hints].style.top = game_canvas.offsetTop + "px";
+    }
+  }
+
+  game_canvas.addEventListener("mousedown", e => {
+
+    let mouse_x = e.clientX - game_canvas.offsetLeft;
+    let mouse_y = e.clientY - game_canvas.offsetTop;
+
+    // if user clicks on hint icon, open up hint view
+    if (!is_hint_view_displayed && mouse_x >= hint_left_bound && mouse_x <= hint_right_bound &&
+        mouse_y >= hint_top_bound && mouse_y <= hint_bottom_bound) {
+
+      changeHintVisibility("visible");
+      is_hint_view_displayed = true;
+    }
+
+    console.log("mouse x: " + mouse_x);
+    console.log("mouse y: " + mouse_y);
+  })
+
+  function changeHintVisibility(visibility) {
+    // make every element in 'tab' class visible
+    // hint_options contains a list of the elements
+    for (let puzzle_num = 0; puzzle_num < hint_options.length; ++puzzle_num) {
+      hint_options[puzzle_num].style.visibility = visibility;
+    }
+    
+    // make every element in 'tab_content' class visible
+    // hint_description contains a list of the elements
+    for (let puzzle_hints = 0; puzzle_hints < hint_description.length; ++puzzle_hints) {
+      hint_description[puzzle_hints].style.visibility = visibility;
+    }
+  }
 
   // check if the character landed in any zoom in area
   function zoomInOnItem() {
@@ -573,6 +713,12 @@
   function logKey(key) {
     
     if (key.code === "Escape") {
+      if (is_hint_view_displayed) {
+        // close out hint view
+        changeHintVisibility("hidden");
+        is_hint_view_displayed = false;
+      }
+
       if (is_whiteboard_scene) {
         // zoom out of whiteboard
         scene_pic = current_room;
@@ -1458,6 +1604,11 @@
   //   escaping the window)
   // - fix backspace key down for computer and combo puzzle
   // - allow cursor to move left and right
+
+
+  // TODO for hints:
+  // - add hints in
+  // - show tab changes with corresponding descriptions displaying
 
 
   // DURING LAST WEEK:
