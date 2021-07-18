@@ -87,6 +87,36 @@
     text-align: left;
   }
 
+  /* source for styling button: https://www.w3schools.com/css/css3_buttons.asp */
+  .button {
+    position: absolute;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    background-color: rgb(181, 255, 207);  /* 168, 255, 199 */
+    color: black;
+    font-size: 16px;
+    padding: 16px 30px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+  }
+
+  .button:hover {
+    background-color: rgb(168, 240, 194);
+  }
+
+  .hint_list {
+    color: black;
+    width: 500px;
+    height: 300px;
+    overflow-y: scroll;
+    visibility: hidden;
+    text-align: left;
+  }
+
 /* this part of the code makes the canvas only show at the top of the page--cannot position it */
 /* canvas {
     border: 1px solid #d3d3d3;
@@ -114,22 +144,30 @@
 
 <div id="Computer" class="tabcontent">
   <h3>Hints for computer puzzle</h3>
-  <p>1)</p>
+  <h4 id="Computer_hint_instruction">Click on the button below to get a hint for this puzzle. To go back to the game, press ESCAPE.</h4>
+  <div class="hint_list" id="Computer_hint_listing"></div>
+  <button class="button" id="Computer_btn" onclick="addHintToView(event, 'Computer')">Get a hint</button>
 </div>
 
 <div id="Toast" class="tabcontent">
   <h3>Hints for toast puzzle</h3>
-  <p>1)</p> 
+  <h4 id="Toast_hint_instruction">Click on the button below to get a hint for this puzzle. To go back to the game, press ESCAPE.</h4>
+  <div class="hint_list" id="Toast_hint_listing"></div>
+  <button class="button" id="Toast_btn" onclick="addHintToView(event, 'Toast')">Get a hint</button>
 </div>
 
 <div id="Fridge" class="tabcontent">
   <h3>Hints for fridge puzzle</h3>
-  <p>1)</p>
+  <h4 id="Fridge_hint_instruction">Click on the button below to get a hint for this puzzle. To go back to the game, press ESCAPE.</h4>
+  <div class="hint_list" id="Fridge_hint_listing"></div>
+  <button class="button" id="Fridge_btn" onclick="addHintToView(event, 'Fridge')">Get a hint</button>
 </div>
 
 <div id="Coffee" class="tabcontent">
   <h3>Hints for coffee puzzle</h3>
-  <p>1)</p>
+  <h4 id="Coffee_hint_instruction">Click on the button below to get a hint for this puzzle. To go back to the game, press ESCAPE.</h4>
+  <div class="hint_list" id="Coffee_hint_listing"></div>
+  <button class="button" id="Coffee_btn" onclick="addHintToView(event, 'Coffee')">Get a hint</button>
 </div>
 
 <!-- creating a canvas: -->
@@ -144,12 +182,66 @@
   const game_context = game_canvas.getContext("2d");
   const game_terminal = document.getElementById("myTerminal");
 
+
+  /* HINT ATTRIBUTES */
   const hint_options = document.getElementsByClassName("tab");
   const hint_description = document.getElementsByClassName("tabcontent");
+  const hint_list = document.getElementsByClassName("hint_list");
   let is_hint_view_displayed = false;
 
   // Get the element with id="defaultOpen" and click on it
   document.getElementById("defaultOpen").click();
+
+  // keeps track of what hints have been shown for a puzzle
+  let current_hint_for_puzzle = {
+    "Computer" : 0,
+    "Toast" : 0,
+    "Fridge" : 0,
+    "Coffee" : 0
+  }
+
+  // hints for puzzles
+  const hints = {
+    "Computer" : [
+      // unlock computer hints below
+      "Try unlocking the computer.",
+      "Go to the whiteboard to find clues for your password!",
+      "Take a look at the Caesar Cipher guide!",
+      "To decrypt Caesar Ciphers, you need to find the right amount of rotations made in the alphabet. How many lives does a cat have?",
+      "How well do 9 rotations work on the whiteboard text?",
+      "Try mapping A to J."
+    ],
+    "Toast" : [
+      // make toast hints below
+      "Go to the whiteboard to find the right number conversion for the lock.",
+      "Take a look at the Number Systems and ASCII guide!",
+      "The binary code given on the whiteboard translates to ‘hexadec’ in ASCII.",
+      "The lock combination is in hexadecimal form. The correct combination is in decimal form."
+    ],
+    "Fridge" : [
+      // unlock fridge hints below
+      "Unlock the computer to access the terminal",
+      "Use the terminal to try to access your smart fridge.",
+      "Take a look at the CLI guide!",
+      "Try the command 'ls' to see what is available to view in the system.",
+      "Try the command 'cd <folder-name>' to navigate to the folder.",
+      "Type ./<executable-file-name> to run the executable.",
+      "Once you run the exe file, type “lock” to lock, and “unlock” to unlock your fridge."
+    ],
+    "Coffee" : [
+      // brew coffee hints below
+      "Unlock the computer to access the terminal",
+      "Use the terminal to try to access your smart coffee brewer.",
+      "Take a look at the CLI guide!",
+      "Type 'exit' to return to the folder the executable file is located.",
+      "Use the command 'cd ../' to navigate to the previous folder.",
+      "Run 'lineDolphin.exe' to capture network traffic.",
+      "Type 'capture' to see what GET request looks like!",
+      "Run 'coffeeRequestSender.exe' to send a request to the coffee machine.",
+      "To check the status, use the URL 'mycyba/brewer/status'. You can also brew coffee using a VERY similar URL.",
+      "The host address is 'mycyba', port number is '5000', request type is 'GET', and URL is 'mycyba/brewer/brew'."
+    ]
+  }
 
   
   /* SCENE ATTRIBUTES */
@@ -562,6 +654,12 @@
       hint_description[puzzle_hints].style.left = game_canvas.offsetLeft + 200 + "px"; /* 100 is the width of the tab, thus need that offset */
       hint_description[puzzle_hints].style.top = game_canvas.offsetTop + "px";
     }
+
+    // update position of every element in 'hint_list' class
+    for (let puzzle_list = 0; puzzle_list < hint_list.length; ++puzzle_list) {
+      hint_list[puzzle_list].style.left = game_canvas.offsetLeft + 200 + "px"; /* 100 is the width of the tab, thus need that offset */
+      hint_list[puzzle_list].style.top = game_canvas.offsetTop + 100 + "px";
+    }
   }
 
   game_canvas.addEventListener("mousedown", e => {
@@ -593,6 +691,11 @@
     for (let puzzle_hints = 0; puzzle_hints < hint_description.length; ++puzzle_hints) {
       hint_description[puzzle_hints].style.visibility = visibility;
     }
+
+    // make every element in 'hint_list' class visible
+    for (let puzzle_list = 0; puzzle_list < hint_list.length; ++puzzle_list) {
+      hint_list[puzzle_list].style.visibility = visibility;
+    }
   }
 
   // source for this function: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp
@@ -616,6 +719,41 @@
     //   for that puzzle
     document.getElementById(puzzle_name).style.display = "block";
     evt.currentTarget.className += " active";
+  }
+
+  function addHintToView(evt, puzzle_name) {
+    // get the hints for the puzzle and the number of hints for the puzzle
+    // that are displayed
+    let hints_for_puzzle = hints[puzzle_name];
+    let current_hint_location = current_hint_for_puzzle[puzzle_name];
+
+    // display a new hint if there are any
+    if (current_hint_location < hints_for_puzzle.length) {
+      // get the element that lists the puzzle hints
+      let puzzle_hint_listing = document.getElementById(puzzle_name + "_hint_listing");
+    
+      // get the new hint and increment the counter
+      let new_hint = hints[puzzle_name][current_hint_location];
+      current_hint_for_puzzle[puzzle_name]++;
+
+      // display the hint
+      puzzle_hint_listing.innerHTML += "- " + new_hint + "<br><br>";
+
+      // scroll to display newest hint
+      puzzle_hint_listing.scrollTop = puzzle_hint_listing.scrollHeight;
+    }
+
+    // if all hints are displayed, disable button to add hints
+    if (current_hint_for_puzzle[puzzle_name] === hints_for_puzzle.length) {
+      // disable button
+      let puzzle_hint_btn = document.getElementById(puzzle_name + "_btn");
+      puzzle_hint_btn.style.opacity = 0.6;
+      puzzle_hint_btn.style.cursor = "not-allowed";
+
+      // change instruction displayed
+      let puzzle_hint_instr = document.getElementById(puzzle_name + "_hint_instruction");
+      puzzle_hint_instr.innerHTML = "All hints for this puzzle are displayed below.  To go back to the game, press ESCAPE."
+    }
   }
 
 
@@ -1636,7 +1774,7 @@
 
 
   // TODO for hints:
-  // - add hints in
+  // DONE - add hints in
   // DONE - show tab changes with corresponding descriptions displaying
 
 
