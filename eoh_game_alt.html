@@ -730,6 +730,11 @@
 
     // display a new hint if there are any
     if (current_hint_location < hints_for_puzzle.length) {
+      // repeat a hint if the user hasn't followed it yet
+      if ((puzzle_name === "Fridge" || puzzle_name === "Coffee") && !is_computer_unlocked) {
+        current_hint_for_puzzle[puzzle_name]--;
+      }
+
       // get the element that lists the puzzle hints
       let puzzle_hint_listing = document.getElementById(puzzle_name + "_hint_listing");
     
