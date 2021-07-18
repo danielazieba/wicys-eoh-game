@@ -717,135 +717,136 @@
         // close out hint view
         changeHintVisibility("hidden");
         is_hint_view_displayed = false;
-      }
-
-      if (is_whiteboard_scene) {
-        // zoom out of whiteboard
-        scene_pic = current_room;
-        
-        // need the following to prevent the character from triggering the zoom in again
-        moveOutOfDetectionZone(whiteboard_left_bound, whiteboard_right_bound, whiteboard_bottom_bound, whiteboard_top_bound);
-
-        // update values
-        is_whiteboard_scene = false;
-        if (current_room === bedroom_scene) {
-          is_bedroom_scene = true;
-        }
-      }
-
-      if (is_computer_scene) {  
-        // zoom out of computer
-        scene_pic = current_room;
-
-        // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
-
-        // update values of the game scene
-        is_computer_scene = false;
-        if (current_room === livingroom_scene) {
-          is_livingroom_scene = true;
-        }
-
-        // clear text
-        computer_password_string = " ";
-        if (is_password_incorrect_message_visible) {
-          is_password_incorrect_message_visible = false;
-        }
-      }
-
-      if (is_combo_lock_scene) {
-        // zoom out of combo lock
-        scene_pic = current_room;
-
-        // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(combo_lock_left_bound, combo_lock_right_bound, combo_lock_bottom_bound, combo_lock_top_bound);
-
-        // update values
-        is_combo_lock_scene = false;
-        if (current_room === kitchen_scene) {
-          is_kitchen_scene = true;
-        }
-
-        // clear text
-        lock_combo_string = " ";
-        if (is_lock_combo_incorrect_message_visible) {
-          is_lock_combo_incorrect_message_visible = false;
-        }
-      }
-
-      if (is_fridge_scene) {
-        // zoom out of fridge
-        scene_pic = current_room;
-
-        // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(fridge_left_bound, fridge_right_bound, fridge_bottom_bound, fridge_top_bound);
-
-        // update values
-        is_fridge_scene = false;
-        if (current_room === kitchen_scene) {
-          is_kitchen_scene = true;
-        }
-      }
-
-      if (is_toaster_scene) {
-        // zoom out of toaster
-        scene_pic = current_room;
-
-        // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(toaster_left_bound, toaster_right_bound, toaster_bottom_bound, toaster_top_bound);
-
-        // update values
-        is_toaster_scene = false;
-        if (current_room === kitchen_scene) {
-          is_kitchen_scene = true;
-        }
-      }
-
-      if (is_coffee_maker_scene) {
-        // zoom out of toaster
-        scene_pic = current_room;
-
-        // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(coffee_maker_left_bound, coffee_maker_right_bound, coffee_maker_bottom_bound, coffee_maker_top_bound);
-
-        // update values
-        is_coffee_maker_scene = false;
-        if (current_room === kitchen_scene) {
-          is_kitchen_scene = true;
-        }
-      }
-
-      if (is_terminal_scene) {
-        // zoom out of terminal
-        scene_pic = current_room;
-
-        // move out of the zone that triggered zoom in
-        moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
-
-        // update values
-        is_terminal_scene = false;
-        if (current_room === livingroom_scene) {
-          is_livingroom_scene = true;
-        }
-
-        // reset terminal history
-        current_directory = "~";
-        directory_archive = ["~"];
-        terminal_archive = [""];
-        user_input = "";
-
-        // remove text from terminal display - https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
-        while (num_inputs > 0) {
-          let terminal_line = document.getElementById("input" + num_inputs);
-          game_terminal.removeChild(terminal_line);
-
-          let output_line = document.getElementById("output" + (num_inputs - 1));
-          game_terminal.removeChild(output_line);
+      } else {
+        if (is_whiteboard_scene) {
+          // zoom out of whiteboard
+          scene_pic = current_room;
           
-          --num_inputs;
+          // need the following to prevent the character from triggering the zoom in again
+          moveOutOfDetectionZone(whiteboard_left_bound, whiteboard_right_bound, whiteboard_bottom_bound, whiteboard_top_bound);
+
+          // update values
+          is_whiteboard_scene = false;
+          if (current_room === bedroom_scene) {
+            is_bedroom_scene = true;
+          }
         }
-        input_number = num_inputs;
-      }  // closing terminal conditional
+
+        if (is_computer_scene) {  
+          // zoom out of computer
+          scene_pic = current_room;
+
+          // move out of the zone that triggered zoom in
+          moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
+
+          // update values of the game scene
+          is_computer_scene = false;
+          if (current_room === livingroom_scene) {
+            is_livingroom_scene = true;
+          }
+
+          // clear text
+          computer_password_string = " ";
+          if (is_password_incorrect_message_visible) {
+            is_password_incorrect_message_visible = false;
+          }
+        }
+
+        if (is_combo_lock_scene) {
+          // zoom out of combo lock
+          scene_pic = current_room;
+
+          // move out of the zone that triggered zoom in
+          moveOutOfDetectionZone(combo_lock_left_bound, combo_lock_right_bound, combo_lock_bottom_bound, combo_lock_top_bound);
+
+          // update values
+          is_combo_lock_scene = false;
+          if (current_room === kitchen_scene) {
+            is_kitchen_scene = true;
+          }
+
+          // clear text
+          lock_combo_string = " ";
+          if (is_lock_combo_incorrect_message_visible) {
+            is_lock_combo_incorrect_message_visible = false;
+          }
+        }
+
+        if (is_fridge_scene) {
+          // zoom out of fridge
+          scene_pic = current_room;
+
+          // move out of the zone that triggered zoom in
+          moveOutOfDetectionZone(fridge_left_bound, fridge_right_bound, fridge_bottom_bound, fridge_top_bound);
+
+          // update values
+          is_fridge_scene = false;
+          if (current_room === kitchen_scene) {
+            is_kitchen_scene = true;
+          }
+        }
+
+        if (is_toaster_scene) {
+          // zoom out of toaster
+          scene_pic = current_room;
+
+          // move out of the zone that triggered zoom in
+          moveOutOfDetectionZone(toaster_left_bound, toaster_right_bound, toaster_bottom_bound, toaster_top_bound);
+
+          // update values
+          is_toaster_scene = false;
+          if (current_room === kitchen_scene) {
+            is_kitchen_scene = true;
+          }
+        }
+
+        if (is_coffee_maker_scene) {
+          // zoom out of toaster
+          scene_pic = current_room;
+
+          // move out of the zone that triggered zoom in
+          moveOutOfDetectionZone(coffee_maker_left_bound, coffee_maker_right_bound, coffee_maker_bottom_bound, coffee_maker_top_bound);
+
+          // update values
+          is_coffee_maker_scene = false;
+          if (current_room === kitchen_scene) {
+            is_kitchen_scene = true;
+          }
+        }
+
+        if (is_terminal_scene) {
+          // zoom out of terminal
+          scene_pic = current_room;
+
+          // move out of the zone that triggered zoom in
+          moveOutOfDetectionZone(computer_left_bound, computer_right_bound, computer_bottom_bound, computer_top_bound);
+
+          // update values
+          is_terminal_scene = false;
+          if (current_room === livingroom_scene) {
+            is_livingroom_scene = true;
+          }
+
+          // reset terminal history
+          current_directory = "~";
+          directory_archive = ["~"];
+          terminal_archive = [""];
+          user_input = "";
+
+          // remove text from terminal display - https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
+          while (num_inputs > 0) {
+            let terminal_line = document.getElementById("input" + num_inputs);
+            game_terminal.removeChild(terminal_line);
+
+            let output_line = document.getElementById("output" + (num_inputs - 1));
+            game_terminal.removeChild(output_line);
+            
+            --num_inputs;
+          }
+          input_number = num_inputs;
+        }  // closing terminal conditional
+
+      }  // closing conditional that checks if hints are displayed
 
     }  // closing the escape key conditional
 
