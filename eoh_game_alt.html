@@ -664,8 +664,9 @@
 
   game_canvas.addEventListener("mousedown", e => {
 
-    let mouse_x = e.clientX - game_canvas.offsetLeft;
-    let mouse_y = e.clientY - game_canvas.offsetTop;
+    // source: https://stackoverflow.com/questions/6073505/what-is-the-difference-between-screenx-y-clientx-y-and-pagex-y
+    let mouse_x = e.pageX - game_canvas.offsetLeft;
+    let mouse_y = e.pageY - game_canvas.offsetTop;
 
     // if user clicks on hint icon, open up hint view
     if (!is_hint_view_displayed && mouse_x >= hint_left_bound && mouse_x <= hint_right_bound &&
