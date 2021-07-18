@@ -106,10 +106,10 @@
 <!-- creating the hint view -->
 <!-- source: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp -->
 <div class="tab">
-  <button class="tablinks" id="defaultOpen">Unlocking the computer</button>
-  <button class="tablinks" >Making toast</button>
-  <button class="tablinks" >Opening the fridge</button>
-  <button class="tablinks" >Brewing coffee</button>
+  <button class="tablinks" onclick="viewHints(event, 'Computer')" id="defaultOpen">Unlocking the computer</button>
+  <button class="tablinks" onclick="viewHints(event, 'Toast')">Making toast</button>
+  <button class="tablinks" onclick="viewHints(event, 'Fridge')">Opening the fridge</button>
+  <button class="tablinks" onclick="viewHints(event, 'Coffee')">Brewing coffee</button>
 </div>
 
 <div id="Computer" class="tabcontent">
@@ -147,6 +147,9 @@
   const hint_options = document.getElementsByClassName("tab");
   const hint_description = document.getElementsByClassName("tabcontent");
   let is_hint_view_displayed = false;
+
+  // Get the element with id="defaultOpen" and click on it
+  document.getElementById("defaultOpen").click();
 
   
   /* SCENE ATTRIBUTES */
@@ -544,6 +547,7 @@
   }
 
 
+  // FUNCTIONS FOR HINTS
   function positionHints() {
     // update position of every element in 'tab' class
     // hint_options contains a list of the elements
@@ -590,6 +594,30 @@
       hint_description[puzzle_hints].style.visibility = visibility;
     }
   }
+
+  // source for this function: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp
+  function viewHints(evt, puzzle_name) {
+    let i, tabcontent, tablinks;
+    
+    // don't display any tab content for any tabs
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // inactivate all buttons for selecting hints for puzzles
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // display and activate the tab for the hint that is selected via mouse click
+    // - will show that the hints for that puzzle is selected and display the hints
+    //   for that puzzle
+    document.getElementById(puzzle_name).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+
 
   // check if the character landed in any zoom in area
   function zoomInOnItem() {
@@ -1609,7 +1637,7 @@
 
   // TODO for hints:
   // - add hints in
-  // - show tab changes with corresponding descriptions displaying
+  // DONE - show tab changes with corresponding descriptions displaying
 
 
   // DURING LAST WEEK:
