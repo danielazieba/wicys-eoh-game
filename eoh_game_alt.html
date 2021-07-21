@@ -512,7 +512,8 @@
     displayIncorrectMessage();
 
     //load the music fround sounds folder
-    computer_sound = new sound("sounds/computer.wav");
+    computer_sound = new Audio("sounds/computer.wav");
+    
     lock_sound = new sound("sounds/lock.wav");
     lock_open_sound = new sound("sounds/lock-open.wav");
     lock_fail_sound = new sound("sounds/lock-open-fail.wav");
@@ -1328,7 +1329,10 @@
 
     if (is_combo_lock_scene) {
       if (allowed_combo_keys.includes(key.which) && lock_combo_string.length < 9) {
+        computer_sound.play();
         // remove incorrect message text
+        //<Audio controls autoplay src="sounds/computer.wav">
+        //</Audio>
         if (is_lock_combo_incorrect_message_visible) {
           is_lock_combo_incorrect_message_visible = false;
         }
@@ -1345,6 +1349,7 @@
 
     if (is_computer_scene) {
       if (allowed_password_keys.includes(key.which) && computer_password_string.length < 18) {
+       
         // remove incorrect message text
         if (is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = false;
