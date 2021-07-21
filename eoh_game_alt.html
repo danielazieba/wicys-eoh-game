@@ -354,6 +354,9 @@
   const coffee_maker_bottom_bound = 178;
   const coffee_maker_top_bound = 80;
 
+  /* Music Attributes*/
+  let computer_sound, lock_open_sound, coffee_pour_sound, toaster_pop_sound, lock_fail_sound;
+
 
   /* PUZZLE ATTRIBUTES */
   // combinationn lock puzzle
@@ -449,7 +452,7 @@
     char_right2 = loadCharacter("images/step2.png", char_x_pos, char_y_pos, 64, 64);
     char_left1 = loadCharacter("images/step1_left.png", char_x_pos, char_y_pos, 64, 64);
     char_left2 = loadCharacter("images/step2_left.png", char_x_pos, char_y_pos, 64, 64);
-    
+
     // initialize values
     scene_pic = bedroom_scene;
     current_room = bedroom_scene;
@@ -501,10 +504,19 @@
     }
     draw(hint_icon, hint_x_pos, hint_y_pos, 32, 32);
 
+  
+
     // display text (needs to be after scene pics are drawn in order to be seen)
     displayUserInput();
     displayComboLockHint();
     displayIncorrectMessage();
+
+    //load the music fround sounds folder
+    computer_sound = new sound("sounds/computer.wav");
+    lock_open_sound = new sound("sounds/lock-open.wav");
+    lock_fail_sound = new sound("sounds/lock-open-fail.wav");
+    coffee_pour_sound = new sound("sounds/liquid-pour.wav");
+    toaster_pop_sound = new sound("sounds/toaster-pop-up.wav");
 
     // can use to find current position of character
     // console.log("x: " + char_x_pos);
@@ -1399,15 +1411,21 @@
 
         // update status of puzzle
         is_lock_unlocked = true;
+        document.getElementById("makeToast").innerHTML = " &#10004 Make Toast &#127838";
+        //lock_open_sound.play();
+        //toaster_pop_sound.play();
+
 
       } else {  // incorrect combo
         if (!is_lock_combo_incorrect_message_visible) {
           is_lock_combo_incorrect_message_visible = true;
+          //lock_fail_sound.play();
         }
       }
     }  // closing lock conditional
 
     if (!is_computer_unlocked && is_computer_scene) {
+     
       if (computer_password_string === " DELILAH") {
 
         // show terminal
@@ -1417,7 +1435,8 @@
 
         // update status of computer => unlocked
         is_computer_unlocked = true;
-
+        document.getElementById("unlockComputer").innerHTML = " &#10004 Unlock the Computer &#128187"
+        //computer_sound.play();
       } else {  // incorrect password
         if (!is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = true;
@@ -1615,6 +1634,8 @@
     } else if (current_request_url === "mycyba/brewer/brew") {
       output_text = "STATUS: BREW REQUEST RECEIVED. WILL PROCEED TO FULFILL REQUEST.";
       is_coffee_brewed = true;
+      document.getElementById("makeCoffee").innerHTML = " &#10004 Make Coffee &#9749";
+      //coffee_pour_sound.play()
     } else if (current_request_url === "mycyba/brewer/status") {
       output_text = "STATUS: OK, READY TO BREW";
     } else {
@@ -1645,6 +1666,8 @@
       if (!is_fridge_unlocked) {
         output_text = "Fridge unlocked!";
         is_fridge_unlocked = true;
+        document.getElementById("openFridge").innerHTML = " &#10004 Open the Fridge &#127859";
+        //lock_open_sound.play()
       } else {
         output_text = "Fridge is already unlocked!";
       }
@@ -1843,7 +1866,7 @@
   <div id="tastList">
     <p>Remaining tasks:</p>
     <p id="unlockComputer">- Unlock the computer &#128187</p>
-    <p id="makeToast">- Make toast &#127838 </p>
+    <p id="makeToast">- Make Toast &#127838 </p>
     <p id="openFridge">- Open the fridge &#127859</p>
     <p id="makeCoffee">- Make coffee &#9749</p>
   </div>
