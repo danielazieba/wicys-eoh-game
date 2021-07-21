@@ -1636,7 +1636,10 @@
       output_text = "STATUS: BREW REQUEST RECEIVED. WILL PROCEED TO FULFILL REQUEST.";
       is_coffee_brewed = true;
       document.getElementById("makeCoffee").innerHTML = " &#10004 Make Coffee &#9749";
-      //coffee_pour_sound.play()
+      /*did not work
+      1. <audio id="coffee_pour" src="sounds/liquid-pour.wav" controls autoplay>
+        </audio>
+      2. coffee_pour_sound.play()*/
     } else if (current_request_url === "mycyba/brewer/status") {
       output_text = "STATUS: OK, READY TO BREW";
     } else {
