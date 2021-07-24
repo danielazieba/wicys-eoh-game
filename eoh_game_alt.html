@@ -276,6 +276,7 @@
   let hint_y_pos = 5;
 
   // the following grouped variables store pics of the game scenes
+  let start_scene;
   let bedroom_scene;
   let kitchen_scene;
   let livingroom_scene;
@@ -293,7 +294,8 @@
   let coffee_maker_complete_scene;
 
   // booleans used for keeping track of current scene
-  let is_bedroom_scene = true;
+  let is_start_scene = true;
+  let is_bedroom_scene = false;
   let is_kitchen_scene = false;
   let is_livingroom_scene = false;
 
@@ -470,6 +472,7 @@
     hint_icon = loadCharacter("images/hint_icon_filled_64x64_x0.5.png", hint_x_pos, hint_y_pos, 32, 32);
 
     // load initial game setting components
+    start_scene = loadBackground("images/ecebtext.png");
     bedroom_scene = loadBackground("images/bedroom.png");
     kitchen_scene = loadBackground("images/new_new_kitchen.png");
     livingroom_scene = loadBackground("images/big-out-living.png");
@@ -495,8 +498,8 @@
     char_left2 = loadCharacter("images/step2_left.png", char_x_pos, char_y_pos, 64, 64);
 
     // initialize values
-    scene_pic = bedroom_scene;
-    current_room = bedroom_scene;
+    scene_pic = start_scene;
+    current_room = start_scene;
     char_pic = char_left1;
 
     // play bgm
@@ -546,8 +549,9 @@
     if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  // only draw character if in a room
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
-    draw(hint_icon, hint_x_pos, hint_y_pos, 32, 32);
-
+    if (!is_start_scene) {
+      draw(hint_icon, hint_x_pos, hint_y_pos, 32, 32);
+    }
   
 
     // display text (needs to be after scene pics are drawn in order to be seen)
@@ -718,7 +722,7 @@
     let mouse_y = e.pageY - game_canvas.offsetTop;
 
     // if user clicks on hint icon, open up hint view
-    if (!is_hint_view_displayed && mouse_x >= hint_left_bound && mouse_x <= hint_right_bound &&
+    if (!is_start_scene && !is_hint_view_displayed && mouse_x >= hint_left_bound && mouse_x <= hint_right_bound &&
         mouse_y >= hint_top_bound && mouse_y <= hint_bottom_bound) {
 
       changeHintVisibility("visible");
@@ -1135,7 +1139,13 @@
     }  // closing the backspace key conditional
 
     if (key.code === "Enter") {
-      if (is_terminal_scene) {
+
+      if (is_start_scene) {
+        scene_pic = bedroom_scene;
+        current_room = bedroom_scene;
+        is_start_scene = false;
+        is_bedroom_scene = true;
+      } else if (is_terminal_scene) {
 
         // execute user input
         let terminal_output = executeUserInput();
