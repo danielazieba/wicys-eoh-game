@@ -285,6 +285,9 @@
   let toaster_scene;
   let coffee_maker_scene;
   let terminal_scene;
+  let fridge_complete_scene;
+  let toaster_complete_scene;
+  let coffee_maker_complete_scene;
 
   // booleans used for keeping track of current scene
   let is_bedroom_scene = true;
@@ -475,6 +478,11 @@
     toaster_scene = loadBackground("images/zoomed_in_toaster_with_background.png");
     coffee_maker_scene = loadBackground("images/coffee.png");
     terminal_scene = loadBackground("images/computer_screen.png");
+
+    // completed puzzle images
+    fridge_complete_scene = loadBackground("images/fridge_completed.png");
+    toaster_complete_scene = loadBackground("images/toaster_task_complete.png");
+    coffee_maker_complete_scene = loadBackground("images/coffee_task_complete_w_text.png");
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -843,7 +851,12 @@
       char_x_pos <= fridge_right_bound && char_y_pos <= fridge_bottom_bound &&
       char_y_pos >= fridge_top_bound) {
 
-      scene_pic = fridge_scene;
+      if (!is_fridge_unlocked) {
+        scene_pic = fridge_scene;
+      } else {
+        scene_pic = fridge_complete_scene;
+      }
+
       is_fridge_scene = true;
       is_kitchen_scene = false;
     }
@@ -852,7 +865,12 @@
       char_x_pos <= toaster_right_bound && char_y_pos <= toaster_bottom_bound &&
       char_y_pos >= toaster_top_bound) {
 
-      scene_pic = toaster_scene;
+      if (!is_lock_unlocked) {
+        scene_pic = toaster_scene;
+      } else {
+        scene_pic = toaster_complete_scene;
+      }
+
       is_toaster_scene = true;
       is_kitchen_scene = false;
     }
@@ -861,7 +879,12 @@
       char_x_pos <= coffee_maker_right_bound && char_y_pos <= coffee_maker_bottom_bound &&
       char_y_pos >= coffee_maker_top_bound) {
 
-      scene_pic = coffee_maker_scene;
+      if (!is_coffee_brewed) {
+        scene_pic = coffee_maker_scene;
+      } else {
+        scene_pic = coffee_maker_complete_scene;
+      }
+      
       is_coffee_maker_scene = true;
       is_kitchen_scene = false;
     }
@@ -1038,6 +1061,7 @@
           directory_archive = ["~"];
           terminal_archive = [""];
           user_input = "";
+          currently_in_executable = false;
 
           // remove text from terminal display - https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
           while (num_inputs > 0) {
