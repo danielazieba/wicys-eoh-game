@@ -1877,8 +1877,8 @@
         completed_game_text[text].style.visibility = "visible";
         completed_game_text[text].style.display = "block";
       }
-      //stop the background music and play congrats theme
-      bgm.src = " ";
+      // stop the background music and play congrats theme
+      bgm.pause();
       congrats.play();
     }
   }
