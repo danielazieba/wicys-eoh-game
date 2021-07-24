@@ -11,6 +11,9 @@
 <audio loop = "true" id = "bgm">
   <source src="sounds/memories.mp3" type="audio/mpeg">
 </audio>
+<audio loop = "true" id = "congrats">
+  <source src = "sounds/celebrate_clapping.mp3" type = "audio/mpeg">
+</audio>
 <audio id = "computer_audio">
   <source src="sounds/computer.wav" type="audio/mpeg">
 </audio>
@@ -409,6 +412,7 @@
 
   /* MUSIC ATTRIBUTES */
   const bgm = document.getElementById("bgm");
+  const congrats = document.getElementById("congrats");
   const computer_sound = document.getElementById("computer_audio");
   const lock_sound = document.getElementById("lock_audio");
   const lock_open_sound = document.getElementById("lock_open_audio");
@@ -1873,6 +1877,9 @@
         completed_game_text[text].style.visibility = "visible";
         completed_game_text[text].style.display = "block";
       }
+      //stop the background music and play congrats theme
+      bgm.src = " ";
+      congrats.play();
     }
   }
 
