@@ -505,9 +505,6 @@
     current_room = start_scene;
     char_pic = char_left1;
 
-    // play bgm
-    bgm.play();
-
     setInterval(update, 20)  // infinite loop, runs every 2 ms
 
     console.log("ending")
@@ -1148,6 +1145,8 @@
         current_room = bedroom_scene;
         is_start_scene = false;
         is_bedroom_scene = true;
+        // play bgm
+        bgm.play();
       } else if (is_terminal_scene) {
 
         // execute user input
