@@ -152,8 +152,7 @@
 </style>
 <!-- <link rel="stylesheet" href="css/alt.css"> -->
 </head>
-  <h2>Cybersecurity Breakfast Adventure</h2>
-  <h3>*For the best user experience, please use Mozilla Firefox. The game has experienced some issues in Google Chrome and Safari. If you ever have problems of the character getting stuck in place or the screen going black, please refresh the page. Note that your current progress in the game will be lost when the page is refreshed.*</h3>
+<h2>Cybersecurity Breakfast Adventure</h2>
 <p>Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
 <!-- creating the game terminal -->
 <div id="myTerminal">
@@ -950,6 +949,8 @@
   function logKey(key) {
     
     if (key.code === "Escape") {
+      key.preventDefault();
+
       if (is_hint_view_displayed) {
         // close out hint view
         changeHintVisibility("hidden");
@@ -1931,14 +1932,8 @@
 
 </script>
 
-<p>We have created a game area! (or at least an empty canvas)</p>
-
-<!--Add hints or description to bottom-->
-  <p id="hintsText">Hints: press ? to get a new hint!</p>
-  <br>
-  <p id="hintsList"></p>
-  <br>
-  <div id="tastList">
+<!--Display tasks and resource links-->
+  <div id="taskList">
     <p>Remaining tasks:</p>
     <p id="unlockComputer">- Unlock the Computer &#128187</p>
     <p id="makeToast">- Make Toast &#127838 </p>
