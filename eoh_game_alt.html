@@ -3,6 +3,29 @@
 <head>
 <meta charset = "utf-8" name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Cybersecurity Breakfast Adventure</title>
+<!-- Need the link tag to solve an error with favicon.ico: https://stackoverflow.com/questions/31075893/im-getting-favicon-ico-error -->
+<link rel="shortcut icon" href="#"/>
+
+<!-- Audio for sound effects: https://www.w3schools.com/tags/tag_audio.asp -->
+<audio id = "computer_audio">
+  <source src="sounds/computer.wav" type="audio/mpeg">
+</audio>
+<audio id = "lock_audio">
+  <source src="sounds/lock.wav" type="audio/mpeg">
+</audio>
+<audio id = "lock_open_audio">
+  <source src="sounds/lock-open.wav" type="audio/mpeg">
+</audio>
+<audio id = "lock_fail_audio">
+  <source src="sounds/lock-open-fail.wav" type="audio/mpeg">
+</audio>
+<audio id = "coffee_pour_audio">
+  <source src="sounds/liquid-pour.wav" type="audio/mpeg">
+</audio>
+<audio id = "toaster_pop_up_audio">
+  <source src="sounds/toaster-pop-up.wav" type="audio/mpeg">
+</audio>
+
 <style>
   /* style for entire webpage */
   body {
@@ -354,8 +377,14 @@
   const coffee_maker_bottom_bound = 178;
   const coffee_maker_top_bound = 80;
 
-  /* Music Attributes*/
-  let computer_sound, lock_open_sound, coffee_pour_sound, toaster_pop_sound, lock_fail_sound;
+
+  /* MUSIC ATTRIBUTES */
+  const computer_sound = document.getElementById("computer_audio");
+  const lock_sound = document.getElementById("lock_audio");
+  const lock_open_sound = document.getElementById("lock_open_audio");
+  const lock_fail_sound = document.getElementById("lock_fail_audio");
+  const coffee_pour_sound = document.getElementById("coffee_pour_audio");
+  const toaster_pop_sound = document.getElementById("toaster_pop_up_audio");
 
 
   /* PUZZLE ATTRIBUTES */
@@ -510,15 +539,6 @@
     displayUserInput();
     displayComboLockHint();
     displayIncorrectMessage();
-
-    //load the music fround sounds folder
-    computer_sound = new Audio("sounds/computer.wav");
-    
-    lock_sound = new sound("sounds/lock.wav");
-    lock_open_sound = new sound("sounds/lock-open.wav");
-    lock_fail_sound = new sound("sounds/lock-open-fail.wav");
-    coffee_pour_sound = new sound("sounds/liquid-pour.wav");
-    toaster_pop_sound = new sound("sounds/toaster-pop-up.wav");
 
     // can use to find current position of character
     // console.log("x: " + char_x_pos);
@@ -1052,6 +1072,9 @@
           // delete a character
           lock_combo_string = lock_combo_string.substring(0, lock_combo_string.length - 1);
         }
+
+        // play sound effect
+        lock_sound.play();
       }  // closing lock scene conditional
 
       if (is_computer_scene) {
@@ -1066,6 +1089,9 @@
           // delete a character
           computer_password_string = computer_password_string.substring(0, computer_password_string.length - 1);
         }
+
+        // play sound effect
+        computer_sound.play();
       }  // closing computer scene conditional
 
       if (is_terminal_scene) {        
@@ -1329,10 +1355,10 @@
 
     if (is_combo_lock_scene) {
       if (allowed_combo_keys.includes(key.which) && lock_combo_string.length < 9) {
-        computer_sound.play();
+        // play sound effect of lock moving
+        lock_sound.play();
+
         // remove incorrect message text
-        //<Audio controls autoplay src="sounds/computer.wav">
-        //</Audio>
         if (is_lock_combo_incorrect_message_visible) {
           is_lock_combo_incorrect_message_visible = false;
         }
@@ -1349,7 +1375,9 @@
 
     if (is_computer_scene) {
       if (allowed_password_keys.includes(key.which) && computer_password_string.length < 18) {
-       
+        // play sound effect of typing keys
+        computer_sound.play()
+
         // remove incorrect message text
         if (is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = false;
@@ -1418,15 +1446,16 @@
         // update status of puzzle
         is_lock_unlocked = true;
         document.getElementById("makeToast").innerHTML = " &#10004 Make Toast &#127838";
-        //lock_open_sound.play();
-        //toaster_pop_sound.play();
-
+        
+        // play sound effects
+        lock_open_sound.play();
+        toaster_pop_sound.play();
 
       } else {  // incorrect combo
-        if (!is_lock_combo_incorrect_message_visible) {
-          is_lock_combo_incorrect_message_visible = true;
-          //lock_fail_sound.play();
-        }
+        is_lock_combo_incorrect_message_visible = true;
+
+        // play sound effects
+        lock_fail_sound.play();
       }
     }  // closing lock conditional
 
@@ -1441,8 +1470,7 @@
 
         // update status of computer => unlocked
         is_computer_unlocked = true;
-        document.getElementById("unlockComputer").innerHTML = " &#10004 Unlock the Computer &#128187"
-        //computer_sound.play();
+        document.getElementById("unlockComputer").innerHTML = " &#10004 Unlock the Computer &#128187";
       } else {  // incorrect password
         if (!is_password_incorrect_message_visible) {
           is_password_incorrect_message_visible = true;
@@ -1639,12 +1667,14 @@
       output_text = "Error: not the expected request type.";
     } else if (current_request_url === "mycyba/brewer/brew") {
       output_text = "STATUS: BREW REQUEST RECEIVED. WILL PROCEED TO FULFILL REQUEST.";
+
+      // update puzzle status
       is_coffee_brewed = true;
       document.getElementById("makeCoffee").innerHTML = " &#10004 Make Coffee &#9749";
-      /*did not work
-      1. <audio id="coffee_pour" src="sounds/liquid-pour.wav" controls autoplay>
-        </audio>
-      2. coffee_pour_sound.play()*/
+
+      // play sound effect
+      coffee_pour_sound.play();
+
     } else if (current_request_url === "mycyba/brewer/status") {
       output_text = "STATUS: OK, READY TO BREW";
     } else {
@@ -1674,9 +1704,13 @@
 
       if (!is_fridge_unlocked) {
         output_text = "Fridge unlocked!";
+
+        // update puzzle status
         is_fridge_unlocked = true;
         document.getElementById("openFridge").innerHTML = " &#10004 Open the Fridge &#127859";
-        //lock_open_sound.play()
+
+        // play sound effects
+        lock_open_sound.play()
       } else {
         output_text = "Fridge is already unlocked!";
       }
