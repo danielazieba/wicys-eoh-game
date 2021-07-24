@@ -280,7 +280,7 @@
   let bedroom_scene;
   let kitchen_scene;
   let livingroom_scene;
-
+  let end_scene;
   // the following grouped variables store pics of zoomed in objects
   let whiteboard_scene;
   let computer_scene;
@@ -298,6 +298,7 @@
   let is_bedroom_scene = false;
   let is_kitchen_scene = false;
   let is_livingroom_scene = false;
+  let is_end_scene = false;
 
   let is_whiteboard_scene = false;
   let is_computer_scene = false;
@@ -476,6 +477,7 @@
     bedroom_scene = loadBackground("images/bedroom.png");
     kitchen_scene = loadBackground("images/new_new_kitchen.png");
     livingroom_scene = loadBackground("images/big-out-living.png");
+    end_scene = loadBackground("images/completed_breakfast.png");
 
     // zoomed in images
     whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png");
@@ -490,6 +492,7 @@
     fridge_complete_scene = loadBackground("images/fridge_completed.png");
     toaster_complete_scene = loadBackground("images/toaster_task_complete.png");
     coffee_maker_complete_scene = loadBackground("images/coffee_task_complete_w_text.png");
+
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -549,7 +552,7 @@
     if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  // only draw character if in a room
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
-    if (!is_start_scene) {
+    if (!is_start_scene && !is_end_scene) {
       draw(hint_icon, hint_x_pos, hint_y_pos, 32, 32);
     }
   
@@ -558,7 +561,7 @@
     displayUserInput();
     displayComboLockHint();
     displayIncorrectMessage();
-
+    complete_game_scene();
     // can use to find current position of character
     // console.log("x: " + char_x_pos);
     // console.log("y: " + char_y_pos);
@@ -722,7 +725,7 @@
     let mouse_y = e.pageY - game_canvas.offsetTop;
 
     // if user clicks on hint icon, open up hint view
-    if (!is_start_scene && !is_hint_view_displayed && mouse_x >= hint_left_bound && mouse_x <= hint_right_bound &&
+    if (!is_start_scene && !is_end_scene && !is_hint_view_displayed && mouse_x >= hint_left_bound && mouse_x <= hint_right_bound &&
         mouse_y >= hint_top_bound && mouse_y <= hint_bottom_bound) {
 
       changeHintVisibility("visible");
@@ -1829,7 +1832,19 @@
     return directory_string;
   }
 
+  function complete_game_scene(){
+    if(is_computer_unlocked && is_lock_unlocked && is_coffee_brewed && is_fridge_unlocked){
+      scene_pic = end_scene;
+      current_room = end_scene;
+      is_end_scene = true;
+      is_bedroom_scene = false;
+      is_kitchen_scene = false;
+      is_livingroom_scene = false;
+      is_terminal_scene = false;
+    }
+  }
 
+  
 
 
   // Notes for incorporating password puzzles:
