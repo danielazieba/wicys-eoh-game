@@ -1501,7 +1501,7 @@
         executables_in_current = directory[current_directory]["executables"];
         
         if (command_to_process.length === 2) {  // can be ls or cd a directory
-          if (command_to_process[0] === "cd") {
+          if (command_to_process[0] === "cd" || command_to_process[0] === "ls") {
             // get work-in-progress directory name (i.e. what the user has typed out in the place of a dir)
             let possible_dir = command_to_process[1];
 
@@ -1618,7 +1618,7 @@
         output_text = executeExecutable(command_to_process);
       } else if (command_to_process[0] === "cd") {
         output_text = executeCdCommand(command_to_process);
-      } else if (command_to_process.length === 1 && command_to_process[0].toLowerCase() == "ls") {  // "ls"
+      } else if ((command_to_process.length === 1 || command_to_process.length === 2) && command_to_process[0].toLowerCase() == "ls") {  // "ls" or "ls" + valid_subdir_name
         output_text = executeLsCommand(command_to_process);
       } else if (command_to_process[0].slice(0, 2) === "./") {
 
@@ -1691,14 +1691,40 @@
   function executeLsCommand(command_to_process) {
     let output_text = "";
 
-    // display subdirectories and executables in current directory
-    for (let i = 0; i < subdirectories.length; ++i) {
-      output_text += subdirectories[i] + " ";
-    }
+    if (command_to_process.length === 1) {  // "ls"
+      // display subdirectories and executables in current directory
+      for (let i = 0; i < subdirectories.length; ++i) {
+        output_text += subdirectories[i] + " ";
+      }
 
-    for (let j = 0; j < executables_in_current.length; ++j) {
-      output_text += executables_in_current[j] + " ";
+      for (let j = 0; j < executables_in_current.length; ++j) {
+        output_text += executables_in_current[j] + " ";
+      }
+    } else {  // "ls" + valid_subdir_name
+      let dir = command_to_process[1];
+
+      // check if the given directory is a valid subdirectory
+      let is_subdirectory = false;
+      for (let d = 0; d < subdirectories.length; ++d) {
+        if (dir === subdirectories[d]) {
+          is_subdirectory = true;
+        }
+      }
+
+      // list out contents in the specified directory
+      if (is_subdirectory) {
+        let dir_contents = directory[dir];
+
+        for (let i = 0; i < dir_contents["directories"].length; ++i) {
+          output_text += dir_contents["directories"][i] + " ";
+        }
+
+        for (let j = 0; j < dir_contents["executables"].length; ++j) {
+          output_text += dir_contents["executables"][j] + " ";
+        }
+      }
     }
+    
 
     return output_text;
   }
