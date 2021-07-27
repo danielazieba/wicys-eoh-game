@@ -1617,13 +1617,13 @@
       if (currently_in_executable) {  // execute executable
         output_text = executeExecutable(command_to_process);
       } else if (command_to_process[0] === "cd") {
-        output_text = executeCdCommand(command_to_process, subdirectories);
+        output_text = executeCdCommand(command_to_process);
       } else if (command_to_process.length === 1 && command_to_process[0].toLowerCase() == "ls") {  // "ls"
-        output_text = executeLsCommand(command_to_process, subdirectories, executables_in_current);
+        output_text = executeLsCommand(command_to_process);
       } else if (command_to_process[0].slice(0, 2) === "./") {
 
         // check if given executable is in the current directory
-        if (checkExecutableExistence(executables_in_current, command_to_process[0].slice(2))) {
+        if (checkExecutableExistence(command_to_process[0].slice(2))) {
           // enter executable
           currently_in_executable = true;
           curr_executable_name = command_to_process[0].slice(2);
@@ -1644,7 +1644,7 @@
     return output_text;
   }
 
-  function executeCdCommand(command_to_process, subdirectories) {
+  function executeCdCommand(command_to_process) {
     let output_text = "";
 
     if (command_to_process.length === 1) {  // "cd"
@@ -1688,7 +1688,7 @@
     return output_text;
   }
 
-  function executeLsCommand(command_to_process, subdirectories, executables_in_current) {
+  function executeLsCommand(command_to_process) {
     let output_text = "";
 
     // display subdirectories and executables in current directory
@@ -1838,7 +1838,7 @@
     return output_text;
   }
 
-  function checkExecutableExistence(executables_in_current, executable_name) {
+  function checkExecutableExistence(executable_name) {
     for (let i = 0; i < executables_in_current.length; ++i) {
       if (executable_name === executables_in_current[i]) {
         return true;
