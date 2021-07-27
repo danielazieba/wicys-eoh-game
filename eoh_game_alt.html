@@ -1842,6 +1842,9 @@
       } else {
         output_text = "Fridge locked!";
         is_fridge_unlocked = false;
+
+        //sound effect of lock closing
+        lock_fail_sound.play();
       }
 
     } else if (command_to_process.length === 1 && command_to_process[0] === "unlock") {
@@ -1907,7 +1910,10 @@
     // display output text
     let text = document.createTextNode(output_text);
     output_divider.appendChild(text);
-
+    /*if("fridge_app" in text ){
+      output_divider.fillStyle = "red";
+      output_divider.fillText("fridge_app");
+    }*/
     // add to terminal
     game_terminal.append(output_divider);
   }
