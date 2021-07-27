@@ -1618,7 +1618,8 @@
         output_text = executeExecutable(command_to_process);
       } else if (command_to_process[0] === "cd") {
         output_text = executeCdCommand(command_to_process);
-      } else if ((command_to_process.length === 1 || command_to_process.length === 2) && command_to_process[0].toLowerCase() == "ls") {  // "ls" or "ls" + valid_subdir_name
+      } else if ((command_to_process.length === 1 || command_to_process.length === 2)
+          && command_to_process[0].toLowerCase() == "ls") {  // "ls" or "ls" + valid_subdir_name
         output_text = executeLsCommand(command_to_process);
       } else if (command_to_process[0].slice(0, 2) === "./") {
 
@@ -1734,6 +1735,7 @@
 
     if (command_to_process.length === 1 && command_to_process[0] === "exit") {
       currently_in_executable = false;
+      current_coffee_state = "";
       output_text = "Exiting current executable.";
     } else {
       // redirect to the specific executable
