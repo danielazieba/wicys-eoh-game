@@ -65,7 +65,6 @@
   /* style the terminal files with respect to color code*/
   /* text: white , directory: blue, executable: white */
   .executable_file{
-
     color: limegreen;
   }
   .subdirectory{
@@ -1923,6 +1922,7 @@
     // directories and executables in color and append to output_divider
     if(executing_ls_command){
       color_directory_executable(output_text, output_divider);
+      executing_ls_command = false;
     }
     // if it is executing ls command, do not make it into a TextNode
     else{
@@ -1935,20 +1935,19 @@
 
   function color_directory_executable(output_text, output_divider){
     let directory_contents = [];
-    let new_colored_text;
-
     // split the output of contents of the directory - after ls command is executed
     output_text = output_text.trim();
     if (output_text != "") {
       directory_contents = output_text.split(" ");
     }
+
     // create span and append to the output divides based on class
     for(let index = 0; index < directory_contents.length; index++){
 
-      let check_exe_file = directory_contents[index].slice(-4);
       // to create the span element: https://stackoverflow.com/questions/5802663/create-a-span-element-inside-another-element-using-javascript
       // color the text different based on class - directory and executable
       let ls_span = document.createElement("span");
+      let check_exe_file = directory_contents[index].slice(-4);
       if(check_exe_file === ".exe"){
         ls_span.className = "executable_file";
       }
@@ -1958,7 +1957,6 @@
       //append to the divider after setting the colors
       ls_span.innerHTML = directory_contents[index] + " ";
       output_divider.appendChild(ls_span);
-
     }
   }
 
