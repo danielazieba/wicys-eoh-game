@@ -52,7 +52,7 @@
   /* style for scrolling text box (i.e. terminal) */
   #myTerminal {
     background-color: rgb(0, 8, 8);
-    color: lime;
+    color: white;
     width: 605px;
     height: 377px;
     overflow-y: scroll;
@@ -60,6 +60,16 @@
     visibility: hidden;
     text-align: left;
     word-break: break-all;  /* allows wraparound without spaces - https://css-tricks.com/almanac/properties/o/overflow-wrap/*/
+  }
+
+  /* style the terminal files with respect to color code*/
+  /* text: white , directory: blue, executable: white */
+  .executable_file{
+
+    color: limegreen;
+  }
+  .subdirectory{
+    color: mediumblue;
   }
 
   /* source for how to style tab-related elements: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp*/
@@ -441,6 +451,7 @@
   let subdirectories, executables_in_current;
   
   let currently_in_executable = false;
+  let executing_ls_command = false;
   let curr_executable_name = "";
   
   let terminal_archive = [""];
@@ -1690,6 +1701,7 @@
   }
 
   function executeLsCommand(command_to_process) {
+    executing_ls_command = true;
     let output_text = "";
 
     if (command_to_process.length === 1) {  // "ls"
@@ -1907,15 +1919,47 @@
       display_coffee_text = false;
     }
 
-    // display output text
-    let text = document.createTextNode(output_text);
-    output_divider.appendChild(text);
-    /*if("fridge_app" in text ){
-      output_divider.fillStyle = "red";
-      output_divider.fillText("fridge_app");
-    }*/
+    //check to see if it is executing a ls command, then display 
+    // directories and executables in color and append to output_divider
+    if(executing_ls_command){
+      color_directory_executable(output_text, output_divider);
+    }
+    // if it is executing ls command, do not make it into a TextNode
+    else{
+      let text = document.createTextNode(output_text);
+      output_divider.appendChild(text);
+    }
     // add to terminal
     game_terminal.append(output_divider);
+  }
+
+  function color_directory_executable(output_text, output_divider){
+    let directory_contents = [];
+    let new_colored_text;
+
+    // split the output of contents of the directory - after ls command is executed
+    output_text = output_text.trim();
+    if (output_text != "") {
+      directory_contents = output_text.split(" ");
+    }
+    // create span and append to the output divides based on class
+    for(let index = 0; index < directory_contents.length; index++){
+
+      let check_exe_file = directory_contents[index].slice(-4);
+      // to create the span element: https://stackoverflow.com/questions/5802663/create-a-span-element-inside-another-element-using-javascript
+      // color the text different based on class - directory and executable
+      let ls_span = document.createElement("span");
+      if(check_exe_file === ".exe"){
+        ls_span.className = "executable_file";
+      }
+      else{
+        ls_span.className = "subdirectory";
+      }
+      //append to the divider after setting the colors
+      ls_span.innerHTML = directory_contents[index] + " ";
+      output_divider.appendChild(ls_span);
+
+    }
   }
 
   // returns a string of the full directory to display in terminal
