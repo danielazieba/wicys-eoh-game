@@ -7,15 +7,15 @@
 <link rel="shortcut icon" href="#"/>
 
 <!-- Audio for sound effects: https://www.w3schools.com/tags/tag_audio.asp -->
-<!-- Note: the type needs to be audio/mpeg instead of audio/wav for it to work -->
-<!-- Use the loop functionality for the background music and the congratulatory music at the end-->
+<!-- Note: the type needs to be "audio/mpeg" instead of "audio/wav" for it to work -->
+<!-- Loop sound effects to play the background music and the congratulatory music at the end -->
 <audio loop = "true" id = "bgm">
   <source src="sounds/memories.mp3" type="audio/mpeg">
 </audio>
 <audio loop = "true" id = "congrats">
   <source src = "sounds/celebrate_clapping.mp3" type = "audio/mpeg">
 </audio>
-<!-- Audio for the puzzle tasks - include computer keystroke, lock opening successfully,
+<!-- Audio for the puzzle tasks - includes computer keystroke, lock clicks, lock opening,
   lock closing, toaster pop up and the coffee being poured out -->
 <audio id = "computer_audio">
   <source src="sounds/computer.wav" type="audio/mpeg">
@@ -65,12 +65,12 @@
     word-break: break-all;  /* allows wraparound without spaces - https://css-tricks.com/almanac/properties/o/overflow-wrap/*/
   }
 
-  /* style the terminal files with respect to color code*/
-  /* text: white , directory: blue, executable: white */
-  .executable_file{
+  /* style the terminal files with respect to linux color code: https://www.2daygeek.com/understanding-the-color-code-of-linux-files/ */
+  /* text: white , directory: blue, executable: green */
+  .executable_file {
     color: limegreen;
   }
-  .subdirectory{
+  .subdirectory {
     color: mediumblue;
   }
 
@@ -151,7 +151,7 @@
     background-color: rgb(168, 240, 194);
   }
 
-  /*style for the list of hints*/
+  /* style for the list of hints */
   .hint_list {
     color: black;
     width: 500px;
@@ -162,12 +162,13 @@
   }
 
   /* source for display parameter: https://stackoverflow.com/questions/2928688/how-to-hide-elements-without-having-them-take-space-on-the-page */
+  /* style for elements that show up while game is ongoing*/
   .ongoing {
     visibility: visible;
     display: block;
   }
 
-  /*separate out the styling for the html text based on classes*/
+  /* style for elements that show up when the game is complete */
   .complete {
     visibility: hidden;
     display: none;
@@ -178,15 +179,15 @@
     border: 1px solid #d3d3d3;
     background-color: #f1f1f1;
 } */
-
 </style>
 <!-- <link rel="stylesheet" href="css/alt.css"> -->
 </head>
-<!-- html text for when the game is ongoing, styled according to the "ongoing" class-->
-<h1>Cybersecurity Breakfast Adventure</h1>
-<p class="ongoing">Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
 
-<!-- html text for when the game is complete styled according to the complete class-->
+<!-- BEGINNING OF ELEMENTS DISPLAYED ON HTML PAGE -->
+<h1>Cybersecurity Breakfast Adventure</h1>
+<!-- this element follows the style of the "ongoing" class--shows up while the game is ongoing -->
+<p class="ongoing">Instructions: Use the arrow keys to navigate locations and complete your tasks. If you find yourself at a pop-up screen within the game, press Escape to close it and return to the overworld. For text-based prompts, hit Enter to submit your input.</p>
+<!-- these elements follow the style of the "complete" class--shows up once the game is complete -->
 <h2 class="complete">CONGRATULATIONS!</h2>
 <p class="complete">You've completed all the cybersecurity puzzles that need to be solved in order to make breakfast.</p>
 <br class="complete">
@@ -205,8 +206,8 @@
   <button class="tablinks" onclick="viewHints(event, 'Coffee')">Brewing coffee</button>
 </div>
 
-<!-- creating the structure of hints under each puzzle tab -->
-<!-- adding in the html text to be shown when the tab is clicked and the "Get a Hint" button-->
+<!-- creating the structure of hints under each puzzle hint tab -->
+<!-- when the tab for the puzzle is selected, will display the content (i.e. hints and "Get a Hint" button) -->
 <div id="Computer" class="tabcontent">
   <h3>Hints for computer puzzle</h3>
   <h4 id="Computer_hint_instruction">Click on the button below to get a hint for this puzzle. To go back to the game, press ESCAPE.</h4>
@@ -235,17 +236,24 @@
   <button class="button" id="Coffee_btn" onclick="addHintToView(event, 'Coffee')">Get a hint</button>
 </div>
 
-<!-- creating a canvas: -->
+<!-- creating the canvas: -->
 <canvas id="myCanvas" width="700" height="500" style="background-color: #f1f1f1;"></canvas>
+
 <!-- <script src="plugins.js"></script> -->
 <br>
 <!-- <body onload="startGame()"> -->
 <body onload="start()">
 <script>
+  /* GENERAL ATTRIBUTES*/
   // get the canvas element and context (context allows you to draw on the canvas)
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
   const game_terminal = document.getElementById("myTerminal");
+
+
+  /* HTML TEXT ATTRIBUTES */
+  const ongoing_game_text = document.getElementsByClassName("ongoing");
+  const completed_game_text = document.getElementsByClassName("complete");
 
 
   /* HINT ATTRIBUTES */
@@ -254,11 +262,7 @@
   const hint_list = document.getElementsByClassName("hint_list");
   let is_hint_view_displayed = false;
 
-  /* variables to keep track of the current html text to be displayed */
-  const ongoing_game_text = document.getElementsByClassName("ongoing");
-  const completed_game_text = document.getElementsByClassName("complete");
-
-  // Get the element with id="defaultOpen" and click on it
+  // get the element with id="defaultOpen" and click on it (i.e. computer hint tab)
   document.getElementById("defaultOpen").click();
 
   // keeps track of what hints have been shown for a puzzle
@@ -314,6 +318,7 @@
 
   
   /* SCENE ATTRIBUTES */
+  // the following grouped variables store and position the hint icon pic
   let hint_icon;
   let hint_x_pos = 660;
   let hint_y_pos = 5;
@@ -346,7 +351,7 @@
   let is_livingroom_scene = false;
   let is_end_scene = false;
 
-  // booleans used to keep track of current task pop upS
+  // booleans used to keep track of current task zoom ins
   let is_whiteboard_scene = false;
   let is_computer_scene = false;
   let is_combo_lock_scene = false;
@@ -355,7 +360,7 @@
   let is_coffee_maker_scene = false;
   let is_terminal_scene = false;
 
-
+  // current scene info
   let scene_pic;  // current background picture being displayed
   let current_room;  // current room the user is in (i.e. bedroom, kitchen, etc)
 
@@ -373,8 +378,8 @@
   let is_left1 = true;
   let is_left2 = false;
 
+  // current character info
   let char_pic;  // current character picture being displayed
-
   let char_x_pos = 587;  // x pos of top left corner of char img
   let char_y_pos = 282;  // y pos of top left corner of char img
 
@@ -383,7 +388,7 @@
   let step_counter = 0;  // used to determine whether the character step changes
   let step_change = 25;  // every 25 ms, character step changes
 
-  // boolean variables representing if the specific arrow key is being pressed by user
+  // booleans representing if the specific arrow key is being pressed by user
   let is_key_up = false;
   let is_key_right = false;
   let is_key_down = false;
@@ -391,13 +396,12 @@
 
 
   /* INTERACTIVE ATTRIBUTES (mostly bounds to interact with zoom-in items) */
-  // hint icon interacted with using mouse clicker
+  // hint icon
   const hint_left_bound = 660;
   const hint_right_bound = 697;
   const hint_bottom_bound = 37;
   const hint_top_bound = 5;
 
-  /* pop ups triggered by movement of the character close to the bounds*/
   // bedroom whiteboard
   const whiteboard_left_bound = 253;
   const whiteboard_right_bound = 408;
@@ -436,7 +440,6 @@
 
 
   /* MUSIC ATTRIBUTES */
-  /* varibles to store the given music files (can be inserted using the .play() functionality) */
   const bgm = document.getElementById("bgm");
   const congrats = document.getElementById("congrats");
   const computer_sound = document.getElementById("computer_audio");
@@ -451,31 +454,31 @@
   // combinationn lock puzzle
   let allowed_combo_keys = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57]  // e.which codes
   let lock_combo_string = " ";  // needs to have a space in between in order for backspace to work
-  let is_lock_combo_incorrect_message_visible = false;              //to display incorrect message                  
-  let is_lock_unlocked = false;       // to keep track of whether the puzzle is complete
+  let is_lock_combo_incorrect_message_visible = false;  // determines whether to display incorrect message                  
+  let is_lock_unlocked = false; // keeps track of whether the puzzle is complete
 
-  // computer password puzzle - only allowing capital letters
+  // computer password puzzle
   let allowed_password_keys = [65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82,
                                83, 84, 85, 86, 87, 88, 89, 90] // e.which codes
   let computer_password_string = " ";  // needs to have a space in between in order for backspace to work
-  let is_password_incorrect_message_visible = false;                  //to display incorrect message
-  let is_computer_unlocked = false;        // to keep track of whether the puzzle is complete
+  let is_password_incorrect_message_visible = false;  // determines whether to display incorrect message
+  let is_computer_unlocked = false;  // keeps track of whether the puzzle is complete
 
   // terminal
-  let current_directory = "~";                      //start in root directory always
+  let current_directory = "~";  // start in root directory
   let directory_archive = ["~"];
-  let subdirectories, executables_in_current;       // displays contents of current directory
+  let subdirectories, executables_in_current;  // stores content of current directory
   
   let currently_in_executable = false;
   let executing_ls_command = false;
   let curr_executable_name = "";
   
   let terminal_archive = [""];
-  let user_input = "";                      //used to execute user input and display user input on the screen
-  let num_inputs = 0;
+  let user_input = "";  // stores what the user types in the terminal
+  let num_inputs = 0;  // used for creating dividers that store user input
   let input_number = num_inputs;  // used for moving between commands
 
-  /* the directory tree structure - to access subdirectories and executables as needed*/
+  // the directory tree structure - to access subdirectories and executables as needed
   const directory = {
     "~" : {
       "directories" : [
@@ -494,19 +497,19 @@
     }
   };
 
-  /*terminal puzzle attributes*/
-  /* to keep track of whether terminal tasks are completed*/
+  /* TERMINAL PUZZLE ATTRIBUTES */
+  // keeps track of whether terminal tasks are complete
   let is_fridge_unlocked = false;
   let is_coffee_brewed = false;
 
-  /* coffee brewing task- coffeeRequestSender user inputs stored here*/
+  // stores coffeeRequestSender.exe user inputs (for coffee brewing task)
   let current_coffee_state = "";
   let current_host_name = "";
   let current_port_name = "";
   let current_request_type = "";
   let current_request_url = "";
 
-  /* outputs displayed when network traffic is captured from the lineDolphin executable */
+  // stores text for when network traffic is captured from the lineDolphin executable
   let display_coffee_text = false;
   const coffee_text = ["Pinging CYBA brewer using saved configuration...",
                         "Request sent:", 
@@ -523,11 +526,14 @@
   // FINAL ATTEMPT (SUCCESSFUL!!)
   console.log("BEGIN");
 
-  // begins game
+  /**
+   * Begins game by loading in all images that will be used (i.e. character, scenes, etc), 
+   * initializing game scene and character images, and calling the function that updates the game.
+   */
   function start() {
     console.log("starting")
 
-    //load the hint icon to be diplayed in all ongoing game scenes
+    // load hint icon to be diplayed in all ongoing game scenes
     hint_icon = loadCharacter("images/hint_icon_filled_64x64_x0.5.png", hint_x_pos, hint_y_pos, 32, 32);
 
     // load initial game setting components
@@ -537,7 +543,7 @@
     livingroom_scene = loadBackground("images/big-out-living.png");
     end_scene = loadBackground("images/completed_breakfast_no_text.png");
 
-    //load puzzle zoomed in images
+    // load zoomed in puzzle images
     whiteboard_scene = loadBackground("images/whiteboard_w_lock_clue.png");
     computer_scene = loadBackground("images/locked_computer.png");
     combo_lock_scene = loadBackground("images/combination_lock_with_numbers_on_cabinet_w_box1.png");
@@ -550,7 +556,6 @@
     fridge_complete_scene = loadBackground("images/fridge_completed.png");
     toaster_complete_scene = loadBackground("images/toaster_task_complete.png");
     coffee_maker_complete_scene = loadBackground("images/coffee_task_complete_w_text.png");
-
 
     // load initial character components
     char_right1 = loadCharacter("images/step1.png", char_x_pos, char_y_pos, 64, 64);
@@ -569,7 +574,9 @@
   }
 
 
-  // updates game visuals and stats
+  /**
+   * Updates game visuals and stats.
+   */
   function update() {
     // step 1 - clear the canvas
     clearCanvas();
@@ -605,23 +612,24 @@
     // redraw scene
     draw(scene_pic, 0, 0, 700, 500);
 
-    /*redraw character only if it is in a room - not a puzzle scene*/
-    if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {  // only draw character if in a room
+    // redraw character only if it is in a room (i.e. not a puzzle scene)
+    if (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene) {
       draw(char_pic, char_x_pos, char_y_pos, 64, 64);
     }
+
+    // redraw hint only if not on starting or ending scene
     if (!is_start_scene && !is_end_scene) {
       draw(hint_icon, hint_x_pos, hint_y_pos, 32, 32);
     }
-  
-
+    
     // display text (needs to be after scene pics are drawn in order to be seen)
     displayUserInput();
     displayComboLockHint();
     displayIncorrectMessage();
 
-    /* after redrawing and rendering text - checker to see if all tasks are done*/
-    /* calls the function to check tasks completion and renders ending scene, music*/
+    // check to see if all tasks are done--if yes, render ending scene instead and play music
     complete_game_scene();
+
     // can use to find current position of character
     // console.log("x: " + char_x_pos);
     // console.log("y: " + char_y_pos);
@@ -629,24 +637,30 @@
   }
 
 
-  // clears canvas
+  /**
+   * Clears the canvas.
+   */
   function clearCanvas() {
     // clears everything on the canvas
     game_context.clearRect(0, 0, 700, 500);
   }
 
 
-  // moves character
+  /**
+   * Moves the character by updating its position and determining which pose the character takes.
+   * 
+   * A character is only allowed to move when it is in a room, within the bounds of a room, and
+   * hint view is not displayed.
+   */
   function moveCharacter() {
-    // only allow to move the character when it is in a room and hint view is not displayed
     if (!is_hint_view_displayed && (scene_pic == bedroom_scene || scene_pic == kitchen_scene || scene_pic == livingroom_scene)) {  
+      // move up
       if (is_key_up && (char_y_pos - char_speed >= 0) && (char_y_pos - char_speed <= 436)) {
         char_y_pos -= char_speed;
 
         changeSteps(false, false, false);
       }
 
-      /* enabled arrow keys for movement of the character if new position is within bounds */
       // move right 
       if (is_key_right && (char_x_pos + char_speed >= 0) && (char_x_pos + char_speed <= 636)) {
         char_x_pos += char_speed;
@@ -708,7 +722,7 @@
           is_left1 = true;
           is_left2 = false;
         }
-      } else if (is_moving_right && !is_moving_left) {
+      } else if (is_moving_right && !is_moving_left) {  // moving right
         if (is_right1) {
           // change char pic
           char_pic = char_right2;
@@ -729,7 +743,7 @@
           is_left1 = false;
           is_left2 = false;
         }
-      } else if (is_moving_left && !is_moving_right) {
+      } else if (is_moving_left && !is_moving_right) {  // moving left
         if (is_left1) {
           // change char pic
           char_pic = char_left2;
@@ -755,7 +769,10 @@
   }
 
 
-  // FUNCTIONS FOR HINTS
+  /* FUNCTIONS FOR HINTS */
+  /**
+   * Positions the hints in the hint view so that it fits within the canvas.
+   */
   function positionHints() {
     // update position of every element in 'tab' class
     // hint_options contains a list of the elements
@@ -764,7 +781,7 @@
       hint_options[puzzle_num].style.top = game_canvas.offsetTop + "px";
     }
     
-    // update position of every element in 'tab_content' class
+    // update position of every element in 'tab_content' class (contains hint list and button)
     // hint_description contains a list of the elements
     for (let puzzle_hints = 0; puzzle_hints < hint_description.length; ++puzzle_hints) {
       hint_description[puzzle_hints].style.left = game_canvas.offsetLeft + 200 + "px"; /* 100 is the width of the tab, thus need that offset */
@@ -778,14 +795,19 @@
     }
   }
 
-  /*check for trigger being a mouseclick down on hint icon */
+
+  /**
+   * Listens for a user mouse-click.
+   * 
+   * If the user clicks within the bounds of the hint icon while on a game scene, the hint view is opened.
+   */
   game_canvas.addEventListener("mousedown", e => {
 
     // source: https://stackoverflow.com/questions/6073505/what-is-the-difference-between-screenx-y-clientx-y-and-pagex-y
     let mouse_x = e.pageX - game_canvas.offsetLeft;
     let mouse_y = e.pageY - game_canvas.offsetTop;
 
-    // if user clicks on hint icon, open up hint view
+    // if user clicks on hint icon while in a game scene, open up hint view
     if (!is_start_scene && !is_end_scene && !is_hint_view_displayed && mouse_x >= hint_left_bound && mouse_x <= hint_right_bound &&
         mouse_y >= hint_top_bound && mouse_y <= hint_bottom_bound) {
 
@@ -797,6 +819,17 @@
     console.log("mouse y: " + mouse_y);
   })
 
+
+  /**
+   * Changes the visibility of hint elements to "visible" or "hidden", depending on the
+   * passed in argument.
+   * 
+   * If the argument passed is "visible", all hint elements become visible to the user; else,
+   * all hint elements are hidden to the user and are not displayed on the HTML page.
+   * 
+   * @param visibility String that represents the visibility for the hint elements; can be either
+   *     "visible" or "hidden"
+   */
   function changeHintVisibility(visibility) {
     // make every element in 'tab' class visible
     // hint_options contains a list of the elements
@@ -816,7 +849,17 @@
     }
   }
 
-  // source for this function: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp
+
+  /**
+   * Displays the hints for the passed in puzzle name. Is called when a user selects the
+   * tab with the passed in puzzle's name.
+   * 
+   * Source for this function: https://www.w3schools.com/howto/howto_js_vertical_tabs.asp
+   * 
+   * @param evt The event variable for the onclick listener
+   * @param puzzle_name String representing the name of the puzzle whose tab was
+   *     selected by the user
+   */
   function viewHints(evt, puzzle_name) {
     let i, tabcontent, tablinks;
     
@@ -839,6 +882,14 @@
     evt.currentTarget.className += " active";
   }
 
+
+  /**
+   * Adds a hint to the hint list in the hint view. Is called when the user clicks
+   * the "Add a Hint" button in the hint view.
+   * 
+   * @param evt The event variable for the onclick listener
+   * @param puzzle_name String representing the name of the puzzle to add a hint for
+   */
   function addHintToView(evt, puzzle_name) {
     // get the hints for the puzzle and the number of hints for the puzzle
     // that are displayed
@@ -880,17 +931,20 @@
   }
 
 
-  /* check if the character landed in any zoom in area by triggering the bounds */
+  /**
+   * Checks if the user character landed in any zoom in area (i.e. within triggering bounds).
+   * If so, zoom into the item by updating the scene images.
+   */
   function zoomInOnItem() {
     
     if (scene_pic == bedroom_scene && char_x_pos >= whiteboard_left_bound &&
       char_x_pos <= whiteboard_right_bound && char_y_pos <= whiteboard_bottom_bound) {
 
-        // zoom into whiteboard - switch out of bedroom scene
-        scene_pic = whiteboard_scene;
-        // update scene images
-        is_whiteboard_scene = true;
-        is_bedroom_scene = false;
+      // zoom into whiteboard - switch out of bedroom scene
+      scene_pic = whiteboard_scene;
+      // update scene images
+      is_whiteboard_scene = true;
+      is_bedroom_scene = false;
     }
 
     if (scene_pic == livingroom_scene && char_x_pos >= computer_left_bound && 
@@ -898,12 +952,12 @@
       char_y_pos >= computer_top_bound) {
       
       if (!is_computer_unlocked) {
-        // show computer lock screen - switch out of living room scene
+        // zoom into computer lock screen - switch out of living room scene
         scene_pic = computer_scene;
         is_computer_scene = true;
         is_livingroom_scene = false;
       } else {
-        // show terminal scene if computer is unlocked
+        // zoom into terminal scene if computer is unlocked
         scene_pic = terminal_scene;
         is_terminal_scene = true;
         is_livingroom_scene = false;
@@ -915,26 +969,26 @@
       char_y_pos >= combo_lock_top_bound) {
         
       if (!is_lock_unlocked) {
-        //show combination lock task screen if it is unlocked
+        // zoom into combination lock scene
         scene_pic = combo_lock_scene
         is_combo_lock_scene = true;
         is_kitchen_scene = false;
       }
-
     }
 
     if (scene_pic == kitchen_scene && char_x_pos >= fridge_left_bound &&
       char_x_pos <= fridge_right_bound && char_y_pos <= fridge_bottom_bound &&
       char_y_pos >= fridge_top_bound) {
 
-      // if fridge puzzle not completed, show locked screen
       if (!is_fridge_unlocked) {
+        // zoom into locked fridge scene
         scene_pic = fridge_scene;
       } else {
-        //else show completed fridge task screen
+        // zoom into interior of fridge scene if fridge is unlocked
         scene_pic = fridge_complete_scene;
       }
 
+      // update scene images
       is_fridge_scene = true;
       is_kitchen_scene = false;
     }
@@ -943,14 +997,15 @@
       char_x_pos <= toaster_right_bound && char_y_pos <= toaster_bottom_bound &&
       char_y_pos >= toaster_top_bound) {
       
-      // if combination lock is locked, show toaster wait screen
       if (!is_lock_unlocked) {
+        // zoom into toaster
         scene_pic = toaster_scene;
       } else {
-        //else show the toaster completed screen
+        // zoom into toaster with toast
         scene_pic = toaster_complete_scene;
       }
 
+      // update scene images
       is_toaster_scene = true;
       is_kitchen_scene = false;
     }
@@ -959,14 +1014,15 @@
       char_x_pos <= coffee_maker_right_bound && char_y_pos <= coffee_maker_bottom_bound &&
       char_y_pos >= coffee_maker_top_bound) {
 
-        //if coffee request not made, show coffee maker scene
       if (!is_coffee_brewed) {
+        // zoom into coffee maker (ready to brew)
         scene_pic = coffee_maker_scene;
       } else {
-        //else show coffee brewed scene
+        // zoom into coffee maker (with coffee brewed)
         scene_pic = coffee_maker_complete_scene;
       }
       
+      // update scene images
       is_coffee_maker_scene = true;
       is_kitchen_scene = false;
     }
@@ -974,8 +1030,13 @@
 
 
   /* RECORD KEY DOWNS (specifically character movements) */
-  // source for recording key downs: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
-  // source for stopping scrolling when using arrow keys: https://stackoverflow.com/questions/40905098/how-to-stop-scrolling-while-html5-game-is-playing
+  /** 
+   * Determines which keys are being pressed and updates the boolean variables that
+   * store which direction the character moves in.
+   * 
+   * source for recording key downs: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
+   * source for stopping scrolling when using arrow keys: https://stackoverflow.com/questions/40905098/how-to-stop-scrolling-while-html5-game-is-playing
+   */
   document.onkeydown = function(event) {
     if (event.code === "ArrowUp") {
       is_key_up = true;
@@ -1018,7 +1079,16 @@
 
 
   /* RECORD KEY DOWNS (i.e. for closing windows, hints, etc) */
-  // special key down - escape the zoomed in window, hints etc
+  /**
+   * Listens for a user key down.
+   * 
+   * If a user presses one of the special key downs, the functionality defined for that
+   * key down is executed.
+   * 
+   * ESCAPE - closes out of zoomed in windows (including hints)
+   * ENTER - submits the user input; can be a lock combination, computer password, or terminal command
+   * BACKSPACE - removes a character from the user input
+   */
   document.addEventListener('keydown', logKey)
 
   function logKey(key) {
@@ -1210,18 +1280,18 @@
     }  // closing the backspace key conditional
 
     if (key.code === "Enter") {
-      // to enter the game from start scene - press Enter
       if (is_start_scene) {
-        //start in the bedroom scene and load bgm
+        // enter game and spawn the user in the bedroom
         scene_pic = bedroom_scene;
         current_room = bedroom_scene;
         is_start_scene = false;
         is_bedroom_scene = true;
+
         // play bgm
         bgm.play();
       } else if (is_terminal_scene) {
 
-        // execute user input and display the output onto terminal
+        // execute user input and display the output into terminal
         let terminal_output = executeUserInput();
         displayTerminalOutput(terminal_output);
 
@@ -1241,9 +1311,7 @@
         let directory_display = getFullDirectory()
         let text = document.createTextNode(directory_display);
         new_divider.appendChild(text);
-
-        /*append the new divider containing terminal output and directory for new line
-        to the game terminal. Scroll down to always display the new line  */
+        
         game_terminal.append(new_divider);
         game_terminal.scrollTop = game_terminal.scrollHeight;  // scroll down to show the newly added element/line
 
@@ -1253,7 +1321,6 @@
         input_number = num_inputs;
 
       } else {
-        //else it is in combo lock scene or computer scene
         checkPasswordCorrectness();
       }
     }
@@ -1264,7 +1331,15 @@
   }  // closing log key function
 
 
-  // moves the character out of the area that would trigger the zoom in again
+  /**
+   * Moves the character out of the area that would trigger the zoom in again. Is called
+   * when trying to zoom out of a zoomed in image.
+   * 
+   * @param left_bound The left bound of the trigger area for the zoomed in item
+   * @param right_bound The right bound of the trigger area for the zoomed in item
+   * @param bottom_bound The bottom bound of the trigger area for the zoomed in item
+   * @param top_bound The top bound of the trigger area for the zoomed in item
+   */
   function moveOutOfDetectionZone(left_bound, right_bound, bottom_bound, top_bound) {
     // the following conditionals essentially check which direction the character
     // approached the item that caused it to zoom in; these checks will require
@@ -1286,7 +1361,14 @@
   }
 
 
-  // initial loading and drawing of background
+  /**
+   * Initial loading of background (image takes up the entire canvas space).
+   * Loads the image into the page. Must be called prior to drawing or will face the problem
+   * of the image not always displaying when the page is opened/refreshed.
+   * 
+   * @param img_url String representing the path to the image
+   * @return Object representing the background image
+   */
   function loadBackground(img_url) {
     const background_img = new Image();
     background_img.src = img_url;
@@ -1315,6 +1397,18 @@
   }
 
 
+  /**
+   * General function to initially load components that don't take up the entire canvas
+   * (i.e. character). Similar to loadBackground(), this function loads the image into the
+   * page and must be called prior to drawing.
+   * 
+   * @param img_url String representing the path to the image
+   * @param x Integer representing the x-coordinate of where the image should be positioned in the canvas
+   * @param y Integer representing the y-coordinate of where the image should be positioned in the canvas
+   * @param width Integer representing the width of the image
+   * @param height Integer representing the height of the image
+   * @return Object representing the component image
+   */
   // general function to initially load and draw components (i.e. character)
   function loadCharacter(img_url, x, y, width, height) {
     const img = new Image();
@@ -1337,16 +1431,29 @@
   }
 
 
-  // need this function for redrawing images in infinite loop
+  /**
+   * Draws the image in the specified location. Is needed for redrawing images in the
+   * infinite loop that updates the game visuals.
+   * 
+   * @param img Object representing the image
+   * @param x Integer representing the x-coordinate of where the image should be positioned in the canvas
+   * @param y Integer representing the y-coordinate of where the image shoudl be positioned in the canvas
+   * @param width Integer representing the width of the image
+   * @param height Integer representing the height of the image
+   */
   function draw(img, x, y, width, height) {
     game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
   }
 
   console.log("OUT");
 
-  // When moving between different rooms in the game through the doorways
+  /**
+   * Checks if the character is within the bounds of a door to change rooms. If so, change
+   * the room the character is in, update the scene attributes, and position the character
+   * in the doorway of the next room.
+   */
   function changeRooms() {
-    /* if character is currently in bedroom and within bounds of left door, enter living room */
+    // if character is currently in bedroom and within bounds of left door, enter living room
     if (scene_pic == bedroom_scene && ((char_y_pos >= 125 && char_y_pos <= 205) && char_x_pos <= 5)){
       scene_pic = livingroom_scene;
       current_room = livingroom_scene;
@@ -1356,7 +1463,7 @@
       is_livingroom_scene = true;
     }
 
-    /* if character is currently in living room and within bounds of top door, enters kitchen*/
+    // if character is currently in living room and within bounds of top door, enter kitchen
     if (scene_pic == livingroom_scene && ((char_x_pos >= 500 && char_x_pos <= 590) && char_y_pos <= 5) ){
       scene_pic = kitchen_scene;
       current_room = kitchen_scene;
@@ -1365,7 +1472,8 @@
       is_kitchen_scene = true;
       is_livingroom_scene = false;
     }
-    /* if character is currently in the kitchen and within bounds of bottom door, then enters the living room */ 
+
+    // if character is currently in kitchen and within bounds of bottom door, enter living room 
     if (scene_pic == kitchen_scene && ((char_x_pos >= 280 && char_x_pos <= 380) && char_y_pos >= 430)){
       scene_pic = livingroom_scene;
       current_room = livingroom_scene;
@@ -1375,7 +1483,7 @@
       is_livingroom_scene = true;
     }
 
-    /* if character is currently in the livingroom and within bounds of right door, enter bedroom */ 
+    // if character is currently in living room and within bounds of right door, enter bedroom 
     if (scene_pic == livingroom_scene && ((char_y_pos >= 107 && char_y_pos <= 160) && char_x_pos >= 630) ){
       scene_pic = bedroom_scene;
       current_room = bedroom_scene;
@@ -1384,14 +1492,15 @@
       is_bedroom_scene = true;
       is_livingroom_scene = false;
     }
-
   }
 
 
   /* FUNCTIONS FOR PUZZLES */
-  // displays text user types
+  /**
+   * Displays the text the user types in the combination lock text box, computer password text box,
+   * and computer terminal.
+   */
   function displayUserInput() {
-
     if (is_combo_lock_scene) {
       game_context.font = "25px Comic Sans MS";
       game_context.fillStyle = "black";
@@ -1426,29 +1535,38 @@
       // replace current input line with updated user input
       game_terminal.replaceChild(replacement_divider, divider_to_replace);
     }
-
   }
 
+
+  /**
+   * Displays a message saying the user input submitted is not correct. Is used for
+   * the combo lock and computer password puzzles.
+   */
   function displayIncorrectMessage() {
 
-    // Check to see if the variable for whether message to be displayed is true
+    // check to see if the input the user submitted was marked as incorrect
     if (is_lock_combo_incorrect_message_visible) {
       game_context.font = "25px Comic Sans MS";
       game_context.fillStyle = "red";
-      //position the error message below the input box
+      // position the error message below the input box
       game_context.fillText("Combo incorrect. Please try again.", 150, 480);
     }
 
+    // check to see if the input the user submitted was marked as incorrect
     if (is_password_incorrect_message_visible) {
       game_context.font = "25px Comic Sans MS";
       game_context.fillStyle = "red";
-      //position the error message below the input box
+      // position the error message below the input box
       game_context.fillText("Password incorrect. Please try again.", 130, 350);
     }
 
   }
   
-  // To display the numbers 56 25 31 on the top left - when the combo scene is displayed
+
+  /**
+   * Displays the hint for the combo lock problem. Is only shown when the combo lock
+   * scene is being displayed.
+   */
   function displayComboLockHint() {
     if (is_combo_lock_scene) {
       game_context.font = "30px courier";
@@ -1457,6 +1575,13 @@
     }
   }
 
+
+  /**
+   * Updates the user input for combo lock, computer password, and terminal puzzles. Is
+   * only updated when the keys the user presses are part of the allowed keys for that puzzle.
+   * 
+   * @param key The keyboard key the user presses.
+   */
   function updateUserInput(key) {
 
     if (key.code === "Space") {
@@ -1464,6 +1589,7 @@
     }
 
     if (is_combo_lock_scene) {
+      // check if the key pressed is allowed and if the input has reached its max length
       if (allowed_combo_keys.includes(key.which) && lock_combo_string.length < 9) {
         // play sound effect of lock moving
         lock_sound.play();
@@ -1484,6 +1610,7 @@
     }  // closing lock conditional
 
     if (is_computer_scene) {
+      // check if the key pressed is allowed and if the input has reached its max length
       if (allowed_password_keys.includes(key.which) && computer_password_string.length < 18) {
         // play sound effect of typing keys
         computer_sound.play()
@@ -1523,9 +1650,8 @@
           user_input = terminal_archive[input_number + 1];
           ++input_number;
         }
-      } 
-      // to do the tab autofill
-      else if (key.key === "Tab") {
+      } else if (key.key === "Tab") {
+        // autocomplete the current command the user has inputted, if possible
 
         // prevent default behavior
         key.preventDefault();
@@ -1584,7 +1710,11 @@
 
   }
 
-  // check passwords for combo lock and computer screen
+
+  /**
+   * Checks if the password submitted by the user is correct for both the combo lock and
+   * computer puzzles.
+   */
   function checkPasswordCorrectness() {
 
     if (!is_lock_unlocked && is_combo_lock_scene) {
@@ -1596,7 +1726,6 @@
 
         moveOutOfDetectionZone(combo_lock_left_bound, combo_lock_right_bound, combo_lock_bottom_bound, combo_lock_top_bound);
 
-        //switch out of current room
         if (scene_pic === kitchen_scene) {
           is_combo_lock_scene = false;
         }
@@ -1618,9 +1747,8 @@
     }  // closing lock conditional
 
     if (!is_computer_unlocked && is_computer_scene) {
-     
-      // check if the computer password string matches
-      if (computer_password_string === " DELILAH") {
+      
+      if (computer_password_string === " DELILAH") {  // correct password
 
         // show terminal
         scene_pic = terminal_scene;
@@ -1630,9 +1758,9 @@
         // update status of computer => unlocked
         is_computer_unlocked = true;
         document.getElementById("unlockComputer").innerHTML = " &#10004 Unlock the Computer &#128187";
+      
       } else {  // incorrect password
         if (!is_password_incorrect_message_visible) {
-          //make the checker for apssword message incorrect visible
           is_password_incorrect_message_visible = true;
         }
       }
@@ -1735,6 +1863,7 @@
 
   function executeLsCommand(command_to_process) {
     executing_ls_command = true;
+    
     let output_text = "";
 
     if (command_to_process.length === 1) {  // "ls"
@@ -1882,15 +2011,15 @@
       output_text = "Current fridge contents: 1x baking soda. 6x bell pepper. 3x Golden Harbor Soup Dumplings. 1x half and half. 34x chicken eggs. 10x quail eggs.";
     
     } else if (command_to_process.length === 1 && command_to_process[0] === "lock") {
-      //check if fridge is locked
+      // check if fridge is locked
       if (!is_fridge_unlocked) {
         output_text = "Fridge is already locked!";
       } else {
-        //if it isn't, lock the fridge and play the lock sounds
+        // if it isn't, lock the fridge and play the lock sounds
         output_text = "Fridge locked!";
         is_fridge_unlocked = false;
 
-        //sound effect of lock closing
+        // play sound effect of lock closing
         lock_fail_sound.play();
       }
 
@@ -1957,43 +2086,44 @@
       display_coffee_text = false;
     }
 
-    //check to see if it is executing a ls command, then display 
-    // directories and executables in color and append to output_divider
-    if(executing_ls_command){
+    // if currently executing a ls command, then display directories
+    // and executables in respective colors and append to output_divider
+    if (executing_ls_command) {
       color_directory_executable(output_text, output_divider);
       executing_ls_command = false;
-    }
-    // if it is executing ls command, do not make it into a TextNode
-    else{
+    } else {  // add output text into a text node
       let text = document.createTextNode(output_text);
       output_divider.appendChild(text);
     }
-    // add to terminal
+
+    // add divider containing output text to terminal
     game_terminal.append(output_divider);
   }
 
   function color_directory_executable(output_text, output_divider){
     let directory_contents = [];
+
     // split the output of contents of the directory - after ls command is executed
     output_text = output_text.trim();
     if (output_text != "") {
       directory_contents = output_text.split(" ");
     }
 
-    // create span and append to the output divides based on class
-    for(let index = 0; index < directory_contents.length; index++){
+    // create span for coloring text and append to the output divider based on class
+    for (let index = 0; index < directory_contents.length; ++index) {
 
-      // to create the span element: https://stackoverflow.com/questions/5802663/create-a-span-element-inside-another-element-using-javascript
-      // color the text different based on class - directory and executable
+      // source to create the span element: https://stackoverflow.com/questions/5802663/create-a-span-element-inside-another-element-using-javascript
       let ls_span = document.createElement("span");
       let check_exe_file = directory_contents[index].slice(-4);
-      if(check_exe_file === ".exe"){
+
+      // color the text based on class - directory and executable
+      if (check_exe_file === ".exe") {
         ls_span.className = "executable_file";
-      }
-      else{
+      } else {
         ls_span.className = "subdirectory";
       }
-      //append to the divider after setting the colors
+
+      // append to the divider after setting the colors
       ls_span.innerHTML = directory_contents[index] + " ";
       output_divider.appendChild(ls_span);
     }
