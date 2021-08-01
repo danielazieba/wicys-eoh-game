@@ -1770,8 +1770,15 @@
   }  // closing check password correctness function
 
 
-  // execute user input by outputting corresponding messages
+  /**
+   * Executes the input the user submits in terminal and outputs corresponding messages based
+   * on the input the user submits. Is called after the user submits their input by pressing
+   * the ENTER key.
+   * 
+   * @return String representing the output message for the submitted user input in terminal
+   */
   function executeUserInput() {
+    // split the user input to process it easier
     let command_to_process = [];
     user_input = user_input.trim();
     if (user_input != "") {
@@ -1780,6 +1787,7 @@
     }
     let output_text = "";
 
+    // update variables that store the contents of the current directory
     subdirectories = directory[current_directory]["directories"];
     executables_in_current = directory[current_directory]["executables"];
 
@@ -1817,6 +1825,17 @@
     return output_text;
   }
 
+
+  /**
+   * Executes the terminal change directory ('cd') command. Is able to execute the following
+   * 'cd' commands:
+   * - "cd" -- move into home directory
+   * - "cd ../" -- move into previous directory
+   * - "cd" + valid_subdirectory -- move into a subdirectory
+   * 
+   * @return String representing the output message for the submitted user input in terminal;
+   *     if inputted 'cd' command is valid, outputs an empty string; else, outputs an error message
+   */
   function executeCdCommand(command_to_process) {
     let output_text = "";
 
@@ -1861,6 +1880,16 @@
     return output_text;
   }
 
+
+  /**
+   * Executes the terminal list directory command ('ls'). Is able to execute the following
+   * 'ls' commands:
+   * - "ls" -- lists the contents of the current directory
+   * - "ls" + valid_subdirectory -- lists the contents of the specified directory
+   * 
+   * @return String representing the output message for the submitted user input in terminal;
+   *     if inputted 'ls' command is valid, outputs a list of the directory's contents
+   */
   function executeLsCommand(command_to_process) {
     executing_ls_command = true;
     
@@ -1897,13 +1926,21 @@
         for (let j = 0; j < dir_contents["executables"].length; ++j) {
           output_text += dir_contents["executables"][j] + " ";
         }
+      } else {
+        output_text = "Error: specified directory not found.";
       }
     }
-    
 
     return output_text;
   }
 
+
+  /**
+   * Executes the executable based on the user input command; only occurs when within an executable.
+   * 
+   * @param command_to_process An array containing the user input while in the executable
+   * @return String representing the output message for the submitted user input in executable
+   */
   function executeExecutable(command_to_process) {
     let output_text = "";
 
@@ -1925,6 +1962,15 @@
     return output_text;
   }
 
+
+  /**
+   * Executes the executable based on the user input command; only occurs if within the lineDolphin
+   * executable.
+   * 
+   * @param command_to_process An array containing the user input while in the executable
+   * @return String representing the output message for the submitted user input in lineDolphin executable;
+   *     if user input is invalid, outputs an error message
+   */
   function executeLineDolphinExecutable(command_to_process) {
     let output_text = "";
 
@@ -1939,6 +1985,14 @@
     return output_text;
   }
 
+
+  /**
+   * Determines what instruction text to output to the terminal while in the coffeeSenderRequest executable and
+   * stores the responses the user inputs for the coffeeSenderRequest.
+   * 
+   * @param command_to_process An array containing the user input while in the executable
+   * @return String representing the instruction text for the user to respond to
+   */
   function executeCoffeeRequestExecutable(command_to_process) {
     let output_text = "";
 
@@ -1973,7 +2027,13 @@
     return output_text;
   }
 
-  /* Verifies if the user's request is valid and outputs the corresponding message status or error */
+
+  /**
+   * Verifies if the user's request for the coffeeRequestSender executable is valid and outputs
+   * the corresponding message status or error.
+   * 
+   * @return String representing the corresponding message status or error to the user's input
+   */
   function processCoffeeRequest() {
     let output_text = "";
 
@@ -2002,12 +2062,21 @@
     return output_text;
   }
 
-  // to execute the script for Fridge Login to fridge_app
+
+  /**
+   * Executes the fridgeLogin executable. Valid commands for this executable include the following:
+   * - "stock" -- displays the fridge contents
+   * - "lock" -- locks the fridge
+   * - "unlock" -- unlocks the fridge
+   * 
+   * @param command_to_process An array containing the user input while in the executable
+   * @return String describing whether the command was executed or, if invalid, an error message
+   */
   function executeFridgeLoginExecutable(command_to_process) {
     let output_text = "";
 
     if (command_to_process.length === 1 && command_to_process[0] === "stock") {
-      // if the command is stock, display fridge contents
+      // display fridge contents
       output_text = "Current fridge contents: 1x baking soda. 6x bell pepper. 3x Golden Harbor Soup Dumplings. 1x half and half. 34x chicken eggs. 10x quail eggs.";
     
     } else if (command_to_process.length === 1 && command_to_process[0] === "lock") {
@@ -2015,7 +2084,7 @@
       if (!is_fridge_unlocked) {
         output_text = "Fridge is already locked!";
       } else {
-        // if it isn't, lock the fridge and play the lock sounds
+        // if fridge isn't locked, lock it
         output_text = "Fridge locked!";
         is_fridge_unlocked = false;
 
@@ -2024,7 +2093,7 @@
       }
 
     } else if (command_to_process.length === 1 && command_to_process[0] === "unlock") {
-      // if the command is to unlock
+      // check if fridge is locked
       if (!is_fridge_unlocked) {
         output_text = "Fridge unlocked!";
 
@@ -2032,7 +2101,7 @@
         is_fridge_unlocked = true;
         document.getElementById("openFridge").innerHTML = " &#10004 Open the Fridge &#127859";
 
-        // play sound effects
+        // play sound effect of lock opening
         lock_open_sound.play()
       } else {
         output_text = "Fridge is already unlocked!";
@@ -2046,8 +2115,15 @@
     return output_text;
   }
 
+
+  /**
+   * Checks if the passed in executable exists in the current directory.
+   * 
+   * @param executable_name String representing the name of the executable to check
+   *     existence for
+   * @return Boolean representing whether the passed in executable exists
+   */
   function checkExecutableExistence(executable_name) {
-    // to see if the executable exists in the current directory
     for (let i = 0; i < executables_in_current.length; ++i) {
       if (executable_name === executables_in_current[i]) {
         return true;
@@ -2057,8 +2133,15 @@
     return false;
   }
 
+
+  /**
+   * Returns the messages that display upon opening a valid executable (i.e. the welcome message).
+   * Contains the welcome messages for the following executables:
+   * - lineDolphin
+   * - coffeeRequestSender
+   * - fridgeLoginPortal
+   */
   function getExecutableWelcomeMessage() {
-    // Default welcome message when starting running a executable file
     if (curr_executable_name === "lineDolphin.exe") {
       return "Welcome to lineDolphin! Default configuration: display CyberCoffee traffic.";
     } else if (curr_executable_name === "coffeeRequestSender.exe") {
@@ -2069,14 +2152,17 @@
     }
   }
 
-  // display output message for a terminal command
+
+  /**
+   * Displays output message for a terminal command in the game scene view.
+   */
   function displayTerminalOutput(output_text) {
     // create divider to store output
     let output_divider = document.createElement("div");
     output_divider.id = "output" + num_inputs;
 
     if (display_coffee_text) {
-      // output coffee brew message
+      // output coffee brew message, if necessary
       for (let i=0; i < coffee_text.length; ++i) {
         let line_of_coffee_text = document.createTextNode(coffee_text[i]);
         output_divider.appendChild(line_of_coffee_text);
@@ -2100,7 +2186,16 @@
     game_terminal.append(output_divider);
   }
 
-  function color_directory_executable(output_text, output_divider){
+
+  /**
+   * Colors the content names (i.e. subdirectories, executables) in a directory; is used for
+   * the ls command.
+   * 
+   * @param output_text String containing the contents of a directory (output of the ls command)
+   * @param output_divider HTML div that will hold the output of the ls command (i.e. the list
+   *     of contents in the directory)
+   */
+  function color_directory_executable(output_text, output_divider) {
     let directory_contents = [];
 
     // split the output of contents of the directory - after ls command is executed
@@ -2129,7 +2224,11 @@
     }
   }
 
-  // returns a string of the full directory to display in terminal
+  /**
+   * Returns a string of the full directory to display in a new line in the terminal.
+   * 
+   * @return String representing the full directory path
+   */
   function getFullDirectory() {
     let directory_string = directory_archive[0];  // "~" directory
 
@@ -2141,13 +2240,18 @@
         directory_string += "/" + directory_archive[dir]; 
       }
       
-      // to display end of the current working directory path
+      // signal the end of the current working directory path
       directory_string += "$ ";
     }
 
     return directory_string;
   }
 
+
+  /**
+   * Displays the end game scene and text and plays congratualory music to signal the game
+   * completion; only occurs if user has completed all required tasks
+   */
   function complete_game_scene(){
     // check to see if all tasks are completed
     if (is_computer_unlocked && is_lock_unlocked && is_coffee_brewed && is_fridge_unlocked) {
@@ -2160,18 +2264,19 @@
       is_livingroom_scene = false;
       is_terminal_scene = false;
 
-      // update html text
+      // update html text to hide elements that are only to be displayed while game is ongoing
+      // and display elements that are only to be displayed when game is completed
       for (let task = 0; task < ongoing_game_text.length; ++task) {
         ongoing_game_text[task].style.visibility = "hidden";
         ongoing_game_text[task].style.display = "none";
       }
 
-      // block the appropriate html text according to class
       for (let text = 0; text < completed_game_text.length; ++text) {
         completed_game_text[text].style.visibility = "visible";
         completed_game_text[text].style.display = "block";
       }
-      // stop the background music and play congrats theme
+
+      // stop the game bgm and play congrats bgm
       bgm.pause();
       congrats.play();
     }
@@ -2246,8 +2351,8 @@
 
 </script>
 
-<!-- The rest of the HTML text after displaying the canvas -->
-<!--Display tasks and resource links when the game is ongoing -->
+<!-- THE FOLLOWING ARE DISPLAYED UNDERNEATH THE GAME CANVAS -->
+<!-- Display tasks and resource links (when the game is ongoing) -->
   <div class="ongoing" id="taskList">
     <p class="ongoing">Remaining tasks:</p>
     <p class="ongoing" id="unlockComputer">- Unlock the Computer &#128187</p>
@@ -2256,7 +2361,7 @@
     <p class="ongoing" id="makeCoffee">- Make Coffee &#9749</p>
   </div>
 
-  <!-- Display the below HTML text when the game is completed-->
+  <!-- Display ending text and additional resource links (when the game is completed) -->
   <p class="complete">We took inspiration from Capture The Flag (CTF) competitions in designing the puzzles you just solved and tried to make them a bit beginner-friendly. CTF competitions are a great way to learn more about cybersecurity, though they definitely aren't the only way.</p>
   <br class="complete">
   <p class="complete">Or, if you're not into CTFs, some things you can do are generally learn more about operating systems (especially Linux), improve your programming skills, read CTF challenge write-ups, or watch talks from DEF CON (an annual security conference) to get inspired about interesting security topics.</p>
@@ -2267,7 +2372,7 @@
   <p class="complete">- <a href="https://ctftime.org/">https://ctftime.org/</a> lists upcoming CTFs if you’re looking for more past picoCTF.</p>
   <br>
 
-  <!-- Display below resources text and links for both when game is ongoing and complete-->
+  <!-- Display resource guides (always displayed) -->
   <div id="resources">
     <p>Resources</p>
     <p><a href="guides/caesar_ciphers.pdf" target="_blank" rel="noopener noreferrer">On Caesar Ciphers</a></p>
