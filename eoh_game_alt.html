@@ -51,6 +51,30 @@
     color: rgb(123, 213, 255);
   }
 
+  /* style for blinking start screen */
+  /* source: https://www.freecodecamp.org/news/make-it-blink-html-tutorial-how-to-use-the-blink-tag-with-code-examples/ */
+  #blinkingStartScreen {
+    animation: blink 1s steps(1, end) infinite;
+
+    /* for positioning the start screen image with text */
+    width: 700px;
+    height: 500px;
+    position: absolute;
+    visibility: visible;
+  }
+
+  @keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
   /* source for how to style an element by id: https://blog.hubspot.com/website/css-id */
   /* style for scrolling text box (i.e. terminal) */
   #myTerminal {
@@ -236,7 +260,13 @@
   <button class="button" id="Coffee_btn" onclick="addHintToView(event, 'Coffee')">Get a hint</button>
 </div>
 
-<!-- creating the canvas: -->
+<!-- creating blinking effect for start screen -->
+<!-- source: https://stackoverflow.com/questions/27427073/how-to-fit-in-an-image-inside-span-tag -->
+<span id="blinkingStartScreen">
+  <img src="images/eceb-2.png"/>
+</span>
+
+<!-- creating the canvas -->
 <canvas id="myCanvas" width="700" height="500" style="background-color: #f1f1f1;"></canvas>
 
 <!-- <script src="plugins.js"></script> -->
@@ -249,6 +279,7 @@
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
   const game_terminal = document.getElementById("myTerminal");
+  const game_start_screen = document.getElementById("blinkingStartScreen");
 
 
   /* HTML TEXT ATTRIBUTES */
@@ -537,7 +568,7 @@
     hint_icon = loadCharacter("images/hint_icon_filled_64x64_x0.5.png", hint_x_pos, hint_y_pos, 32, 32);
 
     // load initial game setting components
-    start_scene = loadBackground("images/ecebtext.png");
+    start_scene = loadBackground("images/eceb-1.png");
     bedroom_scene = loadBackground("images/bedroom.png");
     kitchen_scene = loadBackground("images/new_new_kitchen.png");
     livingroom_scene = loadBackground("images/big-out-living.png");
@@ -667,6 +698,16 @@
     clearCanvas();
 
     // step 2 - update character position + scene
+    // update characteristics for start screen
+    if (is_start_scene) {
+      // update start screen position
+      game_start_screen.style.left = game_canvas.offsetLeft + "px";
+      game_start_screen.style.top = game_canvas.offsetTop + "px";
+    } else {
+      // hide start screen with text once game starts (i.e. stop the blinking)
+      game_start_screen.style.visibility = "hidden";
+    }
+
     moveCharacter();
     step_counter++;
 
