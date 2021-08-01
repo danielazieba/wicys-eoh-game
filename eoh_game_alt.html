@@ -575,6 +575,91 @@
 
 
   /**
+   * Initial loading of background (image takes up the entire canvas space).
+   * Loads the image into the page. Must be called prior to drawing or will face the problem
+   * of the image not always displaying when the page is opened/refreshed.
+   * 
+   * @param img_url String representing the path to the image
+   * @return Object representing the background image
+   */
+   function loadBackground(img_url) {
+    const background_img = new Image();
+    background_img.src = img_url;
+
+    // load images first
+    // - Note: the following line is needed to fix the problem of the background img not always
+    // displaying when the page is refreshed
+    // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
+    background_img.addEventListener("load", drawBackground, false);
+
+    console.log("loaded")
+
+    function drawBackground() {
+      console.log("drawing")
+
+      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
+      // game_context.drawImage(background_img, sx=0, sy=0, swidth=700, sheight=500);
+      
+      // draw(background_img, 0, 0, 700, 500)  // might not need...?
+
+      console.log("finished")
+    }
+
+    return background_img;
+    console.log("DRAWN");
+  }
+
+
+  /**
+   * General function to initially load components that don't take up the entire canvas
+   * (i.e. character). Similar to loadBackground(), this function loads the image into the
+   * page and must be called prior to drawing.
+   * 
+   * @param img_url String representing the path to the image
+   * @param x Integer representing the x-coordinate of where the image should be positioned in the canvas
+   * @param y Integer representing the y-coordinate of where the image should be positioned in the canvas
+   * @param width Integer representing the width of the image
+   * @param height Integer representing the height of the image
+   * @return Object representing the component image
+   */
+  // general function to initially load and draw components (i.e. character)
+  function loadCharacter(img_url, x, y, width, height) {
+    const img = new Image();
+    img.src = img_url;
+
+    // load images first
+    // - Note: the following line is needed to fix the problem of the background img not always
+    // displaying when the page is refreshed
+    // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
+    img.addEventListener("load", drawCharacter, false); 
+
+    function drawCharacter() {
+      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
+      // game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
+      
+      // draw(img, x, y, width, height);  // might not need...?
+    }
+
+    return img;
+  }
+
+
+  /**
+   * Draws the image in the specified location. Is needed for redrawing images in the
+   * infinite loop that updates the game visuals.
+   * 
+   * @param img Object representing the image
+   * @param x Integer representing the x-coordinate of where the image should be positioned in the canvas
+   * @param y Integer representing the y-coordinate of where the image shoudl be positioned in the canvas
+   * @param width Integer representing the width of the image
+   * @param height Integer representing the height of the image
+   */
+   function draw(img, x, y, width, height) {
+    game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
+  }
+
+
+  /**
    * Updates game visuals and stats.
    */
   function update() {
@@ -628,7 +713,7 @@
     displayIncorrectMessage();
 
     // check to see if all tasks are done--if yes, render ending scene instead and play music
-    complete_game_scene();
+    displayCompleteGameScene();
 
     // can use to find current position of character
     // console.log("x: " + char_x_pos);
@@ -646,6 +731,7 @@
   }
 
 
+  /* FUNCTIONS FOR CHARACTER MOVEMENT */
   /**
    * Moves the character by updating its position and determining which pose the character takes.
    * 
@@ -765,6 +851,202 @@
           is_right2 = false;
         }
       }
+    }
+  }
+
+
+  /* RECORD KEY DOWNS (specifically character movements) */
+  /** 
+   * Determines which keys are being pressed and updates the boolean variables that
+   * store which direction the character moves in.
+   * 
+   * source for recording key downs: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
+   * source for stopping scrolling when using arrow keys: https://stackoverflow.com/questions/40905098/how-to-stop-scrolling-while-html5-game-is-playing
+   */
+   document.onkeydown = function(event) {
+    if (event.code === "ArrowUp") {
+      is_key_up = true;
+      event.preventDefault();
+    }
+
+    if (event.code === "ArrowRight") {
+      is_key_right = true;
+      event.preventDefault();
+    }
+
+    if (event.code === "ArrowDown") {
+      is_key_down = true;
+      event.preventDefault();
+    }
+
+    if (event.code === "ArrowLeft") {
+      is_key_left = true;
+      event.preventDefault();
+    }
+  }
+
+  document.onkeyup = function(event) {
+    if (event.code === "ArrowUp") {
+      is_key_up = false;
+    }
+
+    if (event.code === "ArrowRight") {
+      is_key_right = false;
+    }
+
+    if (event.code === "ArrowDown") {
+      is_key_down = false;
+    }
+
+    if (event.code === "ArrowLeft") {
+      is_key_left = false;
+    }
+  }
+
+
+  /* FUNCTIONS FOR SCENE CHANGES */
+  /**
+   * Checks if the user character landed in any zoom in area (i.e. within triggering bounds).
+   * If so, zoom into the item by updating the scene images.
+   */
+   function zoomInOnItem() {
+    
+    if (scene_pic == bedroom_scene && char_x_pos >= whiteboard_left_bound &&
+      char_x_pos <= whiteboard_right_bound && char_y_pos <= whiteboard_bottom_bound) {
+
+      // zoom into whiteboard - switch out of bedroom scene
+      scene_pic = whiteboard_scene;
+      // update scene images
+      is_whiteboard_scene = true;
+      is_bedroom_scene = false;
+    }
+
+    if (scene_pic == livingroom_scene && char_x_pos >= computer_left_bound && 
+      char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound &&
+      char_y_pos >= computer_top_bound) {
+      
+      if (!is_computer_unlocked) {
+        // zoom into computer lock screen - switch out of living room scene
+        scene_pic = computer_scene;
+        is_computer_scene = true;
+        is_livingroom_scene = false;
+      } else {
+        // zoom into terminal scene if computer is unlocked
+        scene_pic = terminal_scene;
+        is_terminal_scene = true;
+        is_livingroom_scene = false;
+      }
+    }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= combo_lock_left_bound &&
+      char_x_pos <= combo_lock_right_bound && char_y_pos <= combo_lock_bottom_bound &&
+      char_y_pos >= combo_lock_top_bound) {
+        
+      if (!is_lock_unlocked) {
+        // zoom into combination lock scene
+        scene_pic = combo_lock_scene
+        is_combo_lock_scene = true;
+        is_kitchen_scene = false;
+      }
+    }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= fridge_left_bound &&
+      char_x_pos <= fridge_right_bound && char_y_pos <= fridge_bottom_bound &&
+      char_y_pos >= fridge_top_bound) {
+
+      if (!is_fridge_unlocked) {
+        // zoom into locked fridge scene
+        scene_pic = fridge_scene;
+      } else {
+        // zoom into interior of fridge scene if fridge is unlocked
+        scene_pic = fridge_complete_scene;
+      }
+
+      // update scene images
+      is_fridge_scene = true;
+      is_kitchen_scene = false;
+    }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= toaster_left_bound &&
+      char_x_pos <= toaster_right_bound && char_y_pos <= toaster_bottom_bound &&
+      char_y_pos >= toaster_top_bound) {
+      
+      if (!is_lock_unlocked) {
+        // zoom into toaster
+        scene_pic = toaster_scene;
+      } else {
+        // zoom into toaster with toast
+        scene_pic = toaster_complete_scene;
+      }
+
+      // update scene images
+      is_toaster_scene = true;
+      is_kitchen_scene = false;
+    }
+
+    if (scene_pic == kitchen_scene && char_x_pos >= coffee_maker_left_bound &&
+      char_x_pos <= coffee_maker_right_bound && char_y_pos <= coffee_maker_bottom_bound &&
+      char_y_pos >= coffee_maker_top_bound) {
+
+      if (!is_coffee_brewed) {
+        // zoom into coffee maker (ready to brew)
+        scene_pic = coffee_maker_scene;
+      } else {
+        // zoom into coffee maker (with coffee brewed)
+        scene_pic = coffee_maker_complete_scene;
+      }
+      
+      // update scene images
+      is_coffee_maker_scene = true;
+      is_kitchen_scene = false;
+    }
+  }
+
+
+  /**
+   * Checks if the character is within the bounds of a door to change rooms. If so, change
+   * the room the character is in, update the scene attributes, and position the character
+   * in the doorway of the next room.
+   */
+   function changeRooms() {
+    // if character is currently in bedroom and within bounds of left door, enter living room
+    if (scene_pic == bedroom_scene && ((char_y_pos >= 125 && char_y_pos <= 205) && char_x_pos <= 5)){
+      scene_pic = livingroom_scene;
+      current_room = livingroom_scene;
+      char_x_pos = 625;
+      char_y_pos = 125
+      is_bedroom_scene = false;
+      is_livingroom_scene = true;
+    }
+
+    // if character is currently in living room and within bounds of top door, enter kitchen
+    if (scene_pic == livingroom_scene && ((char_x_pos >= 500 && char_x_pos <= 590) && char_y_pos <= 5) ){
+      scene_pic = kitchen_scene;
+      current_room = kitchen_scene;
+      char_x_pos = 330;
+      char_y_pos = 420;
+      is_kitchen_scene = true;
+      is_livingroom_scene = false;
+    }
+
+    // if character is currently in kitchen and within bounds of bottom door, enter living room 
+    if (scene_pic == kitchen_scene && ((char_x_pos >= 280 && char_x_pos <= 380) && char_y_pos >= 430)){
+      scene_pic = livingroom_scene;
+      current_room = livingroom_scene;
+      char_x_pos = 555;
+      char_y_pos = 10;
+      is_kitchen_scene = false;
+      is_livingroom_scene = true;
+    }
+
+    // if character is currently in living room and within bounds of right door, enter bedroom 
+    if (scene_pic == livingroom_scene && ((char_y_pos >= 107 && char_y_pos <= 160) && char_x_pos >= 630) ){
+      scene_pic = bedroom_scene;
+      current_room = bedroom_scene;
+      char_x_pos = 10;
+      char_y_pos = 155;
+      is_bedroom_scene = true;
+      is_livingroom_scene = false;
     }
   }
 
@@ -927,153 +1209,6 @@
       // change instruction displayed
       let puzzle_hint_instr = document.getElementById(puzzle_name + "_hint_instruction");
       puzzle_hint_instr.innerHTML = "All hints for this puzzle are displayed below.  To go back to the game, press ESCAPE."
-    }
-  }
-
-
-  /**
-   * Checks if the user character landed in any zoom in area (i.e. within triggering bounds).
-   * If so, zoom into the item by updating the scene images.
-   */
-  function zoomInOnItem() {
-    
-    if (scene_pic == bedroom_scene && char_x_pos >= whiteboard_left_bound &&
-      char_x_pos <= whiteboard_right_bound && char_y_pos <= whiteboard_bottom_bound) {
-
-      // zoom into whiteboard - switch out of bedroom scene
-      scene_pic = whiteboard_scene;
-      // update scene images
-      is_whiteboard_scene = true;
-      is_bedroom_scene = false;
-    }
-
-    if (scene_pic == livingroom_scene && char_x_pos >= computer_left_bound && 
-      char_x_pos <= computer_right_bound && char_y_pos <= computer_bottom_bound &&
-      char_y_pos >= computer_top_bound) {
-      
-      if (!is_computer_unlocked) {
-        // zoom into computer lock screen - switch out of living room scene
-        scene_pic = computer_scene;
-        is_computer_scene = true;
-        is_livingroom_scene = false;
-      } else {
-        // zoom into terminal scene if computer is unlocked
-        scene_pic = terminal_scene;
-        is_terminal_scene = true;
-        is_livingroom_scene = false;
-      }
-    }
-
-    if (scene_pic == kitchen_scene && char_x_pos >= combo_lock_left_bound &&
-      char_x_pos <= combo_lock_right_bound && char_y_pos <= combo_lock_bottom_bound &&
-      char_y_pos >= combo_lock_top_bound) {
-        
-      if (!is_lock_unlocked) {
-        // zoom into combination lock scene
-        scene_pic = combo_lock_scene
-        is_combo_lock_scene = true;
-        is_kitchen_scene = false;
-      }
-    }
-
-    if (scene_pic == kitchen_scene && char_x_pos >= fridge_left_bound &&
-      char_x_pos <= fridge_right_bound && char_y_pos <= fridge_bottom_bound &&
-      char_y_pos >= fridge_top_bound) {
-
-      if (!is_fridge_unlocked) {
-        // zoom into locked fridge scene
-        scene_pic = fridge_scene;
-      } else {
-        // zoom into interior of fridge scene if fridge is unlocked
-        scene_pic = fridge_complete_scene;
-      }
-
-      // update scene images
-      is_fridge_scene = true;
-      is_kitchen_scene = false;
-    }
-
-    if (scene_pic == kitchen_scene && char_x_pos >= toaster_left_bound &&
-      char_x_pos <= toaster_right_bound && char_y_pos <= toaster_bottom_bound &&
-      char_y_pos >= toaster_top_bound) {
-      
-      if (!is_lock_unlocked) {
-        // zoom into toaster
-        scene_pic = toaster_scene;
-      } else {
-        // zoom into toaster with toast
-        scene_pic = toaster_complete_scene;
-      }
-
-      // update scene images
-      is_toaster_scene = true;
-      is_kitchen_scene = false;
-    }
-
-    if (scene_pic == kitchen_scene && char_x_pos >= coffee_maker_left_bound &&
-      char_x_pos <= coffee_maker_right_bound && char_y_pos <= coffee_maker_bottom_bound &&
-      char_y_pos >= coffee_maker_top_bound) {
-
-      if (!is_coffee_brewed) {
-        // zoom into coffee maker (ready to brew)
-        scene_pic = coffee_maker_scene;
-      } else {
-        // zoom into coffee maker (with coffee brewed)
-        scene_pic = coffee_maker_complete_scene;
-      }
-      
-      // update scene images
-      is_coffee_maker_scene = true;
-      is_kitchen_scene = false;
-    }
-  }
-
-
-  /* RECORD KEY DOWNS (specifically character movements) */
-  /** 
-   * Determines which keys are being pressed and updates the boolean variables that
-   * store which direction the character moves in.
-   * 
-   * source for recording key downs: https://stackoverflow.com/questions/39806858/how-to-use-arrow-keys-to-move-object-smoothly-in-canvas
-   * source for stopping scrolling when using arrow keys: https://stackoverflow.com/questions/40905098/how-to-stop-scrolling-while-html5-game-is-playing
-   */
-  document.onkeydown = function(event) {
-    if (event.code === "ArrowUp") {
-      is_key_up = true;
-      event.preventDefault();
-    }
-
-    if (event.code === "ArrowRight") {
-      is_key_right = true;
-      event.preventDefault();
-    }
-
-    if (event.code === "ArrowDown") {
-      is_key_down = true;
-      event.preventDefault();
-    }
-
-    if (event.code === "ArrowLeft") {
-      is_key_left = true;
-      event.preventDefault();
-    }
-  }
-
-  document.onkeyup = function(event) {
-    if (event.code === "ArrowUp") {
-      is_key_up = false;
-    }
-
-    if (event.code === "ArrowRight") {
-      is_key_right = false;
-    }
-
-    if (event.code === "ArrowDown") {
-      is_key_down = false;
-    }
-
-    if (event.code === "ArrowLeft") {
-      is_key_left = false;
     }
   }
 
@@ -1360,222 +1495,9 @@
     }
   }
 
-
-  /**
-   * Initial loading of background (image takes up the entire canvas space).
-   * Loads the image into the page. Must be called prior to drawing or will face the problem
-   * of the image not always displaying when the page is opened/refreshed.
-   * 
-   * @param img_url String representing the path to the image
-   * @return Object representing the background image
-   */
-  function loadBackground(img_url) {
-    const background_img = new Image();
-    background_img.src = img_url;
-
-    // load images first
-    // - Note: the following line is needed to fix the problem of the background img not always
-    // displaying when the page is refreshed
-    // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
-    background_img.addEventListener("load", drawBackground, false);
-
-    console.log("loaded")
-
-    function drawBackground() {
-      console.log("drawing")
-
-      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
-      // game_context.drawImage(background_img, sx=0, sy=0, swidth=700, sheight=500);
-      
-      // draw(background_img, 0, 0, 700, 500)  // might not need...?
-
-      console.log("finished")
-    }
-
-    return background_img;
-    console.log("DRAWN");
-  }
-
-
-  /**
-   * General function to initially load components that don't take up the entire canvas
-   * (i.e. character). Similar to loadBackground(), this function loads the image into the
-   * page and must be called prior to drawing.
-   * 
-   * @param img_url String representing the path to the image
-   * @param x Integer representing the x-coordinate of where the image should be positioned in the canvas
-   * @param y Integer representing the y-coordinate of where the image should be positioned in the canvas
-   * @param width Integer representing the width of the image
-   * @param height Integer representing the height of the image
-   * @return Object representing the component image
-   */
-  // general function to initially load and draw components (i.e. character)
-  function loadCharacter(img_url, x, y, width, height) {
-    const img = new Image();
-    img.src = img_url;
-
-    // load images first
-    // - Note: the following line is needed to fix the problem of the background img not always
-    // displaying when the page is refreshed
-    // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
-    img.addEventListener("load", drawCharacter, false); 
-
-    function drawCharacter() {
-      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
-      // game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
-      
-      // draw(img, x, y, width, height);  // might not need...?
-    }
-
-    return img;
-  }
-
-
-  /**
-   * Draws the image in the specified location. Is needed for redrawing images in the
-   * infinite loop that updates the game visuals.
-   * 
-   * @param img Object representing the image
-   * @param x Integer representing the x-coordinate of where the image should be positioned in the canvas
-   * @param y Integer representing the y-coordinate of where the image shoudl be positioned in the canvas
-   * @param width Integer representing the width of the image
-   * @param height Integer representing the height of the image
-   */
-  function draw(img, x, y, width, height) {
-    game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
-  }
-
   console.log("OUT");
 
-  /**
-   * Checks if the character is within the bounds of a door to change rooms. If so, change
-   * the room the character is in, update the scene attributes, and position the character
-   * in the doorway of the next room.
-   */
-  function changeRooms() {
-    // if character is currently in bedroom and within bounds of left door, enter living room
-    if (scene_pic == bedroom_scene && ((char_y_pos >= 125 && char_y_pos <= 205) && char_x_pos <= 5)){
-      scene_pic = livingroom_scene;
-      current_room = livingroom_scene;
-      char_x_pos = 625;
-      char_y_pos = 125
-      is_bedroom_scene = false;
-      is_livingroom_scene = true;
-    }
-
-    // if character is currently in living room and within bounds of top door, enter kitchen
-    if (scene_pic == livingroom_scene && ((char_x_pos >= 500 && char_x_pos <= 590) && char_y_pos <= 5) ){
-      scene_pic = kitchen_scene;
-      current_room = kitchen_scene;
-      char_x_pos = 330;
-      char_y_pos = 420;
-      is_kitchen_scene = true;
-      is_livingroom_scene = false;
-    }
-
-    // if character is currently in kitchen and within bounds of bottom door, enter living room 
-    if (scene_pic == kitchen_scene && ((char_x_pos >= 280 && char_x_pos <= 380) && char_y_pos >= 430)){
-      scene_pic = livingroom_scene;
-      current_room = livingroom_scene;
-      char_x_pos = 555;
-      char_y_pos = 10;
-      is_kitchen_scene = false;
-      is_livingroom_scene = true;
-    }
-
-    // if character is currently in living room and within bounds of right door, enter bedroom 
-    if (scene_pic == livingroom_scene && ((char_y_pos >= 107 && char_y_pos <= 160) && char_x_pos >= 630) ){
-      scene_pic = bedroom_scene;
-      current_room = bedroom_scene;
-      char_x_pos = 10;
-      char_y_pos = 155;
-      is_bedroom_scene = true;
-      is_livingroom_scene = false;
-    }
-  }
-
-
   /* FUNCTIONS FOR PUZZLES */
-  /**
-   * Displays the text the user types in the combination lock text box, computer password text box,
-   * and computer terminal.
-   */
-  function displayUserInput() {
-    if (is_combo_lock_scene) {
-      game_context.font = "25px Comic Sans MS";
-      game_context.fillStyle = "black";
-      game_context.fillText(lock_combo_string, 290, 443);
-    }
-
-    if (is_computer_scene) {
-      game_context.font = "25px Comic Sans MS";
-      game_context.fillStyle = "black";
-      game_context.fillText(computer_password_string, 144, 270);
-    }
-
-    if (is_terminal_scene) {
-      // source: https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
-
-      // create the replacement elements
-      let replacement_divider = document.createElement("div");
-      let directory_display = getFullDirectory();
-      let replacement_text = document.createTextNode(directory_display + user_input);
-      // source for cursor block: https://www.w3schools.com/charsets/ref_utf_block.asp
-      let cursor = document.createTextNode("\u258A");
-      replacement_divider.appendChild(replacement_text);
-      replacement_divider.appendChild(cursor);
-
-      // retrieve the element to replace
-      let divider_to_replace = document.getElementById("input" + num_inputs);
-
-      // rename dividers so new divider will have original divider name (for consistency)
-      divider_to_replace.id = "old" + num_inputs;
-      replacement_divider.id = "input" + num_inputs;
-
-      // replace current input line with updated user input
-      game_terminal.replaceChild(replacement_divider, divider_to_replace);
-    }
-  }
-
-
-  /**
-   * Displays a message saying the user input submitted is not correct. Is used for
-   * the combo lock and computer password puzzles.
-   */
-  function displayIncorrectMessage() {
-
-    // check to see if the input the user submitted was marked as incorrect
-    if (is_lock_combo_incorrect_message_visible) {
-      game_context.font = "25px Comic Sans MS";
-      game_context.fillStyle = "red";
-      // position the error message below the input box
-      game_context.fillText("Combo incorrect. Please try again.", 150, 480);
-    }
-
-    // check to see if the input the user submitted was marked as incorrect
-    if (is_password_incorrect_message_visible) {
-      game_context.font = "25px Comic Sans MS";
-      game_context.fillStyle = "red";
-      // position the error message below the input box
-      game_context.fillText("Password incorrect. Please try again.", 130, 350);
-    }
-
-  }
-  
-
-  /**
-   * Displays the hint for the combo lock problem. Is only shown when the combo lock
-   * scene is being displayed.
-   */
-  function displayComboLockHint() {
-    if (is_combo_lock_scene) {
-      game_context.font = "30px courier";
-      game_context.fillStyle = "black";
-      game_context.fillText("56 25 31", 10, 30);
-    }
-  }
-
-
   /**
    * Updates the user input for combo lock, computer password, and terminal puzzles. Is
    * only updated when the keys the user presses are part of the allowed keys for that puzzle.
@@ -1708,7 +1630,7 @@
       }
     }  // closing terminal conditional
 
-  }
+  }  // closing updateUserInput() function
 
 
   /**
@@ -1770,6 +1692,87 @@
   }  // closing check password correctness function
 
 
+  /**
+   * Displays the text the user types in the combination lock text box, computer password text box,
+   * and computer terminal.
+   */
+  function displayUserInput() {
+    if (is_combo_lock_scene) {
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "black";
+      game_context.fillText(lock_combo_string, 290, 443);
+    }
+
+    if (is_computer_scene) {
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "black";
+      game_context.fillText(computer_password_string, 144, 270);
+    }
+
+    if (is_terminal_scene) {
+      // source: https://developer.mozilla.org/en-US/docs/Web/API/Node/replaceChild
+
+      // create the replacement elements
+      let replacement_divider = document.createElement("div");
+      let directory_display = getFullDirectory();
+      let replacement_text = document.createTextNode(directory_display + user_input);
+      // source for cursor block: https://www.w3schools.com/charsets/ref_utf_block.asp
+      let cursor = document.createTextNode("\u258A");
+      replacement_divider.appendChild(replacement_text);
+      replacement_divider.appendChild(cursor);
+
+      // retrieve the element to replace
+      let divider_to_replace = document.getElementById("input" + num_inputs);
+
+      // rename dividers so new divider will have original divider name (for consistency)
+      divider_to_replace.id = "old" + num_inputs;
+      replacement_divider.id = "input" + num_inputs;
+
+      // replace current input line with updated user input
+      game_terminal.replaceChild(replacement_divider, divider_to_replace);
+    }
+  }
+
+
+  /**
+   * Displays a message saying the user input submitted is not correct. Is used for
+   * the combo lock and computer password puzzles.
+   */
+  function displayIncorrectMessage() {
+
+    // check to see if the input the user submitted was marked as incorrect
+    if (is_lock_combo_incorrect_message_visible) {
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "red";
+      // position the error message below the input box
+      game_context.fillText("Combo incorrect. Please try again.", 150, 480);
+    }
+
+    // check to see if the input the user submitted was marked as incorrect
+    if (is_password_incorrect_message_visible) {
+      game_context.font = "25px Comic Sans MS";
+      game_context.fillStyle = "red";
+      // position the error message below the input box
+      game_context.fillText("Password incorrect. Please try again.", 130, 350);
+    }
+
+  }
+  
+
+  /**
+   * Displays the hint for the combo lock problem. Is only shown when the combo lock
+   * scene is being displayed.
+   */
+  function displayComboLockHint() {
+    if (is_combo_lock_scene) {
+      game_context.font = "30px courier";
+      game_context.fillStyle = "black";
+      game_context.fillText("56 25 31", 10, 30);
+    }
+  }
+
+
+  /* FUNCTIONS FOR TERMINAL PUZZLES */
   /**
    * Executes the input the user submits in terminal and outputs corresponding messages based
    * on the input the user submits. Is called after the user submits their input by pressing
@@ -1932,6 +1935,44 @@
     }
 
     return output_text;
+  }
+
+
+  /**
+   * Colors the content names (i.e. subdirectories, executables) in a directory; is used for
+   * the ls command.
+   * 
+   * @param output_text String containing the contents of a directory (output of the ls command)
+   * @param output_divider HTML div that will hold the output of the ls command (i.e. the list
+   *     of contents in the directory)
+   */
+   function colorDirectoryExecutable(output_text, output_divider) {
+    let directory_contents = [];
+
+    // split the output of contents of the directory - after ls command is executed
+    output_text = output_text.trim();
+    if (output_text != "") {
+      directory_contents = output_text.split(" ");
+    }
+
+    // create span for coloring text and append to the output divider based on class
+    for (let index = 0; index < directory_contents.length; ++index) {
+
+      // source to create the span element: https://stackoverflow.com/questions/5802663/create-a-span-element-inside-another-element-using-javascript
+      let ls_span = document.createElement("span");
+      let check_exe_file = directory_contents[index].slice(-4);
+
+      // color the text based on class - directory and executable
+      if (check_exe_file === ".exe") {
+        ls_span.className = "executable_file";
+      } else {
+        ls_span.className = "subdirectory";
+      }
+
+      // append to the divider after setting the colors
+      ls_span.innerHTML = directory_contents[index] + " ";
+      output_divider.appendChild(ls_span);
+    }
   }
 
 
@@ -2175,7 +2216,7 @@
     // if currently executing a ls command, then display directories
     // and executables in respective colors and append to output_divider
     if (executing_ls_command) {
-      color_directory_executable(output_text, output_divider);
+      colorDirectoryExecutable(output_text, output_divider);
       executing_ls_command = false;
     } else {  // add output text into a text node
       let text = document.createTextNode(output_text);
@@ -2186,43 +2227,6 @@
     game_terminal.append(output_divider);
   }
 
-
-  /**
-   * Colors the content names (i.e. subdirectories, executables) in a directory; is used for
-   * the ls command.
-   * 
-   * @param output_text String containing the contents of a directory (output of the ls command)
-   * @param output_divider HTML div that will hold the output of the ls command (i.e. the list
-   *     of contents in the directory)
-   */
-  function color_directory_executable(output_text, output_divider) {
-    let directory_contents = [];
-
-    // split the output of contents of the directory - after ls command is executed
-    output_text = output_text.trim();
-    if (output_text != "") {
-      directory_contents = output_text.split(" ");
-    }
-
-    // create span for coloring text and append to the output divider based on class
-    for (let index = 0; index < directory_contents.length; ++index) {
-
-      // source to create the span element: https://stackoverflow.com/questions/5802663/create-a-span-element-inside-another-element-using-javascript
-      let ls_span = document.createElement("span");
-      let check_exe_file = directory_contents[index].slice(-4);
-
-      // color the text based on class - directory and executable
-      if (check_exe_file === ".exe") {
-        ls_span.className = "executable_file";
-      } else {
-        ls_span.className = "subdirectory";
-      }
-
-      // append to the divider after setting the colors
-      ls_span.innerHTML = directory_contents[index] + " ";
-      output_divider.appendChild(ls_span);
-    }
-  }
 
   /**
    * Returns a string of the full directory to display in a new line in the terminal.
@@ -2252,7 +2256,7 @@
    * Displays the end game scene and text and plays congratualory music to signal the game
    * completion; only occurs if user has completed all required tasks
    */
-  function complete_game_scene(){
+  function displayCompleteGameScene() {
     // check to see if all tasks are completed
     if (is_computer_unlocked && is_lock_unlocked && is_coffee_brewed && is_fridge_unlocked) {
       // change scene
