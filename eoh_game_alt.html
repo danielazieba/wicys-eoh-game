@@ -122,7 +122,6 @@
     outline: none;
     text-align: left;
     cursor: pointer;
-    /* transition: 0.3s; */
     font-size: 17px;
   }
 
@@ -160,7 +159,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     
-    background-color: rgb(181, 255, 207);  /* 168, 255, 199 */
+    background-color: rgb(181, 255, 207);
     color: black;
     font-size: 16px;
     padding: 16px 30px;
@@ -186,7 +185,7 @@
   }
 
   /* source for display parameter: https://stackoverflow.com/questions/2928688/how-to-hide-elements-without-having-them-take-space-on-the-page */
-  /* style for elements that show up while game is ongoing*/
+  /* style for elements that show up while game is ongoing */
   .ongoing {
     visibility: visible;
     display: block;
@@ -197,14 +196,7 @@
     visibility: hidden;
     display: none;
   }
-
-/* this part of the code makes the canvas only show at the top of the page--cannot position it */
-/* canvas {
-    border: 1px solid #d3d3d3;
-    background-color: #f1f1f1;
-} */
 </style>
-<!-- <link rel="stylesheet" href="css/alt.css"> -->
 </head>
 
 <!-- BEGINNING OF ELEMENTS DISPLAYED ON HTML PAGE -->
@@ -268,10 +260,8 @@
 
 <!-- creating the canvas -->
 <canvas id="myCanvas" width="700" height="500" style="background-color: #f1f1f1;"></canvas>
-
-<!-- <script src="plugins.js"></script> -->
 <br>
-<!-- <body onload="startGame()"> -->
+
 <body onload="start()">
 <script>
   /* GENERAL ATTRIBUTES */
@@ -414,7 +404,7 @@
   let char_x_pos = 587;  // x pos of top left corner of char img
   let char_y_pos = 282;  // y pos of top left corner of char img
 
-  const char_speed = 3;
+  const char_speed = 3;  // number of pixels the character img moves in a frame
 
   let step_counter = 0;  // used to determine whether the character step changes
   let step_change = 25;  // every 25 ms, character step changes
@@ -554,15 +544,12 @@
                         ];
 
   
-  // FINAL ATTEMPT (SUCCESSFUL!!)
-  console.log("BEGIN");
 
   /**
    * Begins game by loading in all images that will be used (i.e. character, scenes, etc), 
    * initializing game scene and character images, and calling the function that updates the game.
    */
   function start() {
-    console.log("starting")
 
     // load hint icon to be diplayed in all ongoing game scenes
     hint_icon = loadCharacter("images/hint_icon_filled_64x64_x0.5.png", hint_x_pos, hint_y_pos, 32, 32);
@@ -601,7 +588,6 @@
 
     setInterval(update, 20)  // infinite loop, runs every 2 ms
 
-    console.log("ending")
   }
 
 
@@ -623,21 +609,9 @@
     // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
     background_img.addEventListener("load", drawBackground, false);
 
-    console.log("loaded")
-
-    function drawBackground() {
-      console.log("drawing")
-
-      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
-      // game_context.drawImage(background_img, sx=0, sy=0, swidth=700, sheight=500);
-      
-      // draw(background_img, 0, 0, 700, 500)  // might not need...?
-
-      console.log("finished")
-    }
+    function drawBackground() {}
 
     return background_img;
-    console.log("DRAWN");
   }
 
 
@@ -664,12 +638,7 @@
     // - Source: https://stackoverflow.com/questions/22889641/simple-html5-canvas-image-not-displaying
     img.addEventListener("load", drawCharacter, false); 
 
-    function drawCharacter() {
-      // parameters of drawImage: image, x-coord-of-img, y-coord-of-img, img-width, img-height
-      // game_context.drawImage(img, sx=x, sy=y, swidth=width, sheight=height);
-      
-      // draw(img, x, y, width, height);  // might not need...?
-    }
+    function drawCharacter() {}
 
     return img;
   }
@@ -755,11 +724,6 @@
 
     // check to see if all tasks are done--if yes, render ending scene instead and play music
     displayCompleteGameScene();
-
-    // can use to find current position of character
-    // console.log("x: " + char_x_pos);
-    // console.log("y: " + char_y_pos);
-    console.log("CLEARED")
   }
 
 
@@ -1137,9 +1101,6 @@
       changeHintVisibility("visible");
       is_hint_view_displayed = true;
     }
-
-    console.log("mouse x: " + mouse_x);
-    console.log("mouse y: " + mouse_y);
   })
 
 
@@ -1546,7 +1507,6 @@
     input_number = num_inputs;
   }
 
-  console.log("OUT");
 
   /* FUNCTIONS FOR PUZZLES */
   /**
@@ -1638,7 +1598,7 @@
         // for arrowup and arrowdown keys for viewing terminal archive)
         input_number = num_inputs;
       }
-      
+
     }  // closing terminal conditional
 
   }  // closing updateUserInput() function
@@ -1799,7 +1759,6 @@
     let command_to_process = [];
     if (user_input.trim() != "") {
       command_to_process = user_input.split(" ");
-      console.log("COMMAND:" + command_to_process)
     }
 
     // retrieve directories and executables of current dir
@@ -1851,7 +1810,6 @@
     user_input = user_input.trim();
     if (user_input != "") {
       command_to_process = user_input.split(" ");
-      console.log("COMMAND:" + command_to_process)
     }
     let output_text = "";
 
@@ -1876,7 +1834,6 @@
           // enter executable
           currently_in_executable = true;
           curr_executable_name = command_to_process[0].slice(2);
-          console.log(curr_executable_name)
           output_text = getExecutableWelcomeMessage();
         } else {
           output_text = "Error: specified executable does not exist.";
