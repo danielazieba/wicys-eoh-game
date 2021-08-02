@@ -274,7 +274,7 @@
 <!-- <body onload="startGame()"> -->
 <body onload="start()">
 <script>
-  /* GENERAL ATTRIBUTES*/
+  /* GENERAL ATTRIBUTES */
   // get the canvas element and context (context allows you to draw on the canvas)
   const game_canvas = document.getElementById("myCanvas");
   const game_context = game_canvas.getContext("2d");
@@ -1386,24 +1386,8 @@
             is_livingroom_scene = true;
           }
 
-          // reset terminal history
-          current_directory = "~";
-          directory_archive = ["~"];
-          terminal_archive = [""];
-          user_input = "";
-          currently_in_executable = false;
-
-          // remove text from terminal display - https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
-          while (num_inputs > 0) {
-            let terminal_line = document.getElementById("input" + num_inputs);
-            game_terminal.removeChild(terminal_line);
-
-            let output_line = document.getElementById("output" + (num_inputs - 1));
-            game_terminal.removeChild(output_line);
-            
-            --num_inputs;
-          }
-          input_number = num_inputs;
+          // reset terminal
+          resetTerminal();
         }  // closing terminal conditional
 
       }  // closing conditional that checks if hints are displayed
@@ -1536,6 +1520,32 @@
     }
   }
 
+  
+  /**
+   * Resets the game terminal into its original state (empty in root directory) by
+   * clearing the terminal history and text.
+   */
+  function resetTerminal() {
+    // reset terminal history
+    current_directory = "~";
+    directory_archive = ["~"];
+    terminal_archive = [""];
+    user_input = "";
+    currently_in_executable = false;
+
+    // remove text from terminal display - https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild
+    while (num_inputs > 0) {
+      let terminal_line = document.getElementById("input" + num_inputs);
+      game_terminal.removeChild(terminal_line);
+
+      let output_line = document.getElementById("output" + (num_inputs - 1));
+      game_terminal.removeChild(output_line);
+      
+      --num_inputs;
+    }
+    input_number = num_inputs;
+  }
+
   console.log("OUT");
 
   /* FUNCTIONS FOR PUZZLES */
@@ -1614,52 +1624,11 @@
           ++input_number;
         }
       } else if (key.key === "Tab") {
-        // autocomplete the current command the user has inputted, if possible
-
         // prevent default behavior
         key.preventDefault();
 
-        // retrieve user-inputted command
-        let command_to_process = [];
-        if (user_input.trim() != "") {
-          command_to_process = user_input.split(" ");
-          console.log("COMMAND:" + command_to_process)
-        }
-
-        // retrieve directories and executables of current dir
-        subdirectories = directory[current_directory]["directories"];
-        executables_in_current = directory[current_directory]["executables"];
-        
-        if (command_to_process.length === 2) {  // can be ls or cd a directory
-          if (command_to_process[0] === "cd" || command_to_process[0] === "ls") {
-            // get work-in-progress directory name (i.e. what the user has typed out in the place of a dir)
-            let possible_dir = command_to_process[1];
-
-            // check if the work-in-progress directory is an actual subdirectory; if so, autocomplete
-            // the user input to that directory
-            for (let s = 0; s < subdirectories.length; ++s) {
-              if (subdirectories[s].slice(0, possible_dir.length) === possible_dir) {
-                // autocomplete directory name for user command
-                user_input = command_to_process[0] + " " + subdirectories[s];
-              }
-            }
-          }
-        } else if (command_to_process.length === 1) {
-          if (command_to_process[0].length > 2 && command_to_process[0].slice(0, 2) === "./") {
-            // get work-in-progress executable name
-            let possible_exe = command_to_process[0].slice(2, command_to_process[0].length);
-
-            // check if the work-in-progress executable name is an actual executable; if so, autocomplete
-            // the user input to that executable
-            for (let e = 0; e < executables_in_current.length; ++e) {
-              if (executables_in_current[e].slice(0, possible_exe.length) === possible_exe) {
-                // autocomplete executable name for user command
-                user_input = "./" + executables_in_current[e];
-              }
-            }
-          }
-        }
-        
+        // autocomplete the current command the user has inputted, if possible
+        autocompleteInput();
       } else {
         // add to user input and store it
         user_input += key.key;
@@ -1669,6 +1638,7 @@
         // for arrowup and arrowdown keys for viewing terminal archive)
         input_number = num_inputs;
       }
+      
     }  // closing terminal conditional
 
   }  // closing updateUserInput() function
@@ -1814,6 +1784,60 @@
 
 
   /* FUNCTIONS FOR TERMINAL PUZZLES */
+  /**
+   * Autocompletes the user input. Is called when the user presses the TAB key.
+   * Only available when changing directory (cd) to a valid subdirectory or running
+   * an executable that exists in the directory. Also available when listing out
+   * the contents of a valid subdirectory.
+   * 
+   * For the 'cd' and 'ls' commmands, the user does not need to begin writing out the
+   * subdirectory name if there's only one subdirectory. For running an executable, the
+   * user needs to begin writing out the executable name.
+   */
+  function autocompleteInput() {
+    // retrieve user-inputted command
+    let command_to_process = [];
+    if (user_input.trim() != "") {
+      command_to_process = user_input.split(" ");
+      console.log("COMMAND:" + command_to_process)
+    }
+
+    // retrieve directories and executables of current dir
+    subdirectories = directory[current_directory]["directories"];
+    executables_in_current = directory[current_directory]["executables"];
+    
+    if (command_to_process.length === 2) {  // can be ls or cd a directory
+      if (command_to_process[0] === "cd" || command_to_process[0] === "ls") {
+        // get work-in-progress directory name (i.e. what the user has typed out in the place of a dir)
+        let possible_dir = command_to_process[1];
+
+        // check if the work-in-progress directory is an actual subdirectory; if so, autocomplete
+        // the user input to that directory
+        for (let s = 0; s < subdirectories.length; ++s) {
+          if (subdirectories[s].slice(0, possible_dir.length) === possible_dir) {
+            // autocomplete directory name for user command
+            user_input = command_to_process[0] + " " + subdirectories[s];
+          }
+        }
+      }
+    } else if (command_to_process.length === 1) {
+      if (command_to_process[0].length > 2 && command_to_process[0].slice(0, 2) === "./") {
+        // get work-in-progress executable name
+        let possible_exe = command_to_process[0].slice(2, command_to_process[0].length);
+
+        // check if the work-in-progress executable name is an actual executable; if so, autocomplete
+        // the user input to that executable
+        for (let e = 0; e < executables_in_current.length; ++e) {
+          if (executables_in_current[e].slice(0, possible_exe.length) === possible_exe) {
+            // autocomplete executable name for user command
+            user_input = "./" + executables_in_current[e];
+          }
+        }
+      }
+    }
+  }
+
+
   /**
    * Executes the input the user submits in terminal and outputs corresponding messages based
    * on the input the user submits. Is called after the user submits their input by pressing
